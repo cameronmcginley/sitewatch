@@ -56,6 +56,16 @@ def lambda_handler(event, context):
             "title": "Cherry Caps Tin",
             "is_available": None,
         },
+        {
+            "url": "https://gear.bethesda.net/products/fallout-nuka-cola-wild-glass-bottle-and-cap",
+            "title": "Wild Glass Bottle",
+            "is_available": None,
+        },
+        {
+            "url": "https://gear.bethesda.net/products/fallout-bottle-cap-series-nuka-wild-with-collectible-tin",
+            "title": "Wild Caps Tin",
+            "is_available": None,
+        },
     ]
 
     session = requests.Session()  # Use a session for connection pooling
