@@ -11,10 +11,6 @@ print("Loading function")
 
 
 def lambda_handler(event, context):
-    EMAIL_SENDER = os.environ["email_sender"]
-    EMAIL_RECEIVER = os.environ["email_receiver"]
-    EMAIL_PASSWORD = os.environ["email_password"]
-
     session = requests.Session()  # Use a session for connection pooling
 
     for link in links:
@@ -64,7 +60,6 @@ def lambda_handler(event, context):
         except requests.RequestException as e:
             print(f"Error fetching {link['url']}: {str(e)}")
 
-    # Kill session
     session.close()
 
     available_products = [link for link in links if link["is_available"] is True]
@@ -79,10 +74,12 @@ def lambda_handler(event, context):
 
     print(body)
 
-    # Setup and send email
     if not available_products:
         return
 
+    EMAIL_SENDER = os.environ["email_sender"]
+    EMAIL_RECEIVER = os.environ["email_receiver"]
+    EMAIL_PASSWORD = os.environ["email_password"]
     send_email(
         EMAIL_SENDER, EMAIL_RECEIVER, EMAIL_PASSWORD, "Product Availability", body
     )
