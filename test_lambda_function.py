@@ -1,6 +1,7 @@
 import os
-import psutil
 import time
+
+import psutil
 from dotenv import load_dotenv
 
 from lambda_function import lambda_handler
