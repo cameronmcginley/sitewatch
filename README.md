@@ -1,6 +1,12 @@
-# Fallout Store Checker
+# Store Checker Lambda
 
-Checks a set of items in the Bethesda store, and sends an email for results on availability.
+This lambda has two functionalities: 
+1. Check an item's URL and see if it is available to buy
+2. Get the lowest priced item from an Ebay search and check against threshold
+
+Both are implemented together, with Enum to differentiate and unique fields in `links.py`
+
+Emails are sent for results, using environment variables for `sender`, `receiver`, `password`
 
 ## Adding Modules to Lambda Layer
 
