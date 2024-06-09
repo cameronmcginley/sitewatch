@@ -40,7 +40,7 @@ links = [
         "alias": "Quantum Bottle Caps Tin",
         "type": CheckType.AVAILABILITY,
         "is_available": None,
-        "text_when_unavailable": "Notify Me When Available",
+        "text_when_unavailable": "sNotify Me When Available",
     },
     {
         "url": "https://gear.bethesda.net/products/fallout-nuka-cherry-glass-bottle-cap",
@@ -115,7 +115,7 @@ links = [
         "alias": "Cramorant 226 PSA 10",
         "type": CheckType.EBAY_PRICE_THRESHOLD,
         "is_available": None,
-        "threshold": 90,
+        "threshold": 900,
         "found_price": None,
     },
     {
@@ -123,7 +123,7 @@ links = [
         "alias": "Pikachu 227 PSA 9",
         "type": CheckType.EBAY_PRICE_THRESHOLD,
         "is_available": None,
-        "threshold": 270,
+        "threshold": 2700,
         "found_price": None,
     },
     {

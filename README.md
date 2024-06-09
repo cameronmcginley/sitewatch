@@ -13,7 +13,6 @@ Emails are sent for results, using environment variables for `sender`, `receiver
 Create `python` folder (or any name), install modules to it, then add onto layer in AWS console.
 
 - `mkdir python`
-- `pip install -t python requests`
-- `pip install -t python beautifulsoup4`
+- `pip install -t python requests beautifulsoup4 aiohttp lxml tenacity`
 - Zip it
 - Upload to AWS layer
