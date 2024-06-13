@@ -16,3 +16,42 @@ Create `python` folder (or any name), install modules to it, then add onto layer
 - `pip install -t python requests beautifulsoup4 aiohttp lxml tenacity`
 - Zip it
 - Upload to AWS layer
+
+```mermaid
+graph TD
+    subgraph User
+        U1[User]
+    end
+
+    subgraph Frontend
+        A[React App]
+            A1[Google Sign-In]
+            A2[Website Notification Settings]
+    end
+
+    subgraph AWS
+        B[DynamoDB]
+        C[API Gateway]
+        F[Lambda]
+        H[S3]
+        I[SES]
+        J[EventBridge]
+    end
+
+    subgraph Hosting
+        G[GitHub Pages]
+    end
+
+    U1 --> A1
+    A --> A2
+    A1 --> A
+    A2 -->|CRUD Operations| C
+    C --> B
+    F -->|Get Website Data| Internet
+    F -->|Get Links/Data to Check| B
+    F -->|Get/Store HTML| H
+    F -->|Criteria Met| I
+    I -->|Email User| U1
+    G --> A
+    J -->|Timer| F
+```
