@@ -8,6 +8,9 @@ export default function Test() {
         <h1 className="text-2xl font-bold">My Homepage</h1>
         <p className="mt-4">Welcome to my homepage!</p>
       </PageContainer>
+
+      {/* Table */}
+      {/* https://github.com/sadmann7/shadcn-table?tab=readme-ov-file */}
     </div>
   );
 }
