@@ -21,9 +21,11 @@ const links = [
   },
   {
     name: "Documentation",
+    open: false,
     sublinks: [
       {
         name: "Check for Phrase",
+        open: true,
         sublinks: [
           {
             name: "Check for Phrase",
@@ -39,7 +41,7 @@ const links = [
   },
   {
     name: "Configurations",
-    href: "/config",
+    open: true,
     sublinks: [
       {
         name: "View Configurations",

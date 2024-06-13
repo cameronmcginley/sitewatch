@@ -14,24 +14,32 @@ type NavLink = {
   href?: string;
   sublinks?: NavLink[];
   className?: string;
+  open?: boolean;
 };
 
 type VerticalNavProps = {
   links: NavLink[];
 };
 
-const NavItem: React.FC<{ link: NavLink }> = ({ link }) => {
-  const [isOpen, setIsOpen] = useState(false);
+const NavItem: React.FC<{ link: NavLink; level: number }> = ({
+  link,
+  level,
+}) => {
+  const [isOpen, setIsOpen] = useState(link.open || false);
 
   const toggleOpen = () => setIsOpen(!isOpen);
 
   return (
-    <li className="!m-0 relative group border-l-2 border-gray-800 hover:border-white">
+    <li
+      className={`!m-0 relative group ${
+        level > 0 ? "border-l-2 border-gray-800 hover:border-white" : "py-1"
+      }`}
+    >
       {link.sublinks ? (
         <div>
           <button
             onClick={toggleOpen}
-            className="w-fit gap-4 flex items-center justify-between hover:underline hover:font-bold px-4 py-2"
+            className="w-fit gap-4 flex items-center justify-between hover:font-bold mx-4 py-2"
           >
             {link.name}
             {isOpen ? <FaChevronUp /> : <FaChevronDown />}
@@ -43,7 +51,7 @@ const NavItem: React.FC<{ link: NavLink }> = ({ link }) => {
             >
               <ul className="ml-4 space-y-2">
                 {link.sublinks.map((sublink, subIndex) => (
-                  <NavItem key={subIndex} link={sublink} />
+                  <NavItem key={subIndex} link={sublink} level={level + 1} />
                 ))}
               </ul>
             </CollapsibleContent>
@@ -53,7 +61,7 @@ const NavItem: React.FC<{ link: NavLink }> = ({ link }) => {
         <Link
           href={link.href || "#"}
           className={
-            "w-fit hover:underline hover:font-bold block px-4 rounded py-2 " +
+            "w-fit hover:font-bold block mx-4 py-2 " +
             (link.className ? link.className : "")
           }
         >
@@ -69,7 +77,7 @@ const VerticalNav: React.FC<VerticalNavProps> = ({ links }) => {
     <div className="w-full h-full">
       <ul className="space-y-2 p-4">
         {links.map((link, index) => (
-          <NavItem key={index} link={link} />
+          <NavItem key={index} link={link} level={0} />
         ))}
       </ul>
     </div>
