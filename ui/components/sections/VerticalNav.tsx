@@ -29,7 +29,7 @@ const NavItem: React.FC<{ link: NavLink }> = ({ link }) => {
     <li className="!m-0">
       {link.sublinks ? (
         <div>
-          <div className="w-fit gap-6 flex items-center justify-between rounded ">
+          <div className="w-fit gap-4 flex items-center justify-between rounded ">
             <Link
               href={link.href || "#"}
               className={
