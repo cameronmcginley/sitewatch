@@ -1,0 +1,11 @@
+{
+    "requestContext": {
+        "http": {
+            "method": "GET",
+            "path": "/prod/items"
+        }
+    },
+    "headers": {
+        "Content-Type": "application/json"
+    }
+}
