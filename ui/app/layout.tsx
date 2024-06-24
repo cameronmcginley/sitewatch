@@ -8,12 +8,13 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import React from "react";
+import Navbar from "@/components/sections/Navbar";
 
 const links = [
   {
     name: "Home",
     href: "/",
-    className: "text-xl font-bold",
+    className: "text-xl font-bold hover:underline",
   },
   {
     name: "About",
@@ -70,24 +71,41 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`h-screen`}>
-        <main className="h-full">
-          <ResizablePanelGroup
-            direction="horizontal"
-            className="h-full w-full border"
-          >
-            {/* Left */}
-            <ResizablePanel defaultSize={20}>
-              <VerticalNav links={links} />
-            </ResizablePanel>
-            <ResizableHandle withHandle />
-
-            {/* Right */}
-            <ResizablePanel defaultSize={80}>
-              <div className="flex h-full p-12 flex-col">{children}</div>
-            </ResizablePanel>
-          </ResizablePanelGroup>
+        <main className="flex flex-col items-center w-full">
+          <Navbar />
+          <div className="max-w-7xl w-full p-6 pt-12">{children}</div>
         </main>
       </body>
     </html>
   );
 }
+
+// export default function RootLayout({
+//   children,
+// }: Readonly<{
+//   children: React.ReactNode;
+// }>) {
+//   return (
+//     <html lang="en" className="dark">
+//       <body className={`h-screen`}>
+//         <main className="h-full">
+//           <ResizablePanelGroup
+//             direction="horizontal"
+//             className="h-full w-full border"
+//           >
+//             {/* Left */}
+//             <ResizablePanel defaultSize={20}>
+//               <VerticalNav links={links} />
+//             </ResizablePanel>
+//             <ResizableHandle withHandle />
+
+//             {/* Right */}
+//             <ResizablePanel defaultSize={80}>
+//               <div className="flex h-full p-12 flex-col">{children}</div>
+//             </ResizablePanel>
+//           </ResizablePanelGroup>
+//         </main>
+//       </body>
+//     </html>
+//   );
+// }
