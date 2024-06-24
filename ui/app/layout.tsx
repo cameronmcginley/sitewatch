@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/resizable";
 import React from "react";
 import Navbar from "@/components/sections/Navbar";
+import ClientSessionProvider from "@/components/ClientSessionProvider";
 
 const links = [
   {
@@ -69,14 +70,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className={`h-screen`}>
-        <main className="flex flex-col items-center w-full">
-          <Navbar />
-          <div className="max-w-7xl w-full p-6 pt-12">{children}</div>
-        </main>
-      </body>
-    </html>
+    <ClientSessionProvider>
+      <html lang="en" className="dark">
+        <body className={`h-screen`}>
+          <main className="flex flex-col items-center w-full">
+            <Navbar />
+            <div className="max-w-7xl w-full p-6 pt-12">{children}</div>
+          </main>
+        </body>
+      </html>
+    </ClientSessionProvider>
   );
 }
 

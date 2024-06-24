@@ -2,18 +2,24 @@
 
 import React from "react";
 import Link from "next/link";
+import { useSession, signIn, signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import {
   NavigationMenu,
   NavigationMenuContent,
-  NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  NavigationMenuViewport,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const components: { title: string; href: string; description: string }[] = [
   {
@@ -80,9 +86,11 @@ const ListItem = React.forwardRef<
 ListItem.displayName = "ListItem";
 
 const Navbar: React.FC = () => {
+  const { data: session } = useSession();
+
   return (
     <div className="w-full justify-center items-center flex border-b py-2">
-      <div className="max-w-7xl w-full flex">
+      <div className="max-w-7xl w-full flex justify-between items-center">
         <NavigationMenu>
           <NavigationMenuList className="">
             <NavigationMenuItem>
@@ -95,7 +103,6 @@ const Navbar: React.FC = () => {
                         className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
                         href="/"
                       >
-                        {/* <Icons.logo className="h-6 w-6" /> */}
                         <div className="mb-2 mt-4 text-lg font-medium">
                           shadcn/ui
                         </div>
@@ -147,6 +154,38 @@ const Navbar: React.FC = () => {
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
+        <div>
+          {session ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Avatar className="cursor-pointer">
+                  <AvatarImage src={session.user?.image ?? undefined} />
+                  <AvatarFallback>{session.user?.name?.[0]}</AvatarFallback>
+                </Avatar>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem>
+                  <div className="flex flex-col">
+                    <span className="font-medium">{session.user?.name}</span>
+                    <span className="text-sm text-muted-foreground">
+                      Free Tier
+                    </span>
+                  </div>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => signOut()}>
+                  Sign out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <button
+              className="px-4 py-2 bg-blue-500 text-white rounded-md"
+              onClick={() => signIn()}
+            >
+              Sign in
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
