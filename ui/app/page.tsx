@@ -1,13 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { useSession, signIn } from "next-auth/react";
-import withAuth from "@/components/withAuth";
+import React from "react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL_ITEMS;
 
-function Default() {
+function Root() {
   return (
     <>
       <h1 className="text-2xl font-bold">My Homepage</h1>
@@ -16,4 +13,4 @@ function Default() {
   );
 }
 
-export default withAuth(Default);
+export default Root;

@@ -1,63 +1,11 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import VerticalNav from "@/components/sections/VerticalNav";
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable";
 import React from "react";
 import Navbar from "@/components/sections/Navbar";
-import ClientSessionProvider from "@/components/ClientSessionProvider";
-
-const links = [
-  {
-    name: "Home",
-    href: "/",
-    className: "text-xl font-bold hover:underline",
-  },
-  {
-    name: "About",
-    href: "/about",
-  },
-  {
-    name: "Documentation",
-    open: false,
-    sublinks: [
-      {
-        name: "Check for Phrase",
-        open: true,
-        sublinks: [
-          {
-            name: "Check for Phrase",
-            href: "/docs",
-          },
-        ],
-      },
-      {
-        name: "Check for Phrase",
-        href: "/docs",
-      },
-    ],
-  },
-  {
-    name: "Configurations",
-    open: true,
-    sublinks: [
-      {
-        name: "View Configurations",
-        href: "/config",
-      },
-      {
-        name: "Create New Configuration",
-        href: "/",
-      },
-    ],
-  },
-];
-
-const inter = Inter({ subsets: ["latin"] });
+import ClientSessionProvider from "@/lib/ClientSessionProvider";
+import withAuth from "@/lib/withAuth";
+import { PUBLIC_ROUTES } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -69,46 +17,20 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const AuthenticatedLayout = withAuth(() => <>{children}</>, PUBLIC_ROUTES);
+
   return (
     <ClientSessionProvider>
       <html lang="en" className="dark">
         <body className={`h-screen`}>
           <main className="flex flex-col items-center w-full">
             <Navbar />
-            <div className="max-w-7xl w-full p-6 pt-12">{children}</div>
+            <div className="max-w-7xl w-full p-6 pt-12">
+              <AuthenticatedLayout />
+            </div>
           </main>
         </body>
       </html>
     </ClientSessionProvider>
   );
 }
-
-// export default function RootLayout({
-//   children,
-// }: Readonly<{
-//   children: React.ReactNode;
-// }>) {
-//   return (
-//     <html lang="en" className="dark">
-//       <body className={`h-screen`}>
-//         <main className="h-full">
-//           <ResizablePanelGroup
-//             direction="horizontal"
-//             className="h-full w-full border"
-//           >
-//             {/* Left */}
-//             <ResizablePanel defaultSize={20}>
-//               <VerticalNav links={links} />
-//             </ResizablePanel>
-//             <ResizableHandle withHandle />
-
-//             {/* Right */}
-//             <ResizablePanel defaultSize={80}>
-//               <div className="flex h-full p-12 flex-col">{children}</div>
-//             </ResizablePanel>
-//           </ResizablePanelGroup>
-//         </main>
-//       </body>
-//     </html>
-//   );
-// }

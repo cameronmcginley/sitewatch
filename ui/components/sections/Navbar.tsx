@@ -86,7 +86,7 @@ const ListItem = React.forwardRef<
 ListItem.displayName = "ListItem";
 
 const Navbar: React.FC = () => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   return (
     <div className="w-full justify-center items-center flex border-b py-2">
@@ -155,7 +155,9 @@ const Navbar: React.FC = () => {
           </NavigationMenuList>
         </NavigationMenu>
         <div>
-          {session ? (
+          {status === "loading" ? (
+            <></>
+          ) : session ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Avatar className="cursor-pointer">

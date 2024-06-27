@@ -2,14 +2,10 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useSession, signIn } from "next-auth/react";
-import withAuth from "@/components/withAuth";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL_ITEMS;
 
 function Home() {
-  const { data: session } = useSession();
-
   const [data, setData] = useState([]);
   const [item, setItem] = useState({
     type: "",
@@ -145,4 +141,4 @@ function Home() {
   );
 }
 
-export default withAuth(Home);
+export default Home;
