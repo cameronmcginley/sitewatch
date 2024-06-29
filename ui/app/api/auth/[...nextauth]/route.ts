@@ -2,6 +2,7 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { NextAuthOptions } from "next-auth";
+import { SIGN_IN_URL } from "@/lib/constants";
 
 const authOptions: NextAuthOptions = {
   providers: [
@@ -23,7 +24,7 @@ const authOptions: NextAuthOptions = {
     },
   },
   pages: {
-    signIn: '/sign-in',
+    signIn: SIGN_IN_URL,
     error: '/error',
   },
   debug: true,

@@ -1,33 +1,61 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
+import { useSession } from "next-auth/react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL_ITEMS;
 
 function Home() {
+  const { data: session, status } = useSession();
   const [data, setData] = useState([]);
   const [item, setItem] = useState({
-    type: "",
+    userid: "",
+    type: "CHECK",
+    check_type: "",
     url: "",
     alias: "",
     keyword: "",
     opposite: false,
   });
 
-  useEffect(() => {
-    // Fetch data on component mount
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(API_URL);
-        setData(response.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
+  async function fetchData(userid: string) {
+    console.log("Fetching data from", API_URL, "for user", userid);
 
-    fetchData();
-  }, []);
+    try {
+      const response = await axios.get(API_URL!, {
+        params: { userid: userid },
+      });
+      setData(response.data);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError;
+        if (axiosError.response?.status === 404) {
+          console.log("No data found for user:", userid);
+          setData([]);
+          return null;
+        } else {
+          console.error("Error fetching data:", axiosError.message);
+          throw error;
+        }
+      } else {
+        console.error("Unexpected error:", error);
+        throw error;
+      }
+    }
+  }
+
+  useEffect(() => {
+    console.log("status", status, "session", session);
+    if (status === "authenticated" && session?.user?.id) {
+      setItem((prevItem) => ({
+        ...prevItem,
+        userid: session.user.id,
+      }));
+      fetchData(session.user.id);
+    }
+  }, [status, session]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -49,10 +77,17 @@ function Home() {
     event.preventDefault();
     try {
       await axios.post(API_URL, item);
-      setItem({ type: "", url: "", alias: "", keyword: "", opposite: false });
+      setItem({
+        userid: session.user.id,
+        type: "CHECK",
+        check_type: "",
+        url: "",
+        alias: "",
+        keyword: "",
+        opposite: false,
+      });
       // Fetch updated data
-      const response = await axios.get(API_URL);
-      setData(response.data);
+      fetchData(session.user.id);
     } catch (error) {
       console.error("Error adding item:", error);
     }
@@ -76,10 +111,10 @@ function Home() {
       <form onSubmit={handleSubmit} className="mt-8">
         <input
           type="text"
-          name="type"
-          value={item.type}
+          name="check_type"
+          value={item.check_type}
           onChange={handleChange}
-          placeholder="Type"
+          placeholder="Check Type"
           required
           className="border p-2 mb-2"
         />
