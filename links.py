@@ -7,6 +7,14 @@ class CheckType(Enum):
 
 
 links = [
+    # {
+    #     "id": "CHECK#1",
+    #     "type": "AVAILABILITY",
+    #     "url": "https://gear.bethesda.net/products/fallout-nuka-grape-glass-bottle-cap",
+    #     "alias": "Grape Glass Bottle",
+    #     "keyword": "Notify Me When Available",
+    #     "opposite": True,
+    # },
     {
         "url": "https://gear.bethesda.net/products/fallout-nuka-grape-glass-bottle-cap",
         "alias": "Grape Glass Bottle",
@@ -75,7 +83,7 @@ links = [
         "alias": "Cramorant 226 PSA 9",
         "type": CheckType.EBAY_PRICE_THRESHOLD,
         "is_available": None,
-        "threshold": 70,
+        "threshold": 50,
         "found_price": None,
     },
     {
@@ -83,7 +91,7 @@ links = [
         "alias": "Cramorant 226 PSA 10",
         "type": CheckType.EBAY_PRICE_THRESHOLD,
         "is_available": None,
-        "threshold": 90,
+        "threshold": 70,
         "found_price": None,
     },
     {
@@ -91,7 +99,7 @@ links = [
         "alias": "Pikachu 227 PSA 9",
         "type": CheckType.EBAY_PRICE_THRESHOLD,
         "is_available": None,
-        "threshold": 270,
+        "threshold": 250,
         "found_price": None,
     },
     {

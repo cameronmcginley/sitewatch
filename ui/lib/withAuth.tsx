@@ -1,40 +1,41 @@
-"use client";
+// "use client";
 
-import { useSession, signIn } from "next-auth/react";
-import { useEffect } from "react";
-import { useRouter } from "next/router";
-import { SIGN_IN_URL } from "@/lib/constants";
+// import { useSession } from "next-auth/react";
+// import { useRouter, usePathname } from "next/navigation";
+// import { useEffect, ReactNode } from "react";
+// import { PUBLIC_ROUTES } from "./constants";
 
-const withAuth = (
-  WrappedComponent: React.ComponentType,
-  publicRoutes: string[] = []
-) => {
-  return (props) => {
-    const { data: session, status } = useSession();
-    const router = useRouter();
+// interface WithAuthProps {
+//   children: ReactNode;
+// }
 
-    useEffect(() => {
-      if (status === "loading") {
-        // Show a loading spinner or nothing
-        return;
-      }
+// export const withAuth = (
+//   WrappedComponent: React.ComponentType<WithAuthProps>
+// ) => {
+//   const ComponentWithAuth = (props: WithAuthProps) => {
+//     const { data: session, status } = useSession();
+//     const router = useRouter();
+//     const pathname = usePathname();
 
-      if (!session && !publicRoutes.includes(router.pathname)) {
-        router.push(SIGN_IN_URL);
-      }
-    }, [session, status, router.pathname]);
+//     useEffect(() => {
+//       if (status === "loading") return;
 
-    if (
-      status === "loading" ||
-      (!session && !publicRoutes.includes(router.pathname))
-    ) {
-      return (
-        <div className="h-10 w-10 bg-gray-200 rounded-full animate-pulse"></div>
-      ); // Loading state
-    }
+//       if (!session && !PUBLIC_ROUTES.includes(pathname)) {
+//         router.push("/sign-in");
+//       }
+//     }, [session, status, pathname, router]);
 
-    return <WrappedComponent {...props} />;
-  };
-};
+//     if (
+//       status === "loading" ||
+//       (!session && !PUBLIC_ROUTES.includes(pathname))
+//     ) {
+//       return (
+//         <div className="h-10 w-10 bg-gray-200 rounded-full animate-pulse"></div>
+//       );
+//     }
 
-export default withAuth;
+//     return <WrappedComponent {...props} />;
+//   };
+
+//   return ComponentWithAuth;
+// };
