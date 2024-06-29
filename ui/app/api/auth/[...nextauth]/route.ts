@@ -23,8 +23,8 @@ const authOptions: NextAuthOptions = {
     },
   },
   pages: {
-    signIn: '/sign-in', // Specify your custom sign-in page route
-    error: '/error', // Optional: Specify your custom error page route
+    signIn: '/sign-in',
+    error: '/error',
   },
   debug: true,
 };
