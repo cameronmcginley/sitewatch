@@ -6,8 +6,8 @@ import { NextAuthOptions } from "next-auth";
 const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
   callbacks: {
@@ -17,7 +17,7 @@ const authOptions: NextAuthOptions = {
       }
       return token;
     },
-    async session({ session, token }) {
+    async session({ session, token }: any) {
       session.user.id = token.sub;
       return session;
     },

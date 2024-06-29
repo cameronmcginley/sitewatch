@@ -2,13 +2,13 @@
 
 import { getProviders, signIn } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 export default function SignIn() {
   const searchParams = useSearchParams();
-  const [providers, setProviders] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [providers, setProviders] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
     const fetchProviders = async () => {
@@ -27,7 +27,7 @@ export default function SignIn() {
   }, []);
 
   // Function to handle sign-in with callback URL
-  const handleSignIn = async (providerId) => {
+  const handleSignIn = async (providerId: any) => {
     const signInResponse = await signIn(providerId, {
       callbackUrl: searchParams.get("callbackUrl") || "/", // Default callback URL if not provided
     });
@@ -50,9 +50,9 @@ export default function SignIn() {
     <div>
       {providers ? (
         Object.values(providers).map((provider) => (
-          <div key={provider.name}>
-            <button onClick={() => handleSignIn(provider.id)}>
-              Sign in with {provider.name}
+          <div key={(provider as any).name}>
+            <button onClick={() => handleSignIn((provider as any).id)}>
+              Sign in with {(provider as any).name}
             </button>
           </div>
         ))
