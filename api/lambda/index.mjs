@@ -4,6 +4,7 @@ import {
   PutItemCommand,
   UpdateItemCommand,
   DeleteItemCommand,
+  QueryCommand,
 } from "@aws-sdk/client-dynamodb";
 import { randomUUID } from "crypto";
 
@@ -33,28 +34,82 @@ export const handler = async (event) => {
     };
   }
 
+  // if (httpMethod === "GET" && path === "/prod/items") {
+  //   // READ operation
+  //   const params = {
+  //     TableName: tableName,
+  //   };
+
+  //   try {
+  //     const data = await dynamoDb.send(new ScanCommand(params));
+  //     return {
+  //       statusCode: 200,
+  //       body: JSON.stringify(data.Items),
+  //       headers,
+  //     };
+  //   } catch (error) {
+  //     console.error(error);
+  //     return {
+  //       statusCode: 500,
+  //       body: JSON.stringify({
+  //         message: "Failed to fetch data",
+  //         error: error.message,
+  //       }),
+  //       headers,
+  //     };
+  //   }
+  // }
   if (httpMethod === "GET" && path === "/prod/items") {
     // READ operation
+    const userid = event.queryStringParameters?.userid;
+
+    if (!userid) {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({
+          message: "Missing required parameter: userid",
+        }),
+      };
+    }
+
     const params = {
       TableName: tableName,
+      IndexName: "userid-sk-index",
+      KeyConditionExpression: "userid = :userid AND sk = :sk",
+      ExpressionAttributeValues: {
+        ":userid": { S: userid },
+        ":sk": { S: "CHECK" },
+      },
     };
 
     try {
-      const data = await dynamoDb.send(new ScanCommand(params));
-      return {
-        statusCode: 200,
-        body: JSON.stringify(data.Items),
-        headers,
-      };
+      const data = await dynamoDb.send(new QueryCommand(params));
+
+      if (data.Items && data.Items.length > 0) {
+        return {
+          statusCode: 200,
+          headers,
+          body: JSON.stringify(data.Items),
+        };
+      } else {
+        return {
+          statusCode: 404,
+          headers,
+          body: JSON.stringify({
+            message: "No data found for the provided userid",
+          }),
+        };
+      }
     } catch (error) {
       console.error(error);
       return {
         statusCode: 500,
+        headers,
         body: JSON.stringify({
           message: "Failed to fetch data",
           error: error.message,
         }),
-        headers,
       };
     }
   } else if (httpMethod === "POST" && path === "/prod/items") {
