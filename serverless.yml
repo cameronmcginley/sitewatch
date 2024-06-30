@@ -1,0 +1,53 @@
+service: webcheck
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-2
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource:
+            - arn:aws:dynamodb:us-east-2:992382695229:table/webchecks
+            - arn:aws:dynamodb:us-east-2:992382695229:table/webchecks/index/userid-sk-index
+
+functions:
+  createCheck:
+    handler: api/functions/createCheck.handler
+    events:
+      - http:
+          path: items
+          method: post
+
+  getCheck:
+    handler: api/functions/getCheck.handler
+    events:
+      - http:
+          path: items
+          method: get
+          request:
+            parameters:
+              querystrings:
+                userid: false
+
+  updateCheck:
+    handler: api/functions/updateCheck.handler
+    events:
+      - http:
+          path: items
+          method: put
+
+  deleteCheck:
+    handler: api/functions/deleteCheck.handler
+    events:
+      - http:
+          path: items
+          method: delete

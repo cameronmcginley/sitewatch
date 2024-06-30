@@ -41,3 +41,5 @@ lambda_function.zip
 # typescript
 *.tsbuildinfo
 */next-env.d.ts
+
+api/.serverless
