@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from "react";
 import axios, { AxiosError } from "axios";
 import { useSession } from "next-auth/react";
+import CoreTable from "@/components/core-table";
+import dummyData from "@/data/dummyData.json";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL_ITEMS;
 
@@ -97,8 +99,7 @@ function Home() {
     try {
       await axios.delete(API_URL, { data: { pk, sk } });
       // Fetch updated data
-      const response = await axios.get(API_URL);
-      setData(response.data);
+      fetchData(session.user.id);
     } catch (error) {
       console.error("Error deleting item:", error);
     }
@@ -106,6 +107,7 @@ function Home() {
 
   return (
     <>
+      <CoreTable data={dummyData} />
       <h1 className="text-2xl font-bold">My Homepage</h1>
       <p className="mt-4">Welcome to my homepage!</p>
       <form onSubmit={handleSubmit} className="mt-8">

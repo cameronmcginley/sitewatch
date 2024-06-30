@@ -162,13 +162,13 @@ const Navbar: React.FC = () => {
               <DropdownMenuTrigger asChild>
                 <Avatar className="cursor-pointer">
                   <AvatarImage src={session.user?.image ?? undefined} />
-                  <AvatarFallback>{session.user?.name?.[0]}</AvatarFallback>
+                  <AvatarFallback>{session.user?.email?.[0]}</AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuItem>
                   <div className="flex flex-col">
-                    <span className="font-medium">{session.user?.name}</span>
+                    <span className="font-medium">{session.user?.email}</span>
                     <span className="text-sm text-muted-foreground">
                       Free Tier
                     </span>
