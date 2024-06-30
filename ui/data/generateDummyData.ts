@@ -2,6 +2,8 @@
 // new pk/sk. "Past alerts" link to this, page with alert specific details. Same details
 // as email potentialls
 
+// Maybe switch out to only store lastAlert. We could get too much data if storing a row for each alert
+
 export const generateDummyData = (rows: number) => {
     const data = [];
     const userId = "118298783964592448941";
@@ -69,7 +71,9 @@ export const generateDummyData = (rows: number) => {
       const lastResult = lastResults[Math.floor(Math.random() * lastResults.length)];
       const attributes = attributes_options[checkType];
       const email = `exampleemail${i}@gmail.com`
+      // remove this if not storing alerts
       const previousAlerts = Array.from({length: Math.floor(Math.random() * 5)}, () => getRandomDate(""));
+      const mostRecentAlert = previousAlerts[previousAlerts.length - 1];
   
       data.push({
         alias: { S: `Alias ${i}` },
@@ -89,7 +93,8 @@ export const generateDummyData = (rows: number) => {
         delayMs: { S: String(delayMs) },
         attributes: { M: attributes },
         email: { S: email },
-        previousAlerts: { L: previousAlerts.map(alert => ({ S: alert })) }
+        previousAlerts: { L: previousAlerts.map(alert => ({ S: alert })) },
+        mostRecentAlert: { S: mostRecentAlert }
       });
     }
     
