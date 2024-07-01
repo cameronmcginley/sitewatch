@@ -21,7 +21,7 @@ provider:
 
 functions:
   createCheck:
-    handler: api/functions/createCheck.handler
+    handler: functions/createCheck.handler
     events:
       - http:
           path: items
@@ -37,7 +37,7 @@ functions:
               - X-Amz-User-Agent
 
   getCheck:
-    handler: api/functions/getCheck.handler
+    handler: functions/getCheck.handler
     events:
       - http:
           path: items
@@ -57,7 +57,7 @@ functions:
               - X-Amz-User-Agent
 
   updateCheck:
-    handler: api/functions/updateCheck.handler
+    handler: functions/updateCheck.handler
     events:
       - http:
           path: items
@@ -73,7 +73,7 @@ functions:
               - X-Amz-User-Agent
 
   deleteCheck:
-    handler: api/functions/deleteCheck.handler
+    handler: functions/deleteCheck.handler
     events:
       - http:
           path: items
