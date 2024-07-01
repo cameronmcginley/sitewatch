@@ -1,0 +1,99 @@
+{
+    "links": [
+        {
+            "url": "https://gear.bethesda.net/products/fallout-nuka-grape-glass-bottle-cap",
+            "alias": "Grape Glass Bottle",
+            "type": "AVAILABILITY",
+            "is_available": null,
+            "text_when_unavailable": "Notify Me When Available"
+        },
+        {
+            "url": "https://gear.bethesda.net/products/fallout-nuka-cola-glass-bottle-cap",
+            "alias": "Nuka Cola Glass Bottle",
+            "type": "AVAILABILITY",
+            "is_available": null,
+            "text_when_unavailable": "Notify Me When Available"
+        },
+        {
+            "url": "https://gear.bethesda.net/products/fallout-bottle-cap-series-nuka-cola-with-collectible-tin",
+            "alias": "Nuka Cola Caps Tin",
+            "type": "AVAILABILITY",
+            "is_available": null,
+            "text_when_unavailable": "Notify Me When Available"
+        },
+        {
+            "url": "https://gear.bethesda.net/products/fallout-nuka-cola-quantum-glass-bottle-and-cap",
+            "alias": "Quantum Glass Bottle",
+            "type": "AVAILABILITY",
+            "is_available": null,
+            "text_when_unavailable": "Notify Me When Available"
+        },
+        {
+            "url": "https://gear.bethesda.net/products/fallout-nuka-quantum-bottle-caps-with-collectible-tin",
+            "alias": "Quantum Bottle Caps Tin",
+            "type": "AVAILABILITY",
+            "is_available": null,
+            "text_when_unavailable": "Notify Me When Available"
+        },
+        {
+            "url": "https://gear.bethesda.net/products/fallout-nuka-cherry-glass-bottle-cap",
+            "alias": "Cherry Glass Bottle",
+            "type": "AVAILABILITY",
+            "is_available": null,
+            "text_when_unavailable": "Notify Me When Available"
+        },
+        {
+            "url": "https://gear.bethesda.net/products/fallout-bottle-cap-series-nuka-cherry-with-collectible-tin",
+            "alias": "Cherry Caps Tin",
+            "type": "AVAILABILITY",
+            "is_available": null,
+            "text_when_unavailable": "Notify Me When Available"
+        },
+        {
+            "url": "https://gear.bethesda.net/products/fallout-nuka-cola-wild-glass-bottle-and-cap",
+            "alias": "Wild Glass Bottle",
+            "type": "AVAILABILITY",
+            "is_available": null,
+            "text_when_unavailable": "Notify Me When Available"
+        },
+        {
+            "url": "https://gear.bethesda.net/products/fallout-bottle-cap-series-nuka-wild-with-collectible-tin",
+            "alias": "Wild Caps Tin",
+            "type": "AVAILABILITY",
+            "is_available": null,
+            "text_when_unavailable": "Notify Me When Available"
+        },
+        {
+            "url": "https://www.ebay.com/sch/i.html?_from=R40&_nkw=Cramorant+226+psa+9&_sacat=0&_sop=15&rt=nc&LH_BIN=1",
+            "alias": "Cramorant 226 PSA 9",
+            "type": "EBAY_PRICE_THRESHOLD",
+            "is_available": null,
+            "threshold": 50,
+            "found_price": null
+        },
+        {
+            "url": "https://www.ebay.com/sch/i.html?_from=R40&_nkw=Cramorant+226+psa+10&_sacat=0&_sop=15&rt=nc&LH_BIN=1",
+            "alias": "Cramorant 226 PSA 10",
+            "type": "EBAY_PRICE_THRESHOLD",
+            "is_available": null,
+            "threshold": 70,
+            "found_price": null
+        },
+        {
+            "url": "https://www.ebay.com/sch/i.html?_from=R40&_nkw=pikachu+227%2Fs-p+psa+9&_sacat=0&_sop=15&rt=nc&LH_BIN=1",
+            "alias": "Pikachu 227 PSA 9",
+            "type": "EBAY_PRICE_THRESHOLD",
+            "is_available": null,
+            "threshold": 250,
+            "found_price": null
+        },
+        {
+            "url": "https://www.ebay.com/sch/i.html?_from=R40&_nkw=pikachu+227%2Fs-p+psa10&_sacat=0&rt=nc&_odkw=pikachu+227%2Fs-p+psa+10&_osacat=0&LH_BIN=1&_sop=15",
+            "alias": "Pikachu 227 PSA 10",
+            "type": "EBAY_PRICE_THRESHOLD",
+            "is_available": null,
+            "threshold": 320,
+            "found_price": null
+        }
+    ]
+}

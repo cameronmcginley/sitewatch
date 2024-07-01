@@ -42,4 +42,6 @@ lambda_function.zip
 *.tsbuildinfo
 */next-env.d.ts
 
-api/.serverless
+*.serverless
+
+core/data/dummy*
