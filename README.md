@@ -16,3 +16,145 @@ Create `python` folder (or any name), install modules to it, then add onto layer
 - `pip install -t python requests beautifulsoup4 aiohttp lxml tenacity`
 - Zip it
 - Upload to AWS layer
+
+
+
+```mermaid
+graph TD
+    subgraph User
+        U1[User]
+    end
+
+    subgraph Frontend
+        A[React App]
+            A1[Google Sign-In]
+            A2[Website Notification Settings]
+    end
+
+    subgraph Supabase
+        B[PostgreSQL Database]
+        K[Supabase Storage]
+    end
+
+    subgraph Backend
+        C[Express API]
+    end
+
+    subgraph AWS
+        F[Lambda]
+        J[EventBridge]
+    end
+
+    subgraph Google
+        I[Gmail API]
+    end
+
+    subgraph Hosting
+        G[GitHub Pages]
+    end
+
+    U1 --> A1
+    A --> A2
+    A1 --> A
+    A2 -->|CRUD Operations| C
+    C --> B
+    F -->|Get Website Data| Internet
+    F -->|Get Links/Data to Check| B
+    F -->|Get/Store HTML| K
+    F -->|Criteria Met| I
+    I -->|Email User| U1
+    G --> A
+    J[EventBridge] -->|Timer| F
+```
+
+```mermaid
+graph TD
+    subgraph User
+        U1[User]
+    end
+
+    subgraph Frontend
+        A[React App]
+            A1[Google Sign-In]
+            A2[Website Notification Settings]
+    end
+
+    subgraph Firebase
+        B[Firestore Database]
+        K[Firebase Storage]
+    end
+
+    subgraph Backend
+        C[Express API]
+    end
+
+    subgraph AWS
+        F[Lambda]
+        J[EventBridge]
+    end
+
+    subgraph Google
+        I[Gmail API]
+    end
+
+    subgraph Hosting
+        G[GitHub Pages]
+    end
+
+    U1 --> A1
+    A --> A2
+    A1 --> A
+    A2 -->|CRUD Operations| C
+    C --> B
+    F -->|Get Website Data| Internet
+    F -->|Get Links/Data to Check| B
+    F -->|Get/Store HTML| K
+    F -->|Criteria Met| I
+    I -->|Email User| U1
+    G --> A
+    J -->|Timer| F
+
+```
+
+
+```mermaid
+graph TD
+    subgraph User
+        U1[User]
+    end
+
+    subgraph Frontend
+        A[React App]
+            A1[Cognito Sign-In]
+            A2[Website Notification Settings]
+    end
+
+    subgraph AWS
+        B[DynamoDB]
+        C[S3]
+        F[Lambda]
+        J[EventBridge]
+        L[Cognito]
+        I[SES]
+        APIGW[API Gateway]
+    end
+
+    subgraph Hosting
+        G[GitHub Pages]
+    end
+
+    U1 --> A1
+    A --> A2
+    A1 --> A
+    A2 -->|CRUD Operations| APIGW
+    APIGW -->|Invoke| B
+    F -->|Get Website Data| Internet
+    F -->|Get Links/Data to Check| B
+    F -->|Get/Store HTML| C
+    F -->|Criteria Met| I
+    I -->|Email User| U1
+    G --> A
+    J -->|Timer| F
+
+
+```
