@@ -1,0 +1,200 @@
+[
+    {
+        "pk": {
+            "S": "CHECK#1"
+        },
+        "sk": {
+            "S": "CHECK"
+        },
+        "alias": {
+            "S": "Grape Glass Bottle"
+        },
+        "check_type": {
+            "S": "AVAILABILITY"
+        },
+        "url": {
+            "S": "https://gear.bethesda.net/products/fallout-nuka-grape-glass-bottle-cap"
+        },
+        "text_when_unavailable": {
+            "S": "Notify Me When Available"
+        },
+        "type": {
+            "S": "CHECK"
+        },
+        "userid": {
+            "S": "user123"
+        },
+        "email": {
+            "S": "user@example.com"
+        },
+        "status": {
+            "S": "ACTIVE"
+        },
+        "createdAt": {
+            "S": "2023-06-30T12:00:00Z"
+        },
+        "updatedAt": {
+            "S": "2023-06-30T12:00:00Z"
+        }
+    },
+    {
+        "pk": {
+            "S": "CHECK#2"
+        },
+        "sk": {
+            "S": "CHECK"
+        },
+        "alias": {
+            "S": "Nuka Cola Glass Bottle"
+        },
+        "check_type": {
+            "S": "AVAILABILITY"
+        },
+        "url": {
+            "S": "https://gear.bethesda.net/products/fallout-nuka-cola-glass-bottle-cap"
+        },
+        "text_when_unavailable": {
+            "S": "Notify Me When Available"
+        },
+        "type": {
+            "S": "CHECK"
+        },
+        "userid": {
+            "S": "user123"
+        },
+        "email": {
+            "S": "user@example.com"
+        },
+        "status": {
+            "S": "ACTIVE"
+        },
+        "createdAt": {
+            "S": "2023-06-30T12:00:00Z"
+        },
+        "updatedAt": {
+            "S": "2023-06-30T12:00:00Z"
+        }
+    },
+    {
+        "pk": {
+            "S": "CHECK#3"
+        },
+        "sk": {
+            "S": "CHECK"
+        },
+        "alias": {
+            "S": "Nuka Cola Caps Tin"
+        },
+        "check_type": {
+            "S": "AVAILABILITY"
+        },
+        "url": {
+            "S": "https://gear.bethesda.net/products/fallout-bottle-cap-series-nuka-cola-with-collectible-tin"
+        },
+        "text_when_unavailable": {
+            "S": "Notify Me When Available"
+        },
+        "type": {
+            "S": "CHECK"
+        },
+        "userid": {
+            "S": "user123"
+        },
+        "email": {
+            "S": "user@example.com"
+        },
+        "status": {
+            "S": "ACTIVE"
+        },
+        "createdAt": {
+            "S": "2023-06-30T12:00:00Z"
+        },
+        "updatedAt": {
+            "S": "2023-06-30T12:00:00Z"
+        }
+    },
+    {
+        "pk": {
+            "S": "CHECK#10"
+        },
+        "sk": {
+            "S": "CHECK"
+        },
+        "alias": {
+            "S": "Cramorant 226 PSA 9"
+        },
+        "check_type": {
+            "S": "EBAY_PRICE_THRESHOLD"
+        },
+        "url": {
+            "S": "https://www.ebay.com/sch/i.html?_from=R40&_nkw=Cramorant+226+psa+9&_sacat=0&_sop=15&rt=nc&LH_BIN=1"
+        },
+        "type": {
+            "S": "CHECK"
+        },
+        "userid": {
+            "S": "user123"
+        },
+        "email": {
+            "S": "user@example.com"
+        },
+        "status": {
+            "S": "ACTIVE"
+        },
+        "createdAt": {
+            "S": "2023-06-30T12:00:00Z"
+        },
+        "updatedAt": {
+            "S": "2023-06-30T12:00:00Z"
+        },
+        "attributes": {
+            "M": {
+                "threshold": {
+                    "N": "50"
+                }
+            }
+        }
+    },
+    {
+        "pk": {
+            "S": "CHECK#11"
+        },
+        "sk": {
+            "S": "CHECK"
+        },
+        "alias": {
+            "S": "Cramorant 226 PSA 10"
+        },
+        "check_type": {
+            "S": "EBAY_PRICE_THRESHOLD"
+        },
+        "url": {
+            "S": "https://www.ebay.com/sch/i.html?_from=R40&_nkw=Cramorant+226+psa+10&_sacat=0&_sop=15&rt=nc&LH_BIN=1"
+        },
+        "type": {
+            "S": "CHECK"
+        },
+        "userid": {
+            "S": "user123"
+        },
+        "email": {
+            "S": "user@example.com"
+        },
+        "status": {
+            "S": "ACTIVE"
+        },
+        "createdAt": {
+            "S": "2023-06-30T12:00:00Z"
+        },
+        "updatedAt": {
+            "S": "2023-06-30T12:00:00Z"
+        },
+        "attributes": {
+            "M": {
+                "threshold": {
+                    "N": "70"
+                }
+            }
+        }
+    }
+]

@@ -1,6 +1,0 @@
-aiohttp
-lxml
-tenacity
-python-dotenv
-psutil
-cssselect

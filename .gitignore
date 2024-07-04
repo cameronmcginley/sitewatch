@@ -17,7 +17,7 @@ lambda_function.zip
 */coverage
 
 # next.js
-*/.next/
+*.next/
 */out/
 
 # production
