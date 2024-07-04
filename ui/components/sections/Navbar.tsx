@@ -19,81 +19,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { PersonIcon } from "@radix-ui/react-icons";
 
-const components: { title: string; href: string; description: string }[] = [
-  {
-    title: "Alert Dialog",
-    href: "/docs/primitives/alert-dialog",
-    description:
-      "A modal dialog that interrupts the user with important content and expects a response.",
-  },
-  {
-    title: "Hover Card",
-    href: "/docs/primitives/hover-card",
-    description:
-      "For sighted users to preview content available behind a link.",
-  },
-  {
-    title: "Progress",
-    href: "/docs/primitives/progress",
-    description:
-      "Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.",
-  },
-  {
-    title: "Scroll-area",
-    href: "/docs/primitives/scroll-area",
-    description: "Visually or semantically separates content.",
-  },
-  {
-    title: "Tabs",
-    href: "/docs/primitives/tabs",
-    description:
-      "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
-  },
-  {
-    title: "Tooltip",
-    href: "/docs/primitives/tooltip",
-    description:
-      "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
-  },
-];
-
-const gettingStartedLinks: {
+const navigationMenuItems: {
   title: string;
   href: string;
-  description: string;
+  links?: { title: string; href: string; description: string }[];
 }[] = [
-  {
-    title: "Introduction",
-    href: "/docs",
-    description: "Re-usable components built using Radix UI and Tailwind CSS.",
-  },
-  {
-    title: "Installation",
-    href: "/docs/installation",
-    description: "How to install dependencies and structure your app.",
-  },
-  {
-    title: "Typography",
-    href: "/docs/primitives/typography",
-    description: "Styles for headings, paragraphs, lists...etc",
-  },
-];
-
-const navigationMenuItems = [
-  {
-    title: "Getting started",
-    links: gettingStartedLinks,
-  },
-  {
-    title: "Components",
-    links: components,
-  },
-  {
-    title: "Documentation",
-    href: "/docs",
-  },
+  { title: "Application", href: "/test" },
+  { title: "Pricing", href: "/pricing" },
+  { title: "Docs", href: "/docs" },
 ];
 
 const ListItem = React.forwardRef<
@@ -130,6 +65,13 @@ const Navbar: React.FC = () => {
       <div className="max-w-7xl w-full flex justify-between items-center">
         <NavigationMenu>
           <NavigationMenuList className="">
+            {/* Logo */}
+            <Link href="/" className={navigationMenuTriggerStyle() + " flex "}>
+              <div className="text-xl font-bold hover:text-blue-500 transition ease-in-out delay-50">
+                Site<span className="text-blue-500">Watch</span>
+              </div>
+            </Link>
+
             {navigationMenuItems.map((item) => (
               <NavigationMenuItem key={item.title}>
                 {item.links ? (
@@ -167,10 +109,9 @@ const Navbar: React.FC = () => {
           ) : session ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Avatar className="cursor-pointer">
-                  <AvatarImage src={session.user?.image ?? undefined} />
-                  <AvatarFallback>{session.user?.email?.[0]}</AvatarFallback>
-                </Avatar>
+                <div className="flex rounded-full hover:bg-accent w-9 h-9 justify-center items-center cursor-pointer">
+                  <PersonIcon className="w-6 h-6 w-max h-max" />
+                </div>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuItem>
@@ -181,7 +122,10 @@ const Navbar: React.FC = () => {
                     </span>
                   </div>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => signOut()}>
+                <DropdownMenuItem
+                  onClick={() => signOut()}
+                  className="cursor-pointer"
+                >
                   Sign out
                 </DropdownMenuItem>
               </DropdownMenuContent>

@@ -53,7 +53,9 @@ const loadingDots = (
   />
 );
 
-const emptyDash = <Badge className="bg-gray-700 hover:bg-gray-700" />;
+const emptyDash = (
+  <Badge className="bg-gray-700 hover:bg-gray-700 px-2.5 py-0.5" />
+);
 
 const CoreTable = ({ data }) => {
   const handleShowDetails = (item) => {
@@ -259,7 +261,7 @@ const CoreTable = ({ data }) => {
       ? formatDistanceToNowStrict(new Date(mostRecentAlert), {
           addSuffix: true,
         })
-      : "No alerts";
+      : null;
 
     const badgeStyle = mostRecentAlert
       ? "bg-green-700 text-white hover:bg-green-700"
@@ -269,7 +271,11 @@ const CoreTable = ({ data }) => {
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger className="text-start cursor-auto select-text">
-            <Badge className={badgeStyle}>{timeAgo}</Badge>
+            {timeAgo ? (
+              <Badge className={badgeStyle}>{timeAgo}</Badge>
+            ) : (
+              emptyDash
+            )}
           </TooltipTrigger>
           {formattedDateWithTimezone && (
             <TooltipContent>{formattedDateWithTimezone}</TooltipContent>
@@ -287,8 +293,8 @@ const CoreTable = ({ data }) => {
           <TableHead>
             <Checkbox />
           </TableHead>
-          <TableHead>Check Type</TableHead>
           <TableHead>Alias</TableHead>
+          <TableHead>Check Type</TableHead>
           <TableHead>Status</TableHead>
           <TableHead>Frequency</TableHead>
           <TableHead>Next Run</TableHead>
@@ -306,21 +312,6 @@ const CoreTable = ({ data }) => {
           >
             <TableCell>
               <Checkbox />
-            </TableCell>
-            <TableCell>
-              <div className="flex gap-2 items-center">
-                {item.check_type?.S ?? emptyDash}
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <InfoCircledIcon />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      {check_type_descriptions[item.check_type?.S] ?? emptyDash}
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
             </TableCell>
 
             <TableCell>
@@ -341,6 +332,22 @@ const CoreTable = ({ data }) => {
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
+            </TableCell>
+
+            <TableCell>
+              <div className="flex gap-2 items-center">
+                {item.check_type?.S ?? emptyDash}
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <InfoCircledIcon />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {check_type_descriptions[item.check_type?.S] ?? emptyDash}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
             </TableCell>
 
             <TableCell>
