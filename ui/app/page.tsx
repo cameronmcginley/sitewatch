@@ -28,7 +28,7 @@ function Root() {
           className="text-2xl px-4 md:text-4xl lg:text-7xl font-semibold max-w-4xl lg:leading-snug text-center mx-auto"
         >
           Web alerting made easy
-          <div className="text-3xl mt-6">
+          <div className="text-3xl mt-6 transition transform duration-500 ">
             For any URL, get notified on
             <FlipWords
               className="w-max pl-3 !text-blue-500"

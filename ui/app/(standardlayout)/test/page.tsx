@@ -3,112 +3,117 @@
 import React, { useEffect, useState } from "react";
 import axios, { AxiosError } from "axios";
 import { useSession } from "next-auth/react";
-import CoreTable from "@/components/core-table";
+// import CoreTable from "@/components/core-table";
+import CoreTable from "@/components/table/core-table";
 import dummyData from "@/data/dummyData.json";
+
+import { generateDummyData } from "@/data/generateDummyData";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL_ITEMS;
 
 function Home() {
-  const { data: session, status } = useSession();
-  const [data, setData] = useState([]);
-  const [item, setItem] = useState({
-    userid: "",
-    type: "CHECK",
-    check_type: "",
-    url: "",
-    alias: "",
-    keyword: "",
-    opposite: false,
-  });
+  // const { data: session, status } = useSession();
+  // const [data, setData] = useState([]);
+  // const [item, setItem] = useState({
+  //   userid: "",
+  //   type: "CHECK",
+  //   check_type: "",
+  //   url: "",
+  //   alias: "",
+  //   keyword: "",
+  //   opposite: false,
+  // });
 
-  async function fetchData(userid: string) {
-    console.log("Fetching data from", API_URL, "for user", userid);
+  // async function fetchData(userid: string) {
+  //   console.log("Fetching data from", API_URL, "for user", userid);
+  //   console.log(generateDummyData(10));
 
-    try {
-      const response = await axios.get(API_URL!, {
-        params: { userid: userid },
-      });
-      setData(response.data);
-      return response.data;
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError;
-        if (axiosError.response?.status === 404) {
-          console.log("No data found for user:", userid);
-          setData([]);
-          return null;
-        } else {
-          console.error("Error fetching data:", axiosError.message);
-          throw error;
-        }
-      } else {
-        console.error("Unexpected error:", error);
-        throw error;
-      }
-    }
-  }
+  //   try {
+  //     const response = await axios.get(API_URL!, {
+  //       params: { userid: userid },
+  //     });
+  //     setData(response.data);
+  //     return response.data;
+  //   } catch (error) {
+  //     if (axios.isAxiosError(error)) {
+  //       const axiosError = error as AxiosError;
+  //       if (axiosError.response?.status === 404) {
+  //         console.log("No data found for user:", userid);
+  //         setData([]);
+  //         return null;
+  //       } else {
+  //         console.error("Error fetching data:", axiosError.message);
+  //         throw error;
+  //       }
+  //     } else {
+  //       console.error("Unexpected error:", error);
+  //       throw error;
+  //     }
+  //   }
+  // }
 
-  useEffect(() => {
-    console.log("status", status, "session", session);
-    if (status === "authenticated" && session?.user?.id) {
-      setItem((prevItem) => ({
-        ...prevItem,
-        userid: session.user.id,
-      }));
-      fetchData(session.user.id);
-    }
-  }, [status, session]);
+  // useEffect(() => {
+  //   console.log("status", status, "session", session);
+  //   if (status === "authenticated" && session?.user?.id) {
+  //     setItem((prevItem) => ({
+  //       ...prevItem,
+  //       userid: session.user.id,
+  //     }));
+  //     fetchData(session.user.id);
+  //   }
+  // }, [status, session]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setItem((prevItem) => ({
-      ...prevItem,
-      [name]: value,
-    }));
-  };
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setItem((prevItem) => ({
+  //     ...prevItem,
+  //     [name]: value,
+  //   }));
+  // };
 
-  const handleCheckboxChange = (e) => {
-    const { name, checked } = e.target;
-    setItem((prevItem) => ({
-      ...prevItem,
-      [name]: checked,
-    }));
-  };
+  // const handleCheckboxChange = (e) => {
+  //   const { name, checked } = e.target;
+  //   setItem((prevItem) => ({
+  //     ...prevItem,
+  //     [name]: checked,
+  //   }));
+  // };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    try {
-      await axios.post(API_URL, item);
-      setItem({
-        userid: session.user.id,
-        type: "CHECK",
-        check_type: "",
-        url: "",
-        alias: "",
-        keyword: "",
-        opposite: false,
-      });
-      // Fetch updated data
-      fetchData(session.user.id);
-    } catch (error) {
-      console.error("Error adding item:", error);
-    }
-  };
+  // const handleSubmit = async (event) => {
+  //   event.preventDefault();
+  //   try {
+  //     await axios.post(API_URL, item);
+  //     setItem({
+  //       userid: session.user.id,
+  //       type: "CHECK",
+  //       check_type: "",
+  //       url: "",
+  //       alias: "",
+  //       keyword: "",
+  //       opposite: false,
+  //     });
+  //     // Fetch updated data
+  //     fetchData(session.user.id);
+  //   } catch (error) {
+  //     console.error("Error adding item:", error);
+  //   }
+  // };
 
-  const handleDelete = async (pk, sk) => {
-    try {
-      await axios.delete(API_URL, { data: { pk, sk } });
-      // Fetch updated data
-      fetchData(session.user.id);
-    } catch (error) {
-      console.error("Error deleting item:", error);
-    }
-  };
+  // const handleDelete = async (pk, sk) => {
+  //   try {
+  //     await axios.delete(API_URL, { data: { pk, sk } });
+  //     // Fetch updated data
+  //     fetchData(session.user.id);
+  //   } catch (error) {
+  //     console.error("Error deleting item:", error);
+  //   }
+  // };
 
   return (
     <>
       <CoreTable data={dummyData} />
-      <h1 className="text-2xl font-bold">My Homepage</h1>
+
+      {/* <h1 className="text-2xl font-bold">My Homepage</h1>
       <p className="mt-4">Welcome to my homepage!</p>
       <form onSubmit={handleSubmit} className="mt-8">
         <input
@@ -173,7 +178,7 @@ function Home() {
             </button>
           </li>
         ))}
-      </ul>
+      </ul> */}
     </>
   );
 }

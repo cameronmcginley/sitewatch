@@ -16,10 +16,10 @@ export const generateDummyData = (rows: number) => {
         opposite: { S: "false" },
       },
       "EBAY PRICE THRESHOLD": {
-        threshold: { S: "100.95" },
+        threshold: { N: 100.95 },
       },
       "PAGE DIFFERENCE": {
-        percent_diff: { S: "0.05" },
+        percent_diff: { N: 0.05 },
       }
     }
 
@@ -74,7 +74,7 @@ export const generateDummyData = (rows: number) => {
       // remove this if not storing alerts
       const previousAlerts = Array.from({length: Math.floor(Math.random() * 5)}, () => getRandomDate(""));
       const mostRecentAlert = previousAlerts[previousAlerts.length - 1];
-  
+
       data.push({
         alias: { S: `Alias ${i}` },
         check_type: { S: checkType },
