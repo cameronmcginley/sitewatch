@@ -1,6 +1,8 @@
 import React from "react";
 import { ThreeDots } from "react-loader-spinner";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+import { BADGE_COLOR_CLASS } from "@/lib/constants";
 
 export const check_type_descriptions = {
   "KEYWORD CHECK": "Check if a keyword exists in the page",
@@ -23,5 +25,5 @@ export const loadingDots = (
 );
 
 export const emptyDash = (
-  <Badge className="bg-gray-700 hover:bg-gray-700 px-2.5 py-0.5" />
+  <Badge className={cn(BADGE_COLOR_CLASS.GRAY, "px-2.5 py-0.5")} />
 );

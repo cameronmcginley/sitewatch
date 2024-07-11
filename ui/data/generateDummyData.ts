@@ -4,16 +4,31 @@
 
 // Maybe switch out to only store lastAlert. We could get too much data if storing a row for each alert
 
+const getStartHour = (delayMs: number) => {
+  // Generate random start hour
+  // If 4 hours, then options are 0, 1, 2, 3
+  // If 12 hours, then options are 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
+  // etc
+  // Use UTC time, make string like T21:00:39.520Z
+  const hours = Math.floor(delayMs / (60 * 60 * 1000));
+  const startHour = Math.floor(Math.random() * hours);
+
+  // Create the UTC time string
+  const startTime = `T${startHour.toString().padStart(2, '0')}:00:00:000Z`;
+
+  return startHour;
+}
+
 export const generateDummyData = (rows: number) => {
     const data = [];
     const userId = "118298783964592448941";
     const checkTypes = ["KEYWORD CHECK", "EBAY PRICE THRESHOLD", "PAGE DIFFERENCE"];
     const statuses = ["ACTIVE", "PAUSED"];
-    const lastResults = ["ALERTED", "NO ALERT"]
+    const lastResults = ["ALERTED", "NO ALERT", "FAILED"]
     const attributes_options = {
       "KEYWORD CHECK": {
         keyword: { S: "Keyword" },
-        opposite: { S: "false" },
+        opposite: { B: false },
       },
       "EBAY PRICE THRESHOLD": {
         threshold: { N: 100.95 },
@@ -78,8 +93,6 @@ export const generateDummyData = (rows: number) => {
       data.push({
         alias: { S: `Alias ${i}` },
         check_type: { S: checkType },
-        keyword: { S: `Keyword ${i}` },
-        opposite: { S: `${Math.random() > 0.5}` },
         pk: { S: pk },
         sk: { S: sk },
         type: { S: "CHECK" },
@@ -87,14 +100,13 @@ export const generateDummyData = (rows: number) => {
         userid: { S: userId },
         createdAt: { S: createdAt },
         updatedAt: { S: updatedAt },
-        lastExecutedAt: { S: lastExecutedAt },
-        lastResult: { S: lastResult },
+        lastResult: { M: { status: { S: lastResult }, message: { S: "Message" }, timestamp: {S: lastExecutedAt} } },
         status: { S: status },
-        delayMs: { S: String(delayMs) },
+        delayMs: { N: delayMs },
         attributes: { M: attributes },
         email: { S: email },
-        previousAlerts: { L: previousAlerts.map(alert => ({ S: alert })) },
-        mostRecentAlert: { S: mostRecentAlert }
+        mostRecentAlert: { S: mostRecentAlert },
+        startHour: { N: getStartHour(delayMs) }
       });
     }
     

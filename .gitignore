@@ -45,3 +45,5 @@ lambda_function.zip
 *.serverless
 
 core/data/dummy*
+core/.benchmarks
+core/.pytest_cache

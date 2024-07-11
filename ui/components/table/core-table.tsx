@@ -58,8 +58,10 @@ const CoreTable = ({ data }) => {
           </SelectContent>
         </Select>
       </div>
+
       <Table className="min-w-full divide-y divide-gray-200">
-        <TableCaption>A list of your recent checks.</TableCaption>
+        {/* <TableCaption>A list of your recent checks.</TableCaption> */}
+
         <TableHeader>
           <TableRow>
             <TableHead>
@@ -71,6 +73,7 @@ const CoreTable = ({ data }) => {
             <TableHead></TableHead>
           </TableRow>
         </TableHeader>
+
         <TableBody>
           {filteredData.map((item, index) => (
             <TableRow
@@ -80,8 +83,10 @@ const CoreTable = ({ data }) => {
               <TableCell>
                 <Checkbox />
               </TableCell>
+
               {formatCells(item, columns)}
-              <TableCell>
+
+              <TableCell className="w-0">
                 <Button onClick={() => handleShowDetails(item)}>Details</Button>
               </TableCell>
             </TableRow>

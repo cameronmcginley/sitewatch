@@ -1,6 +1,20 @@
-import { formatDistanceToNowStrict } from "date-fns";
+import {
+  formatDistanceToNowStrict,
+  formatDuration,
+  intervalToDuration,
+} from "date-fns";
 
-export const toSentenceCase = (str) => {
+export const msToTimeStr = (ms: number): string => {
+  const duration = intervalToDuration({ start: 0, end: ms });
+
+  const formattedDuration = formatDuration(duration, {
+    format: ["weeks", "days", "hours", "minutes"],
+  });
+
+  return formattedDuration;
+};
+
+export const toSentenceCase = (str: string) => {
   return str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : "";
 };
 
@@ -38,34 +52,39 @@ export const handleShowDetails = (item) => {
   alert(details);
 };
 
-// Bases next run date on lastExecutedAt + delayMs
-export const getNextRunDate = (
-  lastExecutedAt: string,
-  delayMs: number
-): Date | null => {
-  if (!lastExecutedAt || !delayMs) return null;
+export const getNextRunDate = (startHour: string, delayMs: number): Date => {
+  const now = new Date();
+  let nextRunDate = new Date(now);
+  nextRunDate.setUTCHours(Number(startHour), 0, 0, 0);
 
-  const lastExecutedDate = new Date(lastExecutedAt);
+  while (nextRunDate <= now) {
+    nextRunDate = new Date(nextRunDate.getTime() + delayMs);
+  }
 
-  if (isNaN(lastExecutedDate.getTime())) return null;
-
-  return new Date(lastExecutedDate.getTime() + Number(delayMs));
+  return nextRunDate;
 };
 
 export const isHappeningNow = (
   lastExecutedAt: string,
+  startHour: string,
   delayMs: number
 ): boolean | null => {
-  if (!lastExecutedAt || !delayMs) return false;
+  const nextRunDate = getNextRunDate(startHour, delayMs);
 
+  // If distance to nextRunDate is greater than lastExecutedAt + delayMs, then an execution should be happening now
   const lastExecutedDate = new Date(lastExecutedAt);
 
-  if (isNaN(lastExecutedDate.getTime())) return false;
-
-  const nextRunDate = getNextRunDate(lastExecutedAt, delayMs);
-  const now = new Date();
-  return nextRunDate ? now >= nextRunDate : null;
+  return nextRunDate
+    ? new Date(nextRunDate.getTime() - delayMs) > lastExecutedDate
+    : null;
 };
+
+export const getTimeAgo = (date: Date) => {
+  return formatDistanceToNowStrict(new Date(date), { addSuffix: true });
+};
+
+export const getTimeZone = () =>
+  Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 export const formatDateWithTimezone = (date) => {
   return new Intl.DateTimeFormat("en-US", {
@@ -78,29 +97,24 @@ export const formatDateWithTimezone = (date) => {
   }).format(new Date(date));
 };
 
-export const getTimeAgo = (date: Date) => {
-  return formatDistanceToNowStrict(new Date(date), { addSuffix: true });
-};
+export const formatTimeWithTimezone = (hour: number): string => {
+  const now = new Date();
+  const utcDate = new Date(
+    Date.UTC(
+      now.getUTCFullYear(),
+      now.getUTCMonth(),
+      now.getUTCDate(),
+      hour,
+      0,
+      0
+    )
+  );
 
-export const formatFrequency = (milliseconds: number) => {
-  const units = [
-    { label: "month", value: 30 * 24 * 60 * 60 * 1000 },
-    { label: "week", value: 7 * 24 * 60 * 60 * 1000 },
-    { label: "day", value: 24 * 60 * 60 * 1000 },
-    { label: "hour", value: 60 * 60 * 1000 },
-    { label: "minute", value: 60 * 1000 },
-  ];
-
-  let remainingTime = milliseconds;
-  const result: string[] = [];
-
-  units.forEach((unit) => {
-    const unitValue = Math.floor(remainingTime / unit.value);
-    if (unitValue > 0) {
-      result.push(`${unitValue} ${unit.label}${unitValue > 1 ? "s" : ""}`);
-      remainingTime %= unit.value;
-    }
+  return utcDate.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+    timeZone: getTimeZone(),
+    timeZoneName: "short",
   });
-
-  return result.join(", ");
 };

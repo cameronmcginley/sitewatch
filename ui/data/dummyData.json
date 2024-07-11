@@ -4,16 +4,10 @@
             "S": "Alias 0"
         },
         "check_type": {
-            "S": "PAGE DIFFERENCE"
-        },
-        "keyword": {
-            "S": "Keyword 0"
-        },
-        "opposite": {
-            "S": "false"
+            "S": "EBAY PRICE THRESHOLD"
         },
         "pk": {
-            "S": "CHECK#bizb1sqb4z9"
+            "S": "CHECK#2qpzse3v7ju"
         },
         "sk": {
             "S": "CHECK"
@@ -28,42 +22,45 @@
             "S": "118298783964592448941"
         },
         "createdAt": {
-            "S": "2024-07-05T22:10:23.397Z"
+            "S": "2024-07-11T03:05:41.951Z"
         },
         "updatedAt": {
-            "S": "2024-07-05T22:10:23.397Z"
-        },
-        "lastExecutedAt": {
-            "S": "2024-07-05T20:53:03.809Z"
+            "S": "2024-07-11T03:05:41.951Z"
         },
         "lastResult": {
-            "S": "ALERTED"
+            "M": {
+                "status": {
+                    "S": "ALERTED"
+                },
+                "message": {
+                    "S": "Message"
+                },
+                "timestamp": {
+                    "S": "2024-07-11T01:05:16.484Z"
+                }
+            }
         },
         "status": {
             "S": "PAUSED"
         },
         "delayMs": {
-            "S": "14400000"
+            "N": 600000
         },
         "attributes": {
             "M": {
-                "percent_diff": {
-                    "N": 0.05
+                "threshold": {
+                    "N": 100.95
                 }
             }
         },
         "email": {
             "S": "exampleemail0@gmail.com"
         },
-        "previousAlerts": {
-            "L": [
-                {
-                    "S": "2024-07-05T19:21:13.780Z"
-                }
-            ]
-        },
         "mostRecentAlert": {
-            "S": "2024-07-05T19:21:13.780Z"
+            "S": "2020-11-22T22:56:10.686Z"
+        },
+        "startHour": {
+            "N": 0
         }
     },
     {
@@ -71,16 +68,10 @@
             "S": "Alias 1"
         },
         "check_type": {
-            "S": "KEYWORD CHECK"
-        },
-        "keyword": {
-            "S": "Keyword 1"
-        },
-        "opposite": {
-            "S": "true"
+            "S": "EBAY PRICE THRESHOLD"
         },
         "pk": {
-            "S": "CHECK#jm1rvehlvg"
+            "S": "CHECK#svefu69ebif"
         },
         "sk": {
             "S": "CHECK"
@@ -95,45 +86,45 @@
             "S": "118298783964592448941"
         },
         "createdAt": {
-            "S": "2024-07-05T22:10:23.397Z"
+            "S": "2024-07-11T03:05:41.951Z"
         },
         "updatedAt": {
-            "S": "2024-07-05T22:10:23.397Z"
-        },
-        "lastExecutedAt": {
-            "S": "2024-04-30T13:42:26.556Z"
+            "S": "2024-07-11T03:05:41.951Z"
         },
         "lastResult": {
-            "S": "ALERTED"
+            "M": {
+                "status": {
+                    "S": "NO ALERT"
+                },
+                "message": {
+                    "S": "Message"
+                },
+                "timestamp": {
+                    "S": "2024-07-11T03:05:41.951Z"
+                }
+            }
         },
         "status": {
-            "S": "PAUSED"
+            "S": "ACTIVE"
         },
         "delayMs": {
-            "S": "3600000"
+            "N": 604800000
         },
         "attributes": {
             "M": {
-                "keyword": {
-                    "S": "Keyword"
-                },
-                "opposite": {
-                    "S": "false"
+                "threshold": {
+                    "N": 100.95
                 }
             }
         },
         "email": {
             "S": "exampleemail1@gmail.com"
         },
-        "previousAlerts": {
-            "L": [
-                {
-                    "S": "2023-10-13T13:14:45.976Z"
-                }
-            ]
-        },
         "mostRecentAlert": {
-            "S": "2023-10-13T13:14:45.976Z"
+            "S": "2024-07-11T01:50:40.721Z"
+        },
+        "startHour": {
+            "N": 42
         }
     },
     {
@@ -143,14 +134,8 @@
         "check_type": {
             "S": "KEYWORD CHECK"
         },
-        "keyword": {
-            "S": "Keyword 2"
-        },
-        "opposite": {
-            "S": "true"
-        },
         "pk": {
-            "S": "CHECK#11n6aspnngsm"
+            "S": "CHECK#4vs6l43yfej"
         },
         "sk": {
             "S": "CHECK"
@@ -165,22 +150,29 @@
             "S": "118298783964592448941"
         },
         "createdAt": {
-            "S": "2024-07-05T22:10:23.397Z"
+            "S": "2024-07-11T03:05:41.951Z"
         },
         "updatedAt": {
-            "S": "2024-07-05T22:10:23.397Z"
-        },
-        "lastExecutedAt": {
-            "S": "2024-05-19T19:35:14.006Z"
+            "S": "2024-07-11T03:05:41.951Z"
         },
         "lastResult": {
-            "S": "NO ALERT"
+            "M": {
+                "status": {
+                    "S": "FAILED"
+                },
+                "message": {
+                    "S": "Message"
+                },
+                "timestamp": {
+                    "S": "2024-07-11T03:05:41.951Z"
+                }
+            }
         },
         "status": {
-            "S": "PAUSED"
+            "S": "ACTIVE"
         },
         "delayMs": {
-            "S": "604800000"
+            "N": 604800000
         },
         "attributes": {
             "M": {
@@ -188,33 +180,29 @@
                     "S": "Keyword"
                 },
                 "opposite": {
-                    "S": "false"
+                    "B": false
                 }
             }
         },
         "email": {
             "S": "exampleemail2@gmail.com"
         },
-        "previousAlerts": {
-            "L": []
+        "mostRecentAlert": {
+            "S": "2024-07-11T02:57:52.133Z"
         },
-        "mostRecentAlert": {}
+        "startHour": {
+            "N": 68
+        }
     },
     {
         "alias": {
             "S": "Alias 3"
         },
         "check_type": {
-            "S": "KEYWORD CHECK"
-        },
-        "keyword": {
-            "S": "Keyword 3"
-        },
-        "opposite": {
-            "S": "true"
+            "S": "EBAY PRICE THRESHOLD"
         },
         "pk": {
-            "S": "CHECK#ao5cii9hb3c"
+            "S": "CHECK#hbo695ryof"
         },
         "sk": {
             "S": "CHECK"
@@ -229,51 +217,45 @@
             "S": "118298783964592448941"
         },
         "createdAt": {
-            "S": "2024-07-05T22:10:23.397Z"
+            "S": "2024-07-11T03:05:41.951Z"
         },
         "updatedAt": {
-            "S": "2024-07-05T22:10:23.397Z"
-        },
-        "lastExecutedAt": {
-            "S": "2024-07-05T22:10:23.397Z"
+            "S": "2024-07-11T03:05:41.951Z"
         },
         "lastResult": {
-            "S": "ALERTED"
+            "M": {
+                "status": {
+                    "S": "FAILED"
+                },
+                "message": {
+                    "S": "Message"
+                },
+                "timestamp": {
+                    "S": "2024-07-11T03:05:41.951Z"
+                }
+            }
         },
         "status": {
             "S": "ACTIVE"
         },
         "delayMs": {
-            "S": "14400000"
+            "N": 86400000
         },
         "attributes": {
             "M": {
-                "keyword": {
-                    "S": "Keyword"
-                },
-                "opposite": {
-                    "S": "false"
+                "threshold": {
+                    "N": 100.95
                 }
             }
         },
         "email": {
             "S": "exampleemail3@gmail.com"
         },
-        "previousAlerts": {
-            "L": [
-                {
-                    "S": "2023-01-13T08:14:54.161Z"
-                },
-                {
-                    "S": "2024-05-30T22:05:38.011Z"
-                },
-                {
-                    "S": "2024-03-09T05:34:50.941Z"
-                }
-            ]
-        },
         "mostRecentAlert": {
-            "S": "2024-03-09T05:34:50.941Z"
+            "S": "2021-01-19T19:48:49.352Z"
+        },
+        "startHour": {
+            "N": 13
         }
     },
     {
@@ -281,16 +263,10 @@
             "S": "Alias 4"
         },
         "check_type": {
-            "S": "KEYWORD CHECK"
-        },
-        "keyword": {
-            "S": "Keyword 4"
-        },
-        "opposite": {
-            "S": "false"
+            "S": "PAGE DIFFERENCE"
         },
         "pk": {
-            "S": "CHECK#6p7yyyboz4r"
+            "S": "CHECK#i7arebectk"
         },
         "sk": {
             "S": "CHECK"
@@ -305,45 +281,45 @@
             "S": "118298783964592448941"
         },
         "createdAt": {
-            "S": "2024-07-05T22:10:23.397Z"
+            "S": "2024-07-11T03:05:41.951Z"
         },
         "updatedAt": {
-            "S": "2024-07-05T22:10:23.397Z"
-        },
-        "lastExecutedAt": {
-            "S": "2024-05-11T04:30:55.304Z"
+            "S": "2024-07-11T03:05:41.951Z"
         },
         "lastResult": {
-            "S": "ALERTED"
+            "M": {
+                "status": {
+                    "S": "NO ALERT"
+                },
+                "message": {
+                    "S": "Message"
+                },
+                "timestamp": {
+                    "S": "2024-06-13T19:27:53.960Z"
+                }
+            }
         },
         "status": {
             "S": "PAUSED"
         },
         "delayMs": {
-            "S": "43200000"
+            "N": 43200000
         },
         "attributes": {
             "M": {
-                "keyword": {
-                    "S": "Keyword"
-                },
-                "opposite": {
-                    "S": "false"
+                "percent_diff": {
+                    "N": 0.05
                 }
             }
         },
         "email": {
             "S": "exampleemail4@gmail.com"
         },
-        "previousAlerts": {
-            "L": [
-                {
-                    "S": "2024-01-19T04:35:19.559Z"
-                }
-            ]
-        },
         "mostRecentAlert": {
-            "S": "2024-01-19T04:35:19.559Z"
+            "S": "2023-11-26T04:13:48.095Z"
+        },
+        "startHour": {
+            "N": 8
         }
     },
     {
@@ -353,14 +329,8 @@
         "check_type": {
             "S": "PAGE DIFFERENCE"
         },
-        "keyword": {
-            "S": "Keyword 5"
-        },
-        "opposite": {
-            "S": "false"
-        },
         "pk": {
-            "S": "CHECK#ofcl3xki19"
+            "S": "CHECK#zsvmyg8anmg"
         },
         "sk": {
             "S": "CHECK"
@@ -375,22 +345,29 @@
             "S": "118298783964592448941"
         },
         "createdAt": {
-            "S": "2024-07-05T22:10:23.397Z"
+            "S": "2024-07-11T03:05:41.951Z"
         },
         "updatedAt": {
-            "S": "2024-07-05T22:10:23.397Z"
-        },
-        "lastExecutedAt": {
-            "S": "2024-07-05T19:44:34.276Z"
+            "S": "2024-07-11T03:05:41.951Z"
         },
         "lastResult": {
-            "S": "ALERTED"
+            "M": {
+                "status": {
+                    "S": "NO ALERT"
+                },
+                "message": {
+                    "S": "Message"
+                },
+                "timestamp": {
+                    "S": "2024-07-11T03:05:41.951Z"
+                }
+            }
         },
         "status": {
-            "S": "PAUSED"
+            "S": "ACTIVE"
         },
         "delayMs": {
-            "S": "86400000"
+            "N": 86400000
         },
         "attributes": {
             "M": {
@@ -402,15 +379,11 @@
         "email": {
             "S": "exampleemail5@gmail.com"
         },
-        "previousAlerts": {
-            "L": [
-                {
-                    "S": "2023-08-22T14:34:45.129Z"
-                }
-            ]
-        },
         "mostRecentAlert": {
-            "S": "2023-08-22T14:34:45.129Z"
+            "S": "2024-06-26T10:44:53.746Z"
+        },
+        "startHour": {
+            "N": 3
         }
     },
     {
@@ -418,16 +391,10 @@
             "S": "Alias 6"
         },
         "check_type": {
-            "S": "EBAY PRICE THRESHOLD"
-        },
-        "keyword": {
-            "S": "Keyword 6"
-        },
-        "opposite": {
-            "S": "true"
+            "S": "PAGE DIFFERENCE"
         },
         "pk": {
-            "S": "CHECK#vs9d24j81af"
+            "S": "CHECK#muadieczri"
         },
         "sk": {
             "S": "CHECK"
@@ -442,42 +409,45 @@
             "S": "118298783964592448941"
         },
         "createdAt": {
-            "S": "2024-07-05T22:10:23.397Z"
+            "S": "2024-07-11T03:05:41.951Z"
         },
         "updatedAt": {
-            "S": "2024-07-05T22:10:23.397Z"
-        },
-        "lastExecutedAt": {
-            "S": "2019-08-03T00:38:41.861Z"
+            "S": "2024-07-11T03:05:41.951Z"
         },
         "lastResult": {
-            "S": "ALERTED"
+            "M": {
+                "status": {
+                    "S": "FAILED"
+                },
+                "message": {
+                    "S": "Message"
+                },
+                "timestamp": {
+                    "S": "2024-06-18T21:35:19.052Z"
+                }
+            }
         },
         "status": {
             "S": "PAUSED"
         },
         "delayMs": {
-            "S": "600000"
+            "N": 1800000
         },
         "attributes": {
             "M": {
-                "threshold": {
-                    "N": 100.95
+                "percent_diff": {
+                    "N": 0.05
                 }
             }
         },
         "email": {
             "S": "exampleemail6@gmail.com"
         },
-        "previousAlerts": {
-            "L": [
-                {
-                    "S": "2024-06-19T23:44:29.063Z"
-                }
-            ]
-        },
         "mostRecentAlert": {
-            "S": "2024-06-19T23:44:29.063Z"
+            "S": "2024-07-08T14:21:04.510Z"
+        },
+        "startHour": {
+            "N": 0
         }
     },
     {
@@ -485,16 +455,10 @@
             "S": "Alias 7"
         },
         "check_type": {
-            "S": "EBAY PRICE THRESHOLD"
-        },
-        "keyword": {
-            "S": "Keyword 7"
-        },
-        "opposite": {
-            "S": "false"
+            "S": "PAGE DIFFERENCE"
         },
         "pk": {
-            "S": "CHECK#nx8o55erch"
+            "S": "CHECK#x23ht1symb"
         },
         "sk": {
             "S": "CHECK"
@@ -509,53 +473,54 @@
             "S": "118298783964592448941"
         },
         "createdAt": {
-            "S": "2024-07-05T22:10:23.397Z"
+            "S": "2024-07-11T03:05:41.951Z"
         },
         "updatedAt": {
-            "S": "2024-07-05T22:10:23.397Z"
-        },
-        "lastExecutedAt": {
-            "S": "2024-01-07T19:06:42.381Z"
+            "S": "2024-07-11T03:05:41.951Z"
         },
         "lastResult": {
-            "S": "NO ALERT"
+            "M": {
+                "status": {
+                    "S": "ALERTED"
+                },
+                "message": {
+                    "S": "Message"
+                },
+                "timestamp": {
+                    "S": "2022-03-14T07:41:50.643Z"
+                }
+            }
         },
         "status": {
             "S": "PAUSED"
         },
         "delayMs": {
-            "S": "86400000"
+            "N": 600000
         },
         "attributes": {
             "M": {
-                "threshold": {
-                    "N": 100.95
+                "percent_diff": {
+                    "N": 0.05
                 }
             }
         },
         "email": {
             "S": "exampleemail7@gmail.com"
         },
-        "previousAlerts": {
-            "L": []
-        },
-        "mostRecentAlert": {}
+        "mostRecentAlert": {},
+        "startHour": {
+            "N": 0
+        }
     },
     {
         "alias": {
             "S": "Alias 8"
         },
         "check_type": {
-            "S": "EBAY PRICE THRESHOLD"
-        },
-        "keyword": {
-            "S": "Keyword 8"
-        },
-        "opposite": {
-            "S": "true"
+            "S": "PAGE DIFFERENCE"
         },
         "pk": {
-            "S": "CHECK#9r56oucr5oc"
+            "S": "CHECK#6nupohnej6"
         },
         "sk": {
             "S": "CHECK"
@@ -570,53 +535,56 @@
             "S": "118298783964592448941"
         },
         "createdAt": {
-            "S": "2024-07-05T22:10:23.397Z"
+            "S": "2024-07-11T03:05:41.951Z"
         },
         "updatedAt": {
-            "S": "2024-07-05T22:10:23.397Z"
-        },
-        "lastExecutedAt": {
-            "S": "2024-06-26T20:30:26.317Z"
+            "S": "2024-07-11T03:05:41.951Z"
         },
         "lastResult": {
-            "S": "NO ALERT"
+            "M": {
+                "status": {
+                    "S": "ALERTED"
+                },
+                "message": {
+                    "S": "Message"
+                },
+                "timestamp": {
+                    "S": "2022-01-07T10:39:30.691Z"
+                }
+            }
         },
         "status": {
             "S": "PAUSED"
         },
         "delayMs": {
-            "S": "300000"
+            "N": 3600000
         },
         "attributes": {
             "M": {
-                "threshold": {
-                    "N": 100.95
+                "percent_diff": {
+                    "N": 0.05
                 }
             }
         },
         "email": {
             "S": "exampleemail8@gmail.com"
         },
-        "previousAlerts": {
-            "L": []
+        "mostRecentAlert": {
+            "S": "2024-07-10T23:23:14.940Z"
         },
-        "mostRecentAlert": {}
+        "startHour": {
+            "N": 0
+        }
     },
     {
         "alias": {
             "S": "Alias 9"
         },
         "check_type": {
-            "S": "PAGE DIFFERENCE"
-        },
-        "keyword": {
-            "S": "Keyword 9"
-        },
-        "opposite": {
-            "S": "false"
+            "S": "EBAY PRICE THRESHOLD"
         },
         "pk": {
-            "S": "CHECK#55xg3m4bud3"
+            "S": "CHECK#p0tosd2bqx"
         },
         "sk": {
             "S": "CHECK"
@@ -631,22 +599,91 @@
             "S": "118298783964592448941"
         },
         "createdAt": {
-            "S": "2024-07-05T22:10:23.397Z"
+            "S": "2024-07-11T03:05:41.951Z"
         },
         "updatedAt": {
-            "S": "2024-07-05T22:10:23.397Z"
-        },
-        "lastExecutedAt": {
-            "S": "2024-07-05T22:10:23.397Z"
+            "S": "2024-07-11T03:05:41.951Z"
         },
         "lastResult": {
-            "S": "NO ALERT"
+            "M": {
+                "status": {
+                    "S": "ALERTED"
+                },
+                "message": {
+                    "S": "Message"
+                },
+                "timestamp": {
+                    "S": "2024-07-11T03:05:41.951Z"
+                }
+            }
         },
         "status": {
             "S": "ACTIVE"
         },
         "delayMs": {
-            "S": "1800000"
+            "N": 300000
+        },
+        "attributes": {
+            "M": {
+                "threshold": {
+                    "N": 100.95
+                }
+            }
+        },
+        "email": {
+            "S": "exampleemail9@gmail.com"
+        },
+        "mostRecentAlert": {},
+        "startHour": {
+            "N": 0
+        }
+    },
+    {
+        "alias": {
+            "S": "Alias 10"
+        },
+        "check_type": {
+            "S": "PAGE DIFFERENCE"
+        },
+        "pk": {
+            "S": "CHECK#22be2mzs6nq"
+        },
+        "sk": {
+            "S": "CHECK"
+        },
+        "type": {
+            "S": "CHECK"
+        },
+        "url": {
+            "S": "https://example10.com"
+        },
+        "userid": {
+            "S": "118298783964592448941"
+        },
+        "createdAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "updatedAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "lastResult": {
+            "M": {
+                "status": {
+                    "S": "ALERTED"
+                },
+                "message": {
+                    "S": "Message"
+                },
+                "timestamp": {
+                    "S": "2024-07-11T03:05:41.951Z"
+                }
+            }
+        },
+        "status": {
+            "S": "ACTIVE"
+        },
+        "delayMs": {
+            "N": 600000
         },
         "attributes": {
             "M": {
@@ -656,23 +693,1239 @@
             }
         },
         "email": {
-            "S": "exampleemail9@gmail.com"
-        },
-        "previousAlerts": {
-            "L": [
-                {
-                    "S": "2024-06-07T00:22:02.435Z"
-                },
-                {
-                    "S": "2024-07-05T19:14:45.304Z"
-                },
-                {
-                    "S": "2024-07-04T06:28:41.500Z"
-                }
-            ]
+            "S": "exampleemail10@gmail.com"
         },
         "mostRecentAlert": {
-            "S": "2024-07-04T06:28:41.500Z"
+            "S": "2020-05-03T07:13:05.610Z"
+        },
+        "startHour": {
+            "N": 0
+        }
+    },
+    {
+        "alias": {
+            "S": "Alias 11"
+        },
+        "check_type": {
+            "S": "EBAY PRICE THRESHOLD"
+        },
+        "pk": {
+            "S": "CHECK#8f34sbspjnl"
+        },
+        "sk": {
+            "S": "CHECK"
+        },
+        "type": {
+            "S": "CHECK"
+        },
+        "url": {
+            "S": "https://example11.com"
+        },
+        "userid": {
+            "S": "118298783964592448941"
+        },
+        "createdAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "updatedAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "lastResult": {
+            "M": {
+                "status": {
+                    "S": "FAILED"
+                },
+                "message": {
+                    "S": "Message"
+                },
+                "timestamp": {
+                    "S": "2024-05-21T23:16:47.478Z"
+                }
+            }
+        },
+        "status": {
+            "S": "PAUSED"
+        },
+        "delayMs": {
+            "N": 86400000
+        },
+        "attributes": {
+            "M": {
+                "threshold": {
+                    "N": 100.95
+                }
+            }
+        },
+        "email": {
+            "S": "exampleemail11@gmail.com"
+        },
+        "mostRecentAlert": {
+            "S": "2024-03-01T21:50:48.367Z"
+        },
+        "startHour": {
+            "N": 19
+        }
+    },
+    {
+        "alias": {
+            "S": "Alias 12"
+        },
+        "check_type": {
+            "S": "KEYWORD CHECK"
+        },
+        "pk": {
+            "S": "CHECK#w5i81u6rvlh"
+        },
+        "sk": {
+            "S": "CHECK"
+        },
+        "type": {
+            "S": "CHECK"
+        },
+        "url": {
+            "S": "https://example12.com"
+        },
+        "userid": {
+            "S": "118298783964592448941"
+        },
+        "createdAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "updatedAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "lastResult": {
+            "M": {
+                "status": {
+                    "S": "ALERTED"
+                },
+                "message": {
+                    "S": "Message"
+                },
+                "timestamp": {
+                    "S": "2024-07-11T00:37:38.777Z"
+                }
+            }
+        },
+        "status": {
+            "S": "PAUSED"
+        },
+        "delayMs": {
+            "N": 1800000
+        },
+        "attributes": {
+            "M": {
+                "keyword": {
+                    "S": "Keyword"
+                },
+                "opposite": {
+                    "B": false
+                }
+            }
+        },
+        "email": {
+            "S": "exampleemail12@gmail.com"
+        },
+        "mostRecentAlert": {
+            "S": "2024-03-09T11:58:16.341Z"
+        },
+        "startHour": {
+            "N": 0
+        }
+    },
+    {
+        "alias": {
+            "S": "Alias 13"
+        },
+        "check_type": {
+            "S": "PAGE DIFFERENCE"
+        },
+        "pk": {
+            "S": "CHECK#abhx382rund"
+        },
+        "sk": {
+            "S": "CHECK"
+        },
+        "type": {
+            "S": "CHECK"
+        },
+        "url": {
+            "S": "https://example13.com"
+        },
+        "userid": {
+            "S": "118298783964592448941"
+        },
+        "createdAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "updatedAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "lastResult": {
+            "M": {
+                "status": {
+                    "S": "ALERTED"
+                },
+                "message": {
+                    "S": "Message"
+                },
+                "timestamp": {
+                    "S": "2024-07-11T03:05:41.951Z"
+                }
+            }
+        },
+        "status": {
+            "S": "ACTIVE"
+        },
+        "delayMs": {
+            "N": 14400000
+        },
+        "attributes": {
+            "M": {
+                "percent_diff": {
+                    "N": 0.05
+                }
+            }
+        },
+        "email": {
+            "S": "exampleemail13@gmail.com"
+        },
+        "mostRecentAlert": {
+            "S": "2024-05-14T12:18:21.509Z"
+        },
+        "startHour": {
+            "N": 0
+        }
+    },
+    {
+        "alias": {
+            "S": "Alias 14"
+        },
+        "check_type": {
+            "S": "PAGE DIFFERENCE"
+        },
+        "pk": {
+            "S": "CHECK#tq93gtrw31f"
+        },
+        "sk": {
+            "S": "CHECK"
+        },
+        "type": {
+            "S": "CHECK"
+        },
+        "url": {
+            "S": "https://example14.com"
+        },
+        "userid": {
+            "S": "118298783964592448941"
+        },
+        "createdAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "updatedAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "lastResult": {
+            "M": {
+                "status": {
+                    "S": "ALERTED"
+                },
+                "message": {
+                    "S": "Message"
+                },
+                "timestamp": {
+                    "S": "2024-07-11T03:05:41.951Z"
+                }
+            }
+        },
+        "status": {
+            "S": "ACTIVE"
+        },
+        "delayMs": {
+            "N": 3600000
+        },
+        "attributes": {
+            "M": {
+                "percent_diff": {
+                    "N": 0.05
+                }
+            }
+        },
+        "email": {
+            "S": "exampleemail14@gmail.com"
+        },
+        "mostRecentAlert": {
+            "S": "2024-07-11T01:27:41.937Z"
+        },
+        "startHour": {
+            "N": 0
+        }
+    },
+    {
+        "alias": {
+            "S": "Alias 15"
+        },
+        "check_type": {
+            "S": "PAGE DIFFERENCE"
+        },
+        "pk": {
+            "S": "CHECK#fmfedui8lzb"
+        },
+        "sk": {
+            "S": "CHECK"
+        },
+        "type": {
+            "S": "CHECK"
+        },
+        "url": {
+            "S": "https://example15.com"
+        },
+        "userid": {
+            "S": "118298783964592448941"
+        },
+        "createdAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "updatedAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "lastResult": {
+            "M": {
+                "status": {
+                    "S": "ALERTED"
+                },
+                "message": {
+                    "S": "Message"
+                },
+                "timestamp": {
+                    "S": "2024-07-11T03:05:41.951Z"
+                }
+            }
+        },
+        "status": {
+            "S": "ACTIVE"
+        },
+        "delayMs": {
+            "N": 604800000
+        },
+        "attributes": {
+            "M": {
+                "percent_diff": {
+                    "N": 0.05
+                }
+            }
+        },
+        "email": {
+            "S": "exampleemail15@gmail.com"
+        },
+        "mostRecentAlert": {
+            "S": "2023-12-15T08:05:30.703Z"
+        },
+        "startHour": {
+            "N": 119
+        }
+    },
+    {
+        "alias": {
+            "S": "Alias 16"
+        },
+        "check_type": {
+            "S": "PAGE DIFFERENCE"
+        },
+        "pk": {
+            "S": "CHECK#yg0dmsux01"
+        },
+        "sk": {
+            "S": "CHECK"
+        },
+        "type": {
+            "S": "CHECK"
+        },
+        "url": {
+            "S": "https://example16.com"
+        },
+        "userid": {
+            "S": "118298783964592448941"
+        },
+        "createdAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "updatedAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "lastResult": {
+            "M": {
+                "status": {
+                    "S": "ALERTED"
+                },
+                "message": {
+                    "S": "Message"
+                },
+                "timestamp": {
+                    "S": "2021-07-21T09:46:50.159Z"
+                }
+            }
+        },
+        "status": {
+            "S": "PAUSED"
+        },
+        "delayMs": {
+            "N": 14400000
+        },
+        "attributes": {
+            "M": {
+                "percent_diff": {
+                    "N": 0.05
+                }
+            }
+        },
+        "email": {
+            "S": "exampleemail16@gmail.com"
+        },
+        "mostRecentAlert": {
+            "S": "2024-07-10T23:41:11.257Z"
+        },
+        "startHour": {
+            "N": 1
+        }
+    },
+    {
+        "alias": {
+            "S": "Alias 17"
+        },
+        "check_type": {
+            "S": "PAGE DIFFERENCE"
+        },
+        "pk": {
+            "S": "CHECK#bq6tovv6ybb"
+        },
+        "sk": {
+            "S": "CHECK"
+        },
+        "type": {
+            "S": "CHECK"
+        },
+        "url": {
+            "S": "https://example17.com"
+        },
+        "userid": {
+            "S": "118298783964592448941"
+        },
+        "createdAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "updatedAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "lastResult": {
+            "M": {
+                "status": {
+                    "S": "ALERTED"
+                },
+                "message": {
+                    "S": "Message"
+                },
+                "timestamp": {
+                    "S": "2023-09-13T02:06:12.526Z"
+                }
+            }
+        },
+        "status": {
+            "S": "PAUSED"
+        },
+        "delayMs": {
+            "N": 604800000
+        },
+        "attributes": {
+            "M": {
+                "percent_diff": {
+                    "N": 0.05
+                }
+            }
+        },
+        "email": {
+            "S": "exampleemail17@gmail.com"
+        },
+        "mostRecentAlert": {
+            "S": "2024-06-19T10:10:22.358Z"
+        },
+        "startHour": {
+            "N": 161
+        }
+    },
+    {
+        "alias": {
+            "S": "Alias 18"
+        },
+        "check_type": {
+            "S": "EBAY PRICE THRESHOLD"
+        },
+        "pk": {
+            "S": "CHECK#fwh5wxhz6du"
+        },
+        "sk": {
+            "S": "CHECK"
+        },
+        "type": {
+            "S": "CHECK"
+        },
+        "url": {
+            "S": "https://example18.com"
+        },
+        "userid": {
+            "S": "118298783964592448941"
+        },
+        "createdAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "updatedAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "lastResult": {
+            "M": {
+                "status": {
+                    "S": "FAILED"
+                },
+                "message": {
+                    "S": "Message"
+                },
+                "timestamp": {
+                    "S": "2024-02-22T15:09:22.689Z"
+                }
+            }
+        },
+        "status": {
+            "S": "PAUSED"
+        },
+        "delayMs": {
+            "N": 14400000
+        },
+        "attributes": {
+            "M": {
+                "threshold": {
+                    "N": 100.95
+                }
+            }
+        },
+        "email": {
+            "S": "exampleemail18@gmail.com"
+        },
+        "mostRecentAlert": {
+            "S": "2024-03-14T07:28:36.645Z"
+        },
+        "startHour": {
+            "N": 3
+        }
+    },
+    {
+        "alias": {
+            "S": "Alias 19"
+        },
+        "check_type": {
+            "S": "PAGE DIFFERENCE"
+        },
+        "pk": {
+            "S": "CHECK#w8hz786r7if"
+        },
+        "sk": {
+            "S": "CHECK"
+        },
+        "type": {
+            "S": "CHECK"
+        },
+        "url": {
+            "S": "https://example19.com"
+        },
+        "userid": {
+            "S": "118298783964592448941"
+        },
+        "createdAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "updatedAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "lastResult": {
+            "M": {
+                "status": {
+                    "S": "FAILED"
+                },
+                "message": {
+                    "S": "Message"
+                },
+                "timestamp": {
+                    "S": "2024-07-11T03:05:41.951Z"
+                }
+            }
+        },
+        "status": {
+            "S": "ACTIVE"
+        },
+        "delayMs": {
+            "N": 43200000
+        },
+        "attributes": {
+            "M": {
+                "percent_diff": {
+                    "N": 0.05
+                }
+            }
+        },
+        "email": {
+            "S": "exampleemail19@gmail.com"
+        },
+        "mostRecentAlert": {
+            "S": "2024-04-20T23:56:52.695Z"
+        },
+        "startHour": {
+            "N": 1
+        }
+    },
+    {
+        "alias": {
+            "S": "Alias 20"
+        },
+        "check_type": {
+            "S": "EBAY PRICE THRESHOLD"
+        },
+        "pk": {
+            "S": "CHECK#l3lyhirpno"
+        },
+        "sk": {
+            "S": "CHECK"
+        },
+        "type": {
+            "S": "CHECK"
+        },
+        "url": {
+            "S": "https://example20.com"
+        },
+        "userid": {
+            "S": "118298783964592448941"
+        },
+        "createdAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "updatedAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "lastResult": {
+            "M": {
+                "status": {
+                    "S": "ALERTED"
+                },
+                "message": {
+                    "S": "Message"
+                },
+                "timestamp": {
+                    "S": "2024-07-11T03:05:41.951Z"
+                }
+            }
+        },
+        "status": {
+            "S": "ACTIVE"
+        },
+        "delayMs": {
+            "N": 300000
+        },
+        "attributes": {
+            "M": {
+                "threshold": {
+                    "N": 100.95
+                }
+            }
+        },
+        "email": {
+            "S": "exampleemail20@gmail.com"
+        },
+        "mostRecentAlert": {
+            "S": "2021-10-06T08:52:17.866Z"
+        },
+        "startHour": {
+            "N": 0
+        }
+    },
+    {
+        "alias": {
+            "S": "Alias 21"
+        },
+        "check_type": {
+            "S": "EBAY PRICE THRESHOLD"
+        },
+        "pk": {
+            "S": "CHECK#7onr7ncpfir"
+        },
+        "sk": {
+            "S": "CHECK"
+        },
+        "type": {
+            "S": "CHECK"
+        },
+        "url": {
+            "S": "https://example21.com"
+        },
+        "userid": {
+            "S": "118298783964592448941"
+        },
+        "createdAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "updatedAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "lastResult": {
+            "M": {
+                "status": {
+                    "S": "ALERTED"
+                },
+                "message": {
+                    "S": "Message"
+                },
+                "timestamp": {
+                    "S": "2024-07-11T03:05:41.951Z"
+                }
+            }
+        },
+        "status": {
+            "S": "ACTIVE"
+        },
+        "delayMs": {
+            "N": 14400000
+        },
+        "attributes": {
+            "M": {
+                "threshold": {
+                    "N": 100.95
+                }
+            }
+        },
+        "email": {
+            "S": "exampleemail21@gmail.com"
+        },
+        "mostRecentAlert": {
+            "S": "2024-07-11T02:26:51.987Z"
+        },
+        "startHour": {
+            "N": 1
+        }
+    },
+    {
+        "alias": {
+            "S": "Alias 22"
+        },
+        "check_type": {
+            "S": "KEYWORD CHECK"
+        },
+        "pk": {
+            "S": "CHECK#sazcz8vyhx9"
+        },
+        "sk": {
+            "S": "CHECK"
+        },
+        "type": {
+            "S": "CHECK"
+        },
+        "url": {
+            "S": "https://example22.com"
+        },
+        "userid": {
+            "S": "118298783964592448941"
+        },
+        "createdAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "updatedAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "lastResult": {
+            "M": {
+                "status": {
+                    "S": "ALERTED"
+                },
+                "message": {
+                    "S": "Message"
+                },
+                "timestamp": {
+                    "S": "2024-07-11T03:05:41.951Z"
+                }
+            }
+        },
+        "status": {
+            "S": "ACTIVE"
+        },
+        "delayMs": {
+            "N": 14400000
+        },
+        "attributes": {
+            "M": {
+                "keyword": {
+                    "S": "Keyword"
+                },
+                "opposite": {
+                    "B": false
+                }
+            }
+        },
+        "email": {
+            "S": "exampleemail22@gmail.com"
+        },
+        "mostRecentAlert": {},
+        "startHour": {
+            "N": 1
+        }
+    },
+    {
+        "alias": {
+            "S": "Alias 23"
+        },
+        "check_type": {
+            "S": "KEYWORD CHECK"
+        },
+        "pk": {
+            "S": "CHECK#ji5oq9vy5f"
+        },
+        "sk": {
+            "S": "CHECK"
+        },
+        "type": {
+            "S": "CHECK"
+        },
+        "url": {
+            "S": "https://example23.com"
+        },
+        "userid": {
+            "S": "118298783964592448941"
+        },
+        "createdAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "updatedAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "lastResult": {
+            "M": {
+                "status": {
+                    "S": "ALERTED"
+                },
+                "message": {
+                    "S": "Message"
+                },
+                "timestamp": {
+                    "S": "2024-05-27T23:49:26.560Z"
+                }
+            }
+        },
+        "status": {
+            "S": "PAUSED"
+        },
+        "delayMs": {
+            "N": 1800000
+        },
+        "attributes": {
+            "M": {
+                "keyword": {
+                    "S": "Keyword"
+                },
+                "opposite": {
+                    "B": false
+                }
+            }
+        },
+        "email": {
+            "S": "exampleemail23@gmail.com"
+        },
+        "mostRecentAlert": {
+            "S": "2024-06-23T15:26:41.871Z"
+        },
+        "startHour": {
+            "N": 0
+        }
+    },
+    {
+        "alias": {
+            "S": "Alias 24"
+        },
+        "check_type": {
+            "S": "EBAY PRICE THRESHOLD"
+        },
+        "pk": {
+            "S": "CHECK#syzw1xb8k"
+        },
+        "sk": {
+            "S": "CHECK"
+        },
+        "type": {
+            "S": "CHECK"
+        },
+        "url": {
+            "S": "https://example24.com"
+        },
+        "userid": {
+            "S": "118298783964592448941"
+        },
+        "createdAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "updatedAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "lastResult": {
+            "M": {
+                "status": {
+                    "S": "FAILED"
+                },
+                "message": {
+                    "S": "Message"
+                },
+                "timestamp": {
+                    "S": "2024-07-11T01:16:13.768Z"
+                }
+            }
+        },
+        "status": {
+            "S": "PAUSED"
+        },
+        "delayMs": {
+            "N": 600000
+        },
+        "attributes": {
+            "M": {
+                "threshold": {
+                    "N": 100.95
+                }
+            }
+        },
+        "email": {
+            "S": "exampleemail24@gmail.com"
+        },
+        "mostRecentAlert": {
+            "S": "2024-06-20T16:35:37.504Z"
+        },
+        "startHour": {
+            "N": 0
+        }
+    },
+    {
+        "alias": {
+            "S": "Alias 25"
+        },
+        "check_type": {
+            "S": "PAGE DIFFERENCE"
+        },
+        "pk": {
+            "S": "CHECK#qcjgc2von"
+        },
+        "sk": {
+            "S": "CHECK"
+        },
+        "type": {
+            "S": "CHECK"
+        },
+        "url": {
+            "S": "https://example25.com"
+        },
+        "userid": {
+            "S": "118298783964592448941"
+        },
+        "createdAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "updatedAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "lastResult": {
+            "M": {
+                "status": {
+                    "S": "NO ALERT"
+                },
+                "message": {
+                    "S": "Message"
+                },
+                "timestamp": {
+                    "S": "2024-07-11T01:33:39.939Z"
+                }
+            }
+        },
+        "status": {
+            "S": "PAUSED"
+        },
+        "delayMs": {
+            "N": 604800000
+        },
+        "attributes": {
+            "M": {
+                "percent_diff": {
+                    "N": 0.05
+                }
+            }
+        },
+        "email": {
+            "S": "exampleemail25@gmail.com"
+        },
+        "mostRecentAlert": {
+            "S": "2024-07-10T23:36:19.740Z"
+        },
+        "startHour": {
+            "N": 74
+        }
+    },
+    {
+        "alias": {
+            "S": "Alias 26"
+        },
+        "check_type": {
+            "S": "KEYWORD CHECK"
+        },
+        "pk": {
+            "S": "CHECK#zru7qguibq"
+        },
+        "sk": {
+            "S": "CHECK"
+        },
+        "type": {
+            "S": "CHECK"
+        },
+        "url": {
+            "S": "https://example26.com"
+        },
+        "userid": {
+            "S": "118298783964592448941"
+        },
+        "createdAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "updatedAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "lastResult": {
+            "M": {
+                "status": {
+                    "S": "NO ALERT"
+                },
+                "message": {
+                    "S": "Message"
+                },
+                "timestamp": {
+                    "S": "2024-07-11T00:10:54.461Z"
+                }
+            }
+        },
+        "status": {
+            "S": "PAUSED"
+        },
+        "delayMs": {
+            "N": 600000
+        },
+        "attributes": {
+            "M": {
+                "keyword": {
+                    "S": "Keyword"
+                },
+                "opposite": {
+                    "B": false
+                }
+            }
+        },
+        "email": {
+            "S": "exampleemail26@gmail.com"
+        },
+        "mostRecentAlert": {
+            "S": "2023-07-14T00:33:14.570Z"
+        },
+        "startHour": {
+            "N": 0
+        }
+    },
+    {
+        "alias": {
+            "S": "Alias 27"
+        },
+        "check_type": {
+            "S": "PAGE DIFFERENCE"
+        },
+        "pk": {
+            "S": "CHECK#lklxwcgh9ic"
+        },
+        "sk": {
+            "S": "CHECK"
+        },
+        "type": {
+            "S": "CHECK"
+        },
+        "url": {
+            "S": "https://example27.com"
+        },
+        "userid": {
+            "S": "118298783964592448941"
+        },
+        "createdAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "updatedAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "lastResult": {
+            "M": {
+                "status": {
+                    "S": "NO ALERT"
+                },
+                "message": {
+                    "S": "Message"
+                },
+                "timestamp": {
+                    "S": "2024-06-19T13:47:14.367Z"
+                }
+            }
+        },
+        "status": {
+            "S": "PAUSED"
+        },
+        "delayMs": {
+            "N": 600000
+        },
+        "attributes": {
+            "M": {
+                "percent_diff": {
+                    "N": 0.05
+                }
+            }
+        },
+        "email": {
+            "S": "exampleemail27@gmail.com"
+        },
+        "mostRecentAlert": {
+            "S": "2024-07-10T23:38:42.943Z"
+        },
+        "startHour": {
+            "N": 0
+        }
+    },
+    {
+        "alias": {
+            "S": "Alias 28"
+        },
+        "check_type": {
+            "S": "EBAY PRICE THRESHOLD"
+        },
+        "pk": {
+            "S": "CHECK#sx64mjpm2om"
+        },
+        "sk": {
+            "S": "CHECK"
+        },
+        "type": {
+            "S": "CHECK"
+        },
+        "url": {
+            "S": "https://example28.com"
+        },
+        "userid": {
+            "S": "118298783964592448941"
+        },
+        "createdAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "updatedAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "lastResult": {
+            "M": {
+                "status": {
+                    "S": "NO ALERT"
+                },
+                "message": {
+                    "S": "Message"
+                },
+                "timestamp": {
+                    "S": "2024-06-05T08:28:58.947Z"
+                }
+            }
+        },
+        "status": {
+            "S": "PAUSED"
+        },
+        "delayMs": {
+            "N": 86400000
+        },
+        "attributes": {
+            "M": {
+                "threshold": {
+                    "N": 100.95
+                }
+            }
+        },
+        "email": {
+            "S": "exampleemail28@gmail.com"
+        },
+        "mostRecentAlert": {
+            "S": "2023-11-21T05:11:05.559Z"
+        },
+        "startHour": {
+            "N": 16
+        }
+    },
+    {
+        "alias": {
+            "S": "Alias 29"
+        },
+        "check_type": {
+            "S": "PAGE DIFFERENCE"
+        },
+        "pk": {
+            "S": "CHECK#81h96f7skxi"
+        },
+        "sk": {
+            "S": "CHECK"
+        },
+        "type": {
+            "S": "CHECK"
+        },
+        "url": {
+            "S": "https://example29.com"
+        },
+        "userid": {
+            "S": "118298783964592448941"
+        },
+        "createdAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "updatedAt": {
+            "S": "2024-07-11T03:05:41.951Z"
+        },
+        "lastResult": {
+            "M": {
+                "status": {
+                    "S": "NO ALERT"
+                },
+                "message": {
+                    "S": "Message"
+                },
+                "timestamp": {
+                    "S": "2024-07-11T03:05:41.951Z"
+                }
+            }
+        },
+        "status": {
+            "S": "ACTIVE"
+        },
+        "delayMs": {
+            "N": 86400000
+        },
+        "attributes": {
+            "M": {
+                "percent_diff": {
+                    "N": 0.05
+                }
+            }
+        },
+        "email": {
+            "S": "exampleemail29@gmail.com"
+        },
+        "mostRecentAlert": {
+            "S": "2021-06-09T05:10:40.843Z"
+        },
+        "startHour": {
+            "N": 17
         }
     }
 ]

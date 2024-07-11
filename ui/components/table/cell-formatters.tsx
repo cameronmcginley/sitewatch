@@ -15,191 +15,15 @@ import {
   isHappeningNow,
   formatDateWithTimezone,
   getTimeAgo,
-  formatFrequency,
+  msToTimeStr,
+  formatTimeWithTimezone,
 } from "./utils";
+import { cn } from "@/lib/utils";
+import { BADGE_COLOR_CLASS } from "@/lib/constants";
+import { time } from "console";
 
-const formatAliasCell = (item) => (
-  <TableCell>
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger className="cursor-auto select-text">
-          {item.alias?.S ?? emptyDash}
-        </TooltipTrigger>
-        <TooltipContent>
-          {
-            <a
-              className="hover:text-gray-400 underline text-ellipsis"
-              href={item.url?.S}
-            >
-              {item.url?.S ?? emptyDash}
-            </a>
-          }
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  </TableCell>
-);
-
-const formatCheckTypeCell = (item) => (
-  <TableCell>
-    <div className="flex gap-2 items-center">
-      {item.check_type?.S ?? emptyDash}
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger>
-            <InfoCircledIcon />
-          </TooltipTrigger>
-          <TooltipContent>
-            {check_type_descriptions[item.check_type?.S] ?? emptyDash}
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    </div>
-  </TableCell>
-);
-
-const formatStatusCell = (item) => (
-  <TableCell>
-    <Badge
-      className={
-        item.status?.S === "ACTIVE"
-          ? "bg-green-700 text-white hover:bg-green-700"
-          : "bg-yellow-700 text-white hover:bg-yellow-700"
-      }
-    >
-      {toSentenceCase(item.status?.S) ?? emptyDash}
-    </Badge>
-  </TableCell>
-);
-
-const formatFrequencyCell = (item) => (
-  <TableCell>
-    {item.delayMs?.S ? formatFrequency(Number(item.delayMs.S)) : emptyDash}
-  </TableCell>
-);
-
-const formatNextRunCell = (item) => {
-  const lastExecutedAt = item.lastExecutedAt?.S;
-  const delayMs = item.delayMs?.S;
-
-  const getCellContent = () => {
-    if (!lastExecutedAt || !delayMs) {
-      return emptyDash;
-    }
-    if (isHappeningNow(lastExecutedAt, delayMs)) {
-      return loadingDots;
-    }
-    const nextRunDate = getNextRunDate(lastExecutedAt, delayMs);
-    return nextRunDate ? `In ${getTimeAgo(nextRunDate)}` : emptyDash;
-  };
-
-  const getTooltipContent = () => {
-    if (lastExecutedAt && delayMs && !isHappeningNow(lastExecutedAt, delayMs)) {
-      const nextRunDate = getNextRunDate(lastExecutedAt, delayMs);
-      return formatDateWithTimezone(nextRunDate);
-    }
-    return null;
-  };
-
-  const cellContent = getCellContent();
-  const tooltipContent = getTooltipContent();
-
-  return (
-    <TableCell>
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger className="text-start cursor-auto select-text">
-            {cellContent}
-          </TooltipTrigger>
-          {tooltipContent && <TooltipContent>{tooltipContent}</TooltipContent>}
-        </Tooltip>
-      </TooltipProvider>
-    </TableCell>
-  );
-};
-
-const formatLastResultCell = (item) => (
-  <TableCell>
-    <div className="flex flex-col items-start gap-1">
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger className="cursor-auto select-text">
-            <Badge
-              className={
-                item.lastResult?.S === "ALERTED"
-                  ? "bg-green-700 text-white hover:bg-green-700"
-                  : "bg-gray-700 text-white hover:bg-gray-700"
-              }
-            >
-              {toSentenceCase(item.lastResult?.S)}
-            </Badge>
-          </TooltipTrigger>
-          {item.email?.S && item.lastResult?.S === "ALERTED" && (
-            <TooltipContent>Email sent to {item.email?.S}</TooltipContent>
-          )}
-        </Tooltip>
-      </TooltipProvider>
-
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger className="cursor-auto select-text text-sm text-gray-500 text-start">
-            {item.lastExecutedAt?.S
-              ? "Last ran " + getTimeAgo(item.lastExecutedAt?.S)
-              : emptyDash}
-          </TooltipTrigger>
-          <TooltipContent>
-            {item.lastExecutedAt?.S
-              ? formatDateWithTimezone(item.lastExecutedAt?.S)
-              : emptyDash}
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    </div>
-  </TableCell>
-);
-
-const formatMostRecentAlertCell = (item) => (
-  <TableCell>
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger className="text-start cursor-auto select-text">
-          {item.mostRecentAlert?.S ? (
-            <Badge className="bg-green-700 text-white hover:bg-green-700">
-              {getTimeAgo(item.mostRecentAlert?.S)}
-            </Badge>
-          ) : (
-            emptyDash
-          )}
-        </TooltipTrigger>
-        {item.mostRecentAlert?.S && (
-          <TooltipContent>
-            {formatDateWithTimezone(item.mostRecentAlert?.S)}
-          </TooltipContent>
-        )}
-      </Tooltip>
-    </TooltipProvider>
-  </TableCell>
-);
-
-const formatKeywordCell = (item) => (
-  <TableCell>{item.keyword?.S ?? emptyDash}</TableCell>
-);
-
-const formatTargetPriceCell = (item) => (
-  <TableCell>
-    {item.attributes?.M.threshold?.N
-      ? `$${item.attributes?.M.threshold.N}`
-      : emptyDash}
-  </TableCell>
-);
-
-const formatDiffPercentageCell = (item) => (
-  <TableCell>
-    {item.attributes?.M.percent_diff?.N
-      ? `${item.attributes?.M.percent_diff.N}%`
-      : emptyDash}
-  </TableCell>
-);
+export const formatCells = (item, columns) =>
+  columns.map((column) => column.formatter(item));
 
 export const getGenericColumns = () => [
   { header: "Alias", formatter: formatAliasCell },
@@ -234,5 +58,274 @@ export const getTypeSpecificColumns = (checkType) => {
   }
 };
 
-export const formatCells = (item, columns) =>
-  columns.map((column) => column.formatter(item));
+const defaultTooltipClassName =
+  "flex flex-col justify-center items-center gap-1 p-1";
+
+const formatAliasCell = (item) => {
+  const alias = item.alias?.S;
+  const url = item.url?.S;
+
+  const getCellContent = () => {
+    return (
+      <div className="flex flex-col items-start">
+        <div className="text-ellipsis cursor-auto select-text">
+          {alias ?? emptyDash}
+        </div>
+        <div className="text-xs text-gray-500 text-ellipsis">
+          <a
+            className="hover:text-gray-400 hover:underline text-ellipsis"
+            href={url}
+          >
+            {url ?? emptyDash}
+          </a>
+        </div>
+      </div>
+    );
+  };
+
+  const getTooltipContent = () => {
+    return (
+      <div className={cn(defaultTooltipClassName)}>
+        <div className="text-ellipsis cursor-auto select-text">
+          {alias ?? emptyDash}
+        </div>
+        <a className="hover:text-gray-400 underline text-ellipsis" href={url}>
+          {url ?? emptyDash}
+        </a>
+      </div>
+    );
+  };
+
+  const cellContent = getCellContent();
+  const tooltipContent = getTooltipContent();
+
+  return (
+    <TableCell>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>{cellContent}</TooltipTrigger>
+          <TooltipContent>{tooltipContent}</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </TableCell>
+  );
+};
+
+const formatCheckTypeCell = (item) => (
+  <TableCell>
+    <div className="flex gap-2 items-center">
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <InfoCircledIcon />
+          </TooltipTrigger>
+          <TooltipContent>
+            {check_type_descriptions[item.check_type?.S] ?? emptyDash}
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+      {item.check_type?.S ?? emptyDash}
+    </div>
+  </TableCell>
+);
+
+const formatStatusCell = (item) => {
+  const status = item.status?.S;
+
+  const statusToBadgeColor: Record<string, string> = {
+    ACTIVE: "GREEN",
+    PAUSED: "YELLOW",
+  };
+
+  return (
+    <TableCell>
+      <Badge className={cn(BADGE_COLOR_CLASS[statusToBadgeColor[status]])}>
+        {toSentenceCase(item.status?.S) ?? emptyDash}
+      </Badge>
+    </TableCell>
+  );
+};
+
+const formatFrequencyCell = (item) => {
+  const delayMs = item.delayMs?.N;
+  const startHour = item.startHour?.N;
+
+  // Don't show start hour if runs every 1 hour or less
+  const showStartHour = delayMs !== null && delayMs > 3600000;
+
+  const getCellContent = () => {
+    return delayMs !== null ? msToTimeStr(delayMs) : emptyDash;
+  };
+
+  const getTooltipContent = () => {
+    if (delayMs !== null && startHour !== null) {
+      const frequencyStr = msToTimeStr(delayMs);
+      const baseContent = `Runs every ${frequencyStr}`;
+
+      if (showStartHour) {
+        const formattedStartHour = formatTimeWithTimezone(Number(startHour));
+        return `${baseContent}, starting at ${formattedStartHour}`;
+      }
+
+      return baseContent;
+    }
+    return null;
+  };
+
+  const cellContent = getCellContent();
+  const tooltipContent = getTooltipContent();
+
+  return (
+    <TableCell>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger className="text-start cursor-auto select-text">
+            {cellContent}
+          </TooltipTrigger>
+          {tooltipContent && <TooltipContent>{tooltipContent}</TooltipContent>}
+        </Tooltip>
+      </TooltipProvider>
+    </TableCell>
+  );
+};
+
+const formatNextRunCell = (item) => {
+  const lastExecutedAt = item.lastResult?.M.timestamp.S;
+  const delayMs = item.delayMs?.N;
+  const startHour = item.startHour?.N;
+  const status = item.status?.S;
+
+  const nextRunDate = getNextRunDate(startHour, delayMs);
+  const isHappening = isHappeningNow(lastExecutedAt, startHour, delayMs);
+
+  const getCellContent = () => {
+    if (status !== "ACTIVE" || startHour === null || delayMs === null) {
+      return emptyDash;
+    }
+    if (isHappening) {
+      return loadingDots;
+    }
+    return nextRunDate ? toSentenceCase(getTimeAgo(nextRunDate)) : emptyDash;
+  };
+
+  const getTooltipContent = () => {
+    if (
+      status === "ACTIVE" &&
+      startHour !== null &&
+      delayMs !== null &&
+      !isHappening
+    ) {
+      return formatDateWithTimezone(nextRunDate);
+    }
+    return null;
+  };
+
+  const cellContent = getCellContent();
+  const tooltipContent = getTooltipContent();
+
+  return (
+    <TableCell>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger className="text-start cursor-auto select-text">
+            {cellContent}
+          </TooltipTrigger>
+          {tooltipContent && <TooltipContent>{tooltipContent}</TooltipContent>}
+        </Tooltip>
+      </TooltipProvider>
+    </TableCell>
+  );
+};
+
+const formatLastResultCell = (item) => {
+  const status = item.lastResult?.M.status.S;
+  const message = item.lastResult?.M.message.S;
+  const timestamp = item.lastResult?.M.timestamp.S;
+  const email = item.email?.S;
+
+  const statusToBadgeColor: Record<string, string> = {
+    ALERTED: "GREEN",
+    "NO ALERT": "GRAY",
+    FAILED: "RED",
+  };
+
+  return (
+    <TableCell>
+      <div className="flex flex-col items-start gap-1">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger className="cursor-auto select-text">
+              <Badge
+                className={cn(BADGE_COLOR_CLASS[statusToBadgeColor[status]])}
+              >
+                {toSentenceCase(status)}
+              </Badge>
+            </TooltipTrigger>
+            {email && status === "ALERTED" && (
+              <TooltipContent>Email sent to {email}</TooltipContent>
+            )}
+            {message && status === "FAILED" && (
+              <TooltipContent>{message}</TooltipContent>
+            )}
+          </Tooltip>
+        </TooltipProvider>
+
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger className="cursor-auto select-text text-sm text-gray-500 text-start">
+              {timestamp ? "Last ran " + getTimeAgo(timestamp) : emptyDash}
+            </TooltipTrigger>
+            <TooltipContent>
+              {timestamp ? formatDateWithTimezone(timestamp) : emptyDash}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+    </TableCell>
+  );
+};
+
+const formatMostRecentAlertCell = (item) => {
+  return (
+    <TableCell className="w-0">
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger className="w-32 text-start cursor-auto select-text">
+            {item.mostRecentAlert?.S ? (
+              <Badge className={cn(BADGE_COLOR_CLASS.GREEN)}>
+                {getTimeAgo(item.mostRecentAlert?.S)}
+              </Badge>
+            ) : (
+              emptyDash
+            )}
+          </TooltipTrigger>
+          {item.mostRecentAlert?.S && (
+            <TooltipContent>
+              {formatDateWithTimezone(item.mostRecentAlert?.S)}
+            </TooltipContent>
+          )}
+        </Tooltip>
+      </TooltipProvider>
+    </TableCell>
+  );
+};
+
+const formatKeywordCell = (item) => (
+  <TableCell>{item.keyword?.S ?? emptyDash}</TableCell>
+);
+
+const formatTargetPriceCell = (item) => (
+  <TableCell>
+    {item.attributes?.M.threshold?.N
+      ? `$${item.attributes?.M.threshold.N}`
+      : emptyDash}
+  </TableCell>
+);
+
+const formatDiffPercentageCell = (item) => (
+  <TableCell>
+    {item.attributes?.M.percent_diff?.N
+      ? `${item.attributes?.M.percent_diff.N}%`
+      : emptyDash}
+  </TableCell>
+);
