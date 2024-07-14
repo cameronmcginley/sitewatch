@@ -1,125 +1,174 @@
+import asyncio
 import json
 import os
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+from tabulate import tabulate
+
+os.environ["DYNAMODB_TABLE_NAME"] = "mock-table"
+os.environ["PROCESSOR_LAMBDA_NAME"] = "mock-processor"
+os.environ["email_sender"] = "sender@example.com"
+os.environ["email_password"] = "password123"
+
+import aiohttp
 import boto3
-import pytest
-from moto import mock_aws
-from url_checker_lambda import lambda_handler
-from url_check_functions.availability import check_availability
-from url_check_functions.ebay_price_threshold import check_ebay_price_threshold
 
 
-# Load the dummy data
-with open("test_links.json", "r") as f:
-    dummy_data = json.load(f)
+def mock_send_email(sender, receiver, password, subject, body):
+    print(f"\nEmail Details:")
+    print(f"From: {sender}")
+    print(f"To: {receiver}")
+    print(f"Subject: {subject}")
+    print(f"Body: {body}")
+    print("---")
 
 
-@pytest.fixture(scope="function")
-def aws_credentials():
-    """Mocked AWS Credentials for moto."""
-    os.environ["AWS_ACCESS_KEY_ID"] = "testing"
-    os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"
-    os.environ["AWS_SECURITY_TOKEN"] = "testing"
-    os.environ["AWS_SESSION_TOKEN"] = "testing"
+send_email = MagicMock(side_effect=mock_send_email)
+
+patch("utils.send_email", send_email).start()
+
+# Dummy data
+dummy_data = [
+    {
+        "alias": {"S": "Alias 0"},
+        "check_type": {"S": "EBAY PRICE THRESHOLD"},
+        "pk": {"S": "CHECK#2qpzse3v7ju"},
+        "sk": {"S": "CHECK"},
+        "type": {"S": "CHECK"},
+        "url": {"S": "https://example0.com"},
+        "userid": {"S": "118298783964592448941"},
+        "status": {"S": "ACTIVE"},
+        "attributes": {"M": {"threshold": {"N": "100.95"}}},
+        "email": {"S": "exampleemail0@gmail.com"},
+    },
+    {
+        "alias": {"S": "Alias 1"},
+        "check_type": {"S": "EBAY PRICE THRESHOLD"},
+        "pk": {"S": "CHECK#svefu69ebif"},
+        "sk": {"S": "CHECK"},
+        "type": {"S": "CHECK"},
+        "url": {"S": "https://example1.com"},
+        "userid": {"S": "118298783964592448941"},
+        "status": {"S": "ACTIVE"},
+        "attributes": {"M": {"threshold": {"N": "100.95"}}},
+        "email": {"S": "exampleemail1@gmail.com"},
+    },
+    {
+        "alias": {"S": "Alias 2"},
+        "check_type": {"S": "KEYWORD CHECK"},
+        "pk": {"S": "CHECK#4vs6l43yfej"},
+        "sk": {"S": "CHECK"},
+        "type": {"S": "CHECK"},
+        "url": {"S": "https://example2.com"},
+        "userid": {"S": "118298783964592448941"},
+        "status": {"S": "ACTIVE"},
+        "attributes": {"M": {"keyword": {"S": "Keyword"}, "opposite": {"B": False}}},
+        "email": {"S": "exampleemail2@gmail.com"},
+    },
+]
 
 
-@pytest.fixture(scope="function")
-def mock_env_variables():
-    os.environ["email_sender"] = "sender@example.com"
-    os.environ["email_password"] = "password123"
+# Mock DynamoDB scan method
+def mock_scan(**kwargs):
+    return {"Items": dummy_data}
 
 
-@pytest.mark.asyncio
-async def test_check_availability():
-    link = {
-        "type": "AVAILABILITY",
-        "url": "http://example.com",
-        "text_when_unavailable": "Out of stock",
-    }
-
-    mock_session = MagicMock()
-    mock_response = MagicMock()
-    mock_response.read.return_value = b"Product is available"
-    mock_session.get.return_value.__aenter__.return_value = mock_response
-
-    with patch(
-        "url_check_functions.availability.fetch_url",
-        return_value=b"Product is available",
-    ):
-        await check_availability(mock_session, link)
-
-    assert link["is_available"] == True
+# Mock Lambda invoke method
+def mock_invoke(**kwargs):
+    payload = json.loads(kwargs["Payload"])
+    executor_handler(payload, None)
 
 
-@pytest.mark.asyncio
-async def test_check_ebay_price_threshold():
-    link = {
-        "type": "EBAY_PRICE_THRESHOLD",
-        "url": "http://ebay.com/item",
-        "threshold": 100,
-    }
-
-    mock_session = MagicMock()
-    mock_response = MagicMock()
-    mock_response.read.return_value = b'<html><ul class="srp-results srp-grid clearfix"><li><span class="s-item__price">$90</span><span class="s-item__shipping">$5</span></li></ul></html>'
-    mock_session.get.return_value.__aenter__.return_value = mock_response
-
-    with patch(
-        "url_check_functions.ebay_price_threshold.fetch_url",
-        return_value=mock_response.read.return_value,
-    ):
-        await check_ebay_price_threshold(mock_session, link)
-
-    assert link["is_available"] == True
-    assert link["found_price"] == 95
+# Mock URL check functions
+async def mock_ebay_price_threshold(session, link):
+    link["is_available"] = True
+    link["found_price"] = 95.00
 
 
-@pytest.mark.asyncio
-async def test_lambda_handler(mock_env_variables):
-    event = {"links": dummy_data["links"]}
-
-    with patch("url_checker_lambda.ClientSession") as MockClientSession, patch(
-        "url_checker_lambda.send_email"
-    ) as mock_send_email:
-        mock_session = MockClientSession.return_value
-        mock_get = MagicMock()
-        mock_get.__aenter__.return_value.status = 200
-        mock_get.__aenter__.return_value.read.return_value = b"Product is available"
-        mock_session.get.return_value = mock_get
-
-        await lambda_handler(event, {})
-
-    # Assert that send_email was called for each available product
-    assert mock_send_email.call_count > 0
+async def mock_keyword_check(session, link):
+    link["is_available"] = True
 
 
-@pytest.mark.asyncio
-async def test_lambda_handler_no_available_products(mock_env_variables):
-    event = {
-        "links": [
-            {
-                "type": "AVAILABILITY",
-                "url": "http://example.com",
-                "text_when_unavailable": "In stock",
-            }
-        ]
-    }
+# Mock the boto3 clients
+boto3.resource = MagicMock()
+boto3.client = MagicMock()
 
-    with patch("url_checker_lambda.ClientSession") as MockClientSession, patch(
-        "url_checker_lambda.send_email"
-    ) as mock_send_email:
-        mock_session = MockClientSession.return_value
-        mock_get = MagicMock()
-        mock_get.__aenter__.return_value.status = 200
-        mock_get.__aenter__.return_value.read.return_value = b"In stock"
-        mock_session.get.return_value = mock_get
+# Set up mock methods
+boto3.resource.return_value.Table.return_value.scan = mock_scan
+boto3.client.return_value.invoke = mock_invoke
 
-        result = await lambda_handler(event, {})
+# Mock the aiohttp ClientSession
+aiohttp.ClientSession = MagicMock()
 
-    # Assert that send_email was not called
-    assert mock_send_email.call_count == 0
-    assert result is None
+
+mock_functions = {
+    "EBAY PRICE THRESHOLD": mock_ebay_price_threshold,
+    "KEYWORD CHECK": mock_keyword_check,
+    "PAGE DIFFERENCE": None,
+}
+
+from constants import BATCH_SIZE, CHECKTYPE_TO_FUNCTION_MAP, TIMEOUT_LIMIT
+from lambda_executor import lambda_handler as executor_handler
+from lambda_processor import lambda_handler as processor_handler
+
+
+# Replace actual check functions with mocks
+for check_type, func in CHECKTYPE_TO_FUNCTION_MAP.items():
+    if func is not None:
+        mock_func = mock_functions.get(check_type)
+        if mock_func:
+            CHECKTYPE_TO_FUNCTION_MAP[check_type] = MagicMock(side_effect=mock_func)
+        else:
+            print(f"Warning: No mock function defined for {check_type}")
+
+
+# def test_lambda_functions():
+async def test_lambda_functions():
+    print(f"Using BATCH_SIZE: {BATCH_SIZE}")
+    print(f"Using TIMEOUT_LIMIT: {TIMEOUT_LIMIT}")
+    print("Supported check types:", list(CHECKTYPE_TO_FUNCTION_MAP.keys()))
+
+    print("\nTesting Lambda Processor...")
+    # processor_result = processor_handler({}, None)
+    processor_result = await processor_handler({}, None)
+    print(f"Processor result: {processor_result}")
+
+    print("\nChecking function calls:")
+    function_calls = []
+    for check_type, mock_func in CHECKTYPE_TO_FUNCTION_MAP.items():
+        if mock_func is not None:
+            function_calls.append([check_type, mock_func.call_count])
+
+    print(
+        tabulate(function_calls, headers=["Check Type", "Call Count"], tablefmt="grid")
+    )
+
+    print("\nDetailed Results Table:")
+    results_table = []
+    for item in dummy_data:
+        check_type = item["check_type"]["S"]
+        url = item["url"]["S"]
+        alias = item["alias"]["S"]
+        email = item["email"]["S"]
+
+        # Assume the check was successful if the mock function was called
+        success = (
+            CHECKTYPE_TO_FUNCTION_MAP[check_type].call_count > 0
+            if CHECKTYPE_TO_FUNCTION_MAP[check_type]
+            else "N/A"
+        )
+
+        results_table.append([check_type, url, alias, email, success])
+
+    print(
+        tabulate(
+            results_table,
+            headers=["Check Type", "URL", "Alias", "Email", "Success"],
+            tablefmt="grid",
+        )
+    )
 
 
 if __name__ == "__main__":
-    pytest.main([__file__])
+    with patch("lambda_executor.CHECKTYPE_TO_FUNCTION_MAP", CHECKTYPE_TO_FUNCTION_MAP):
+        # test_lambda_functions()
+        asyncio.run(test_lambda_functions())

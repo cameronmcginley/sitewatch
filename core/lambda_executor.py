@@ -2,19 +2,13 @@ import asyncio
 import os
 import time
 from aiohttp import ClientSession
-from url_check_functions import availability, ebay_price_threshold
 from utils import send_email
+from constants import CHECKTYPE_TO_FUNCTION_MAP, TIMEOUT_LIMIT
 
 print("Loading function")
 
 DEBUG = os.environ.get("debug", "false") == "true"
-TIMEOUT_LIMIT = 100000
 error_counter = {"errors": 0, "total": 0}
-
-function_map = {
-    "AVAILABILITY": availability,
-    "EBAY_PRICE_THRESHOLD": ebay_price_threshold,
-}
 
 
 async def process_link(session, link):
@@ -23,8 +17,8 @@ async def process_link(session, link):
     start_time = time.time()
 
     try:
-        if link["type"] in function_map:
-            await function_map[link["type"]](session, link)
+        if link["type"] in CHECKTYPE_TO_FUNCTION_MAP:
+            await CHECKTYPE_TO_FUNCTION_MAP[link["type"]](session, link)
         else:
             print(f"Unknown check type: {link['type']}")
             link["is_available"] = False
