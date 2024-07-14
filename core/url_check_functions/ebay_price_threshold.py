@@ -3,34 +3,56 @@ from utils import fetch_url, sum_of_numbers
 
 
 async def check_ebay_price_threshold(session, link):
+    """
+    Checks the eBay price threshold for a given link.
+
+    Args:
+        session (aiohttp.ClientSession): The session to use for the HTTP request.
+        link (dict): The link information containing URL, threshold, and other details.
+
+    Returns:
+        dict: A dictionary containing the result of the eBay price threshold check.
+    """
     content = await fetch_url(session, link["url"])
-    if content:
-        tree = html.fromstring(content)
-        first_item = tree.cssselect(
-            "ul.srp-results.srp-grid.clearfix > li:nth-of-type(2)"
-        )
-        if first_item:
-            price_element = first_item[0].cssselect("span.s-item__price")
-            shipping_element = first_item[0].cssselect("span.s-item__shipping")
+    result = {
+        "send_alert": False,
+        "message": "Unable to check price",
+        "found_price": None,
+    }
 
-            if price_element and shipping_element:
-                price = price_element[0].text_content().strip()
-                shipping = shipping_element[0].text_content().strip()
+    if not content:
+        result["message"] = "Failed to fetch URL content"
+        return result
 
-                try:
-                    total_price = sum_of_numbers(price, shipping)
-                    if total_price < link["threshold"]:
-                        link["is_available"] = True
-                        link["found_price"] = total_price
-                    else:
-                        link["is_available"] = False
-                except TypeError as e:
-                    print(f"Error parsing price for {link['url']}: {e}")
-                    link["is_available"] = False
-            else:
-                print(f"Price or shipping elements missing for {link['url']}")
-                link["is_available"] = False
+    tree = html.fromstring(content)
+    first_item = tree.cssselect("ul.srp-results.srp-grid.clearfix > li:nth-of-type(2)")
+
+    if not first_item:
+        result["message"] = "No items found on the page"
+        return result
+
+    price_element = first_item[0].cssselect("span.s-item__price")
+    shipping_element = first_item[0].cssselect("span.s-item__shipping")
+
+    if not (price_element and shipping_element):
+        result["message"] = "Price or shipping elements missing"
+        return result
+
+    price = price_element[0].text_content().strip()
+    shipping = shipping_element[0].text_content().strip()
+
+    try:
+        total_price = sum_of_numbers(price, shipping)
+        result["found_price"] = total_price
+
+        if total_price < link["threshold"]:
+            result["send_alert"] = True
+            result["message"] = f"Price threshold met. Found price: ${total_price:.2f}"
         else:
-            link["is_available"] = False
-    else:
-        link["is_available"] = False
+            result[
+                "message"
+            ] = f"Price above threshold. Found price: ${total_price:.2f}"
+    except TypeError as e:
+        result["message"] = f"Error parsing price: {e}"
+
+    return result

@@ -2,20 +2,35 @@ from utils import fetch_url
 
 
 async def keyword_check(session, link):
+    """
+    Performs a keyword check on the given URL and returns a result dictionary.
+
+    Args:
+        session (aiohttp.ClientSession): The session to use for the HTTP request.
+        link (dict): The link information containing URL, keyword, and other details.
+
+    Returns:
+        dict: A dictionary containing the result of the keyword check.
+    """
     content = await fetch_url(session, link["url"])
 
     if not content:
-        link["keyword_found"] = False
-        return
-
-    # if content:
-    #     tree = html.fromstring(content)
-    #     if link["text_when_unavailable"] not in tree.text_content():
-    #         link["is_available"] = True
-    #     else:
-    #         link["is_available"] = False
-    # else:
-    #     link["is_available"] = False
+        return {
+            "send_alert": False,
+            "message": "Failed to fetch URL content",
+        }
 
     keyword_found = link["keyword"].lower() in content.text().lower()
-    link["keyword_found"] = keyword_found if not link["opposite"] else not keyword_found
+    send_alert = keyword_found if not link["opposite"] else not keyword_found
+
+    result = {
+        "send_alert": send_alert,
+        "message": f"Keyword {'found' if keyword_found else 'not found'}",
+    }
+
+    if send_alert:
+        result["message"] += f" - Alert condition met"
+    else:
+        result["message"] += f" - No alert needed"
+
+    return result

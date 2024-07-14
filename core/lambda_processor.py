@@ -26,6 +26,8 @@ def transform_item(item):
         "type": item["check_type"]["S"],
         "url": item["url"]["S"],
         "email": item["email"]["S"],
+        "pk": item["pk"]["S"],
+        "sk": item["sk"]["S"],
     }
 
     if item["check_type"]["S"] == "EBAY PRICE THRESHOLD":

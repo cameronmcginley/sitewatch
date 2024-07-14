@@ -1,10 +1,11 @@
 import asyncio
 import json
 import os
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, patch, AsyncMock
 from tabulate import tabulate
 import aiohttp
 import boto3
+from datetime import datetime, timezone
 
 # Set up environment variables
 os.environ["DYNAMODB_TABLE_NAME"] = "mock-table"
@@ -25,6 +26,20 @@ def mock_send_email(sender, receiver, password, subject, body):
 
 send_email = MagicMock(side_effect=mock_send_email)
 patch("utils.send_email", send_email).start()
+
+
+async def mock_update_dynamodb_item(pk, sk, last_result):
+    print(f"\nMock Updating DynamoDB item:")
+    print(f"PK: {pk}")
+    print(f"SK: {sk}")
+    print(f"Last Result: {last_result}")
+    print(f"Updated At: {datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S.%fZ')}")
+    print(f"Updated item {pk} in DynamoDB")
+
+
+update_dynamodb_item = AsyncMock(side_effect=mock_update_dynamodb_item)
+patch("lambda_executor.update_dynamodb_item", update_dynamodb_item).start()
+
 
 dummy_data = [
     {
@@ -79,13 +94,16 @@ def mock_invoke(**kwargs):
 
 async def mock_ebay_price_threshold(session, link):
     """Mock function for eBay price threshold check."""
-    link["is_available"] = True
-    link["found_price"] = 95.00
+    return {
+        "send_alert": True,
+        "found_price": 95.00,
+        "message": "Price threshold met",
+    }
 
 
 async def mock_keyword_check(session, link):
     """Mock function for keyword check."""
-    link["is_available"] = True
+    return {"send_alert": True, "message": "Keyword found"}
 
 
 # Set up mock methods
@@ -159,6 +177,11 @@ async def test_lambda_functions():
             tablefmt="grid",
         )
     )
+
+    print("\nDynamoDB Update Calls:")
+    for call in update_dynamodb_item.call_args_list:
+        args, kwargs = call
+        print(f"PK: {args[0]}, SK: {args[1]}, Last Result: {args[2]}")
 
 
 if __name__ == "__main__":
