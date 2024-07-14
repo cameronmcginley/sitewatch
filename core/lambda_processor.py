@@ -5,16 +5,22 @@ import boto3
 from boto3.dynamodb.conditions import Attr
 from constants import BATCH_SIZE
 
-# Initialize DynamoDB client
+# Initialize DynamoDB and Lambda clients
 dynamodb = boto3.resource("dynamodb")
 table = dynamodb.Table(os.environ["DYNAMODB_TABLE_NAME"])
-
-# Initialize Lambda client
 lambda_client = boto3.client("lambda")
 
 
 def transform_item(item):
-    """Transform a DynamoDB item into the format expected by the processing Lambda."""
+    """
+    Transform a DynamoDB item into the format expected by the processing Lambda.
+
+    Args:
+        item (dict): The DynamoDB item to transform.
+
+    Returns:
+        dict: The transformed item.
+    """
     transformed = {
         "alias": item["alias"]["S"],
         "type": item["check_type"]["S"],
@@ -32,7 +38,12 @@ def transform_item(item):
 
 
 async def scan_table():
-    """Asynchronously scan the DynamoDB table."""
+    """
+    Asynchronously scan the DynamoDB table for active items.
+
+    Returns:
+        list: A list of active items from the DynamoDB table.
+    """
     items = []
     scan_kwargs = {"FilterExpression": Attr("status").eq("ACTIVE")}
 
@@ -48,7 +59,12 @@ async def scan_table():
 
 
 async def invoke_lambda(batch):
-    """Asynchronously invoke the processor Lambda function."""
+    """
+    Asynchronously invoke the processor Lambda function.
+
+    Args:
+        batch (list): A batch of items to be processed by the Lambda function.
+    """
     await asyncio.to_thread(
         lambda_client.invoke,
         FunctionName=os.environ["PROCESSOR_LAMBDA_NAME"],
@@ -58,17 +74,21 @@ async def invoke_lambda(batch):
 
 
 async def lambda_handler(event, context):
-    # Scan DynamoDB table to get all active checks
+    """
+    Main Lambda handler function.
+
+    Args:
+        event (dict): The event data passed to the Lambda function.
+        context (object): The context in which the Lambda function is running.
+
+    Returns:
+        dict: A response containing the status code and a summary of the processing.
+    """
     items = await scan_table()
-
-    # Transform items into the format expected by the processing Lambda
     transformed_items = [transform_item(item) for item in items]
-
-    # Split items into batches
-    batch_size = BATCH_SIZE
     batches = [
-        transformed_items[i : i + batch_size]
-        for i in range(0, len(transformed_items), batch_size)
+        transformed_items[i : i + BATCH_SIZE]
+        for i in range(0, len(transformed_items), BATCH_SIZE)
     ]
 
     # Invoke a new Lambda function for each batch
@@ -80,6 +100,5 @@ async def lambda_handler(event, context):
     }
 
 
-# For local testing
 if __name__ == "__main__":
     asyncio.run(lambda_handler({}, None))

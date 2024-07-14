@@ -3,17 +3,18 @@ import json
 import os
 from unittest.mock import MagicMock, patch
 from tabulate import tabulate
+import aiohttp
+import boto3
 
+# Set up environment variables
 os.environ["DYNAMODB_TABLE_NAME"] = "mock-table"
 os.environ["PROCESSOR_LAMBDA_NAME"] = "mock-processor"
 os.environ["email_sender"] = "sender@example.com"
 os.environ["email_password"] = "password123"
 
-import aiohttp
-import boto3
-
 
 def mock_send_email(sender, receiver, password, subject, body):
+    """Mock function to simulate sending an email."""
     print(f"\nEmail Details:")
     print(f"From: {sender}")
     print(f"To: {receiver}")
@@ -23,10 +24,8 @@ def mock_send_email(sender, receiver, password, subject, body):
 
 
 send_email = MagicMock(side_effect=mock_send_email)
-
 patch("utils.send_email", send_email).start()
 
-# Dummy data
 dummy_data = [
     {
         "alias": {"S": "Alias 0"},
@@ -67,38 +66,36 @@ dummy_data = [
 ]
 
 
-# Mock DynamoDB scan method
 def mock_scan(**kwargs):
+    """Mock function to simulate DynamoDB scan operation."""
     return {"Items": dummy_data}
 
 
-# Mock Lambda invoke method
 def mock_invoke(**kwargs):
+    """Mock function to simulate Lambda invoke operation."""
     payload = json.loads(kwargs["Payload"])
     executor_handler(payload, None)
 
 
-# Mock URL check functions
 async def mock_ebay_price_threshold(session, link):
+    """Mock function for eBay price threshold check."""
     link["is_available"] = True
     link["found_price"] = 95.00
 
 
 async def mock_keyword_check(session, link):
+    """Mock function for keyword check."""
     link["is_available"] = True
 
 
-# Mock the boto3 clients
+# Set up mock methods
 boto3.resource = MagicMock()
 boto3.client = MagicMock()
-
-# Set up mock methods
 boto3.resource.return_value.Table.return_value.scan = mock_scan
 boto3.client.return_value.invoke = mock_invoke
 
 # Mock the aiohttp ClientSession
 aiohttp.ClientSession = MagicMock()
-
 
 mock_functions = {
     "EBAY PRICE THRESHOLD": mock_ebay_price_threshold,
@@ -110,7 +107,6 @@ from constants import BATCH_SIZE, CHECKTYPE_TO_FUNCTION_MAP, TIMEOUT_LIMIT
 from lambda_executor import lambda_handler as executor_handler
 from lambda_processor import lambda_handler as processor_handler
 
-
 # Replace actual check functions with mocks
 for check_type, func in CHECKTYPE_TO_FUNCTION_MAP.items():
     if func is not None:
@@ -121,44 +117,41 @@ for check_type, func in CHECKTYPE_TO_FUNCTION_MAP.items():
             print(f"Warning: No mock function defined for {check_type}")
 
 
-# def test_lambda_functions():
 async def test_lambda_functions():
+    """
+    Main test function to simulate and validate Lambda function behavior.
+    """
     print(f"Using BATCH_SIZE: {BATCH_SIZE}")
     print(f"Using TIMEOUT_LIMIT: {TIMEOUT_LIMIT}")
     print("Supported check types:", list(CHECKTYPE_TO_FUNCTION_MAP.keys()))
 
     print("\nTesting Lambda Processor...")
-    # processor_result = processor_handler({}, None)
     processor_result = await processor_handler({}, None)
     print(f"Processor result: {processor_result}")
 
     print("\nChecking function calls:")
-    function_calls = []
-    for check_type, mock_func in CHECKTYPE_TO_FUNCTION_MAP.items():
-        if mock_func is not None:
-            function_calls.append([check_type, mock_func.call_count])
-
+    function_calls = [
+        [check_type, mock_func.call_count]
+        for check_type, mock_func in CHECKTYPE_TO_FUNCTION_MAP.items()
+        if mock_func is not None
+    ]
     print(
         tabulate(function_calls, headers=["Check Type", "Call Count"], tablefmt="grid")
     )
 
     print("\nDetailed Results Table:")
-    results_table = []
-    for item in dummy_data:
-        check_type = item["check_type"]["S"]
-        url = item["url"]["S"]
-        alias = item["alias"]["S"]
-        email = item["email"]["S"]
-
-        # Assume the check was successful if the mock function was called
-        success = (
-            CHECKTYPE_TO_FUNCTION_MAP[check_type].call_count > 0
-            if CHECKTYPE_TO_FUNCTION_MAP[check_type]
-            else "N/A"
-        )
-
-        results_table.append([check_type, url, alias, email, success])
-
+    results_table = [
+        [
+            item["check_type"]["S"],
+            item["url"]["S"],
+            item["alias"]["S"],
+            item["email"]["S"],
+            "Success"
+            if CHECKTYPE_TO_FUNCTION_MAP[item["check_type"]["S"]].call_count > 0
+            else "N/A",
+        ]
+        for item in dummy_data
+    ]
     print(
         tabulate(
             results_table,
@@ -170,5 +163,4 @@ async def test_lambda_functions():
 
 if __name__ == "__main__":
     with patch("lambda_executor.CHECKTYPE_TO_FUNCTION_MAP", CHECKTYPE_TO_FUNCTION_MAP):
-        # test_lambda_functions()
         asyncio.run(test_lambda_functions())

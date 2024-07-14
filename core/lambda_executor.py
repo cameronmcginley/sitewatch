@@ -12,6 +12,13 @@ error_counter = {"errors": 0, "total": 0}
 
 
 async def process_link(session, link):
+    """
+    Process a single link asynchronously.
+
+    Args:
+        session (ClientSession): The aiohttp client session.
+        link (dict): The link to process.
+    """
     global error_counter
     error_counter["total"] += 1
     start_time = time.time()
@@ -33,8 +40,16 @@ async def process_link(session, link):
 
 
 async def main_handler(event, context):
-    start_time = time.time()
+    """
+    Main asynchronous handler function.
 
+    Args:
+        event (dict): The event data passed to the Lambda function.
+        context (object): The context in which the Lambda function is running.
+
+    This function processes all links and sends email notifications for available products.
+    """
+    start_time = time.time()
     links = event.get("links", [])
 
     async with ClientSession() as session:
@@ -66,4 +81,14 @@ async def main_handler(event, context):
 
 
 def lambda_handler(event, context):
+    """
+    AWS Lambda function handler.
+
+    Args:
+        event (dict): The event data passed to the Lambda function.
+        context (object): The context in which the Lambda function is running.
+
+    Returns:
+        The result of the main_handler function.
+    """
     return asyncio.run(main_handler(event, context))

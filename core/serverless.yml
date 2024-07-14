@@ -1,0 +1,81 @@
+service: url-checker
+
+provider:
+  name: aws
+  runtime: python3.8
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
+  environment:
+    DYNAMODB_TABLE_NAME: ${self:service}-${self:provider.stage}
+    PROCESSOR_LAMBDA_NAME: ${self:service}-${self:provider.stage}-processor
+    EXECUTOR_LAMBDA_NAME: ${self:service}-${self:provider.stage}-executor
+    email_sender: ${ssm:/url-checker/email-sender}
+    email_password: ${ssm:/url-checker/email-password~true}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Scan
+        - dynamodb:Query
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE_NAME}"
+    - Effect: Allow
+      Action:
+        - lambda:InvokeFunction
+      Resource:
+        - "arn:aws:lambda:${self:provider.region}:*:function:${self:provider.environment.EXECUTOR_LAMBDA_NAME}"
+
+functions:
+  processor:
+    handler: lambda_processor.lambda_handler
+    events:
+      - schedule: rate(5 minutes)
+    timeout: 60 # 1 minute
+    environment:
+      EXECUTOR_LAMBDA_NAME: ${self:provider.environment.EXECUTOR_LAMBDA_NAME}
+
+  executor:
+    handler: lambda_executor.lambda_handler
+    timeout: 300 # 5 minutes
+
+resources:
+  Resources:
+    UrlCheckerTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_TABLE_NAME}
+        AttributeDefinitions:
+          - AttributeName: pk
+            AttributeType: S
+          - AttributeName: sk
+            AttributeType: S
+        KeySchema:
+          - AttributeName: pk
+            KeyType: HASH
+          - AttributeName: sk
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: non-linux
+
+package:
+  individually: true
+  patterns:
+    - "!node_modules/**"
+    - "!venv/**"
+    - "!lambda_test.py"
+    - "constants.py"
+    - "url_check_functions/**"
+
+  exclude:
+    - package.json
+    - package-lock.json
+    - .gitignore
+    - README.md
