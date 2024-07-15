@@ -1,4 +1,4 @@
-from utils import fetch_url
+from fetch_url import fetch_url
 
 
 async def keyword_check(session, link):

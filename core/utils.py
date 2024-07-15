@@ -8,21 +8,21 @@ import aiohttp
 TIMEOUT_LIMIT = 100000
 
 
-async def fetch_url(session, url):
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:106.0) Gecko/20100101 Firefox/106.0"
-    }
-    url = yarl.URL(url, encoded=True)
-    try:
-        async with session.get(url, timeout=TIMEOUT_LIMIT, headers=headers) as response:
-            if response.status == 200:
-                return await response.read()
-            else:
-                print(f"Error fetching {url}: {response.status}")
-                return None
-    except aiohttp.ClientError as e:
-        print(f"Error fetching {url}: {str(e)}")
-        return None
+# async def fetch_url(session, url):
+#     headers = {
+#         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:106.0) Gecko/20100101 Firefox/106.0"
+#     }
+#     url = yarl.URL(url, encoded=True)
+#     try:
+#         async with session.get(url, timeout=TIMEOUT_LIMIT, headers=headers) as response:
+#             if response.status == 200:
+#                 return await response.read()
+#             else:
+#                 print(f"Error fetching {url}: {response.status}")
+#                 return None
+#     except aiohttp.ClientError as e:
+#         print(f"Error fetching {url}: {str(e)}")
+#         return None
 
 
 def send_email(sender, receiver, password, subject, body):
