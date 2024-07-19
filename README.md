@@ -1,162 +1,44 @@
 # Store Checker Lambda
 
-This lambda has two functionalities: 
-1. Check an item's URL and see if it is available to buy
-2. Get the lowest priced item from an Ebay search and check against threshold
+The Store Checker Lambda is a versatile and extensible solution for automating the monitoring of websites using a variety of functions. It allows for customizable checks based on user-defined criteria and intervals, ensuring timely notifications when specified conditions are met.
 
-Both are implemented together, with Enum to differentiate and unique fields in `links.py`
+## Features
 
-Emails are sent for results, using environment variables for `sender`, `receiver`, `password`
+- **Automated Monitoring**: Continuously monitors specified URLs at user-defined intervals.
+- **Customizable Functions**: Supports various functions for different types of checks, such as keyword presence and price thresholds.
+- **Email Notifications**: Sends alerts when specified criteria are met, using configurable email settings.
+- **Extensible Architecture**: Easily add new check functions as needed. Current functionalities include keyword presence and price threshold checks.
+- **Configuration**: Customize URLs, keywords, and price thresholds via a straightforward setup process.
+- **Authentication and Permissions**: Features authentication with different permissions per account, controlling the number of URL checks allowed and the frequency of checks.
 
-## Adding Modules to Lambda Layer
+## How It Works
 
-Create `python` folder (or any name), install modules to it, then add onto layer in AWS console.
+1. **User Configuration**: Specify the URLs to monitor, the type of check (e.g., keyword or price threshold), and the checking interval via UI.
+2. **Automated Checks**: The Lambda function executes the specified checks at the defined intervals.
+3. **Notification**: Sends an email notification when the criteria for any check are met.
 
-- `mkdir python`
-- `pip install -t python requests beautifulsoup4 aiohttp lxml tenacity`
-- Zip it
-- Upload to AWS layer
+## Current Functionalities
 
+URL is given by user, pointing to exact URL to check. For example, on Ebay Price Threshold Check, the URL will point to the user's desired search query. On the backend, we add (if needed) paramaters to the URL to query and sort for lowest priced "buy-it-now" items, which ensures the lowest priced item will be on the given URL. Each function may work slightly differently in terms of preprocessing.
 
+1. **Keyword Check**: Monitors a specified URL for the presence (or lack thereof) of user-defined keywords, triggering notifications when keywords are detected.
+   - Parameters: `url: string`, `keyword: string`, `opposite: boolean`
+2. **Ebay Price Threshold Check**: Searches for the lowest priced item on Ebay and alerts the user when the price falls below a predefined threshold.
+   - Parameters: `url: string`, `threshold: number`
 
-```mermaid
-graph TD
-    subgraph User
-        U1[User]
-    end
-
-    subgraph Frontend
-        A[React App]
-            A1[Google Sign-In]
-            A2[Website Notification Settings]
-    end
-
-    subgraph Supabase
-        B[PostgreSQL Database]
-        K[Supabase Storage]
-    end
-
-    subgraph Backend
-        C[Express API]
-    end
-
-    subgraph AWS
-        F[Lambda]
-        J[EventBridge]
-    end
-
-    subgraph Google
-        I[Gmail API]
-    end
-
-    subgraph Hosting
-        G[GitHub Pages]
-    end
-
-    U1 --> A1
-    A --> A2
-    A1 --> A
-    A2 -->|CRUD Operations| C
-    C --> B
-    F -->|Get Website Data| Internet
-    F -->|Get Links/Data to Check| B
-    F -->|Get/Store HTML| K
-    F -->|Criteria Met| I
-    I -->|Email User| U1
-    G --> A
-    J[EventBridge] -->|Timer| F
-```
-
-```mermaid
-graph TD
-    subgraph User
-        U1[User]
-    end
-
-    subgraph Frontend
-        A[React App]
-            A1[Google Sign-In]
-            A2[Website Notification Settings]
-    end
-
-    subgraph Firebase
-        B[Firestore Database]
-        K[Firebase Storage]
-    end
-
-    subgraph Backend
-        C[Express API]
-    end
-
-    subgraph AWS
-        F[Lambda]
-        J[EventBridge]
-    end
-
-    subgraph Google
-        I[Gmail API]
-    end
-
-    subgraph Hosting
-        G[GitHub Pages]
-    end
-
-    U1 --> A1
-    A --> A2
-    A1 --> A
-    A2 -->|CRUD Operations| C
-    C --> B
-    F -->|Get Website Data| Internet
-    F -->|Get Links/Data to Check| B
-    F -->|Get/Store HTML| K
-    F -->|Criteria Met| I
-    I -->|Email User| U1
-    G --> A
-    J -->|Timer| F
+## Project Structure
 
 ```
-
-
-```mermaid
-graph TD
-    subgraph User
-        U1[User]
-    end
-
-    subgraph Frontend
-        A[React App]
-            A1[Cognito Sign-In]
-            A2[Website Notification Settings]
-    end
-
-    subgraph AWS
-        B[DynamoDB]
-        C[S3]
-        F[Lambda]
-        J[EventBridge]
-        L[Cognito]
-        I[SES]
-        APIGW[API Gateway]
-    end
-
-    subgraph Hosting
-        G[GitHub Pages]
-    end
-
-    U1 --> A1
-    A --> A2
-    A1 --> A
-    A2 -->|CRUD Operations| APIGW
-    APIGW -->|Invoke| B
-    F -->|Get Website Data| Internet
-    F -->|Get Links/Data to Check| B
-    F -->|Get/Store HTML| C
-    F -->|Criteria Met| I
-    I -->|Email User| U1
-    G --> A
-    J -->|Timer| F
-
-
+project-root/
+├── core/
+│   └── ...                 # Core logic of the service
+├── api/
+│   └── ...                 # API endpoints and handlers
+├── ui/
+│   └── ...                 # User interface components and logic
+└── deploy/
+    ├── deploy-core.mjs     # Deployment script for the core service
+    └── deploy-api.mjs      # Deployment script for the API service
 ```
 
 ```mermaid
@@ -198,23 +80,6 @@ graph TD
     I -->|Email User| U1
     G --> A
     J -->|Timer| F
-
-
-```
-
-## Project Structure
-
-```
-project-root/
-├── core/
-│   └── ...                 # Core logic of the service
-├── api/
-│   └── ...                 # API endpoints and handlers
-├── ui/
-│   └── ...                 # User interface components and logic
-└── deploy/
-    ├── deploy-core.mjs     # Deployment script for the core service
-    └── deploy-api.mjs      # Deployment script for the API service
 ```
 
 ## Deployment
