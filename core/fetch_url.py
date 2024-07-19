@@ -11,7 +11,7 @@ USER_AGENTS: List[str] = [
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Safari/605.1.15",
 ]
 
-# List of proxy servers (replace with your own if you have them)
+# List of proxy servers
 PROXIES: List[str] = [
     # "http://proxy1.example.com:8080",
     # "http://proxy2.example.com:8080",

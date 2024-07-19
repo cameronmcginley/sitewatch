@@ -1,4 +1,4 @@
-service: webcheck
+service: sitewatch-api
 
 provider:
   name: aws

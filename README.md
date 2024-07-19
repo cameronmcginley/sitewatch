@@ -158,3 +158,97 @@ graph TD
 
 
 ```
+
+```mermaid
+graph TD
+    subgraph User
+        U1[User]
+    end
+
+    subgraph Frontend
+        A[Next.js App]
+            A1[Next Auth Sign-In]
+            A2[Website Notification Settings]
+    end
+
+    subgraph AWS
+        B[DynamoDB]
+        C[S3]
+        F[Processor Lambda]
+        E[Executor Lambdas]
+        J[EventBridge]
+        I[Gmail API]
+        APIGW[API Gateway]
+    end
+
+    subgraph Hosting
+        G[GitHub Pages]
+    end
+
+    U1 --> A1
+    A --> A2
+    A1 --> A
+    A2 -->|CRUD Operations| APIGW
+    APIGW -->|Invoke| B
+    F -->|Get Links/Data to Check| B
+    F -->|Invoke| E
+    E -->|Check Website| Internet
+    E -->|Get/Store HTML| C
+    E -->|Criteria Met| I
+    I -->|Email User| U1
+    G --> A
+    J -->|Timer| F
+
+
+```
+
+## Project Structure
+
+```
+project-root/
+├── core/
+│   └── ...                 # Core logic of the service
+├── api/
+│   └── ...                 # API endpoints and handlers
+├── ui/
+│   └── ...                 # User interface components and logic
+└── deploy/
+    ├── deploy-core.mjs     # Deployment script for the core service
+    └── deploy-api.mjs      # Deployment script for the API service
+```
+
+## Deployment
+
+To deploy the application, follow these steps. Make sure you have the necessary environment variables and dependencies set up.
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) installed
+- [Serverless Framework](https://www.serverless.com/framework/docs/getting-started/) installed
+- AWS credentials configured for Serverless
+
+### Setup
+
+1. **Install dependencies:**
+
+`npm install`
+
+2. **Ensure AWS credentials are configured:**
+
+Set up AWS credentials using the AWS CLI or manually configuring the ~/.aws/credentials file.
+
+3. **Deploying Core**
+
+Dev: `npm run deploy:core:dev`
+
+Prod: `npm run deploy:core:prod`
+
+3. **Deploying API**
+
+Dev: `npm run deploy:api:dev`
+
+Prod: `npm run deploy:api:prod`
+
+4. **Deploying UI**
+
+Changes to main branch auto-deployed by Vercel.

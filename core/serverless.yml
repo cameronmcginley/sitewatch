@@ -1,16 +1,14 @@
-service: url-checker
+service: sitewatch-core
 
 provider:
   name: aws
   runtime: python3.8
   stage: ${opt:stage, 'dev'}
-  region: ${opt:region, 'us-east-1'}
+  region: ${opt:region, 'us-east-2'}
   environment:
     DYNAMODB_TABLE_NAME: ${self:service}-${self:provider.stage}
     PROCESSOR_LAMBDA_NAME: ${self:service}-${self:provider.stage}-processor
     EXECUTOR_LAMBDA_NAME: ${self:service}-${self:provider.stage}-executor
-    email_sender: ${ssm:/url-checker/email-sender}
-    email_password: ${ssm:/url-checker/email-password~true}
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -26,6 +24,11 @@ provider:
         - lambda:InvokeFunction
       Resource:
         - "arn:aws:lambda:${self:provider.region}:*:function:${self:provider.environment.EXECUTOR_LAMBDA_NAME}"
+    - Effect: Allow
+      Action:
+        - ssm:GetParameter
+      Resource:
+        - "arn:aws:ssm:${self:provider.region}:*:parameter/url-checker/*"
 
 functions:
   processor:
@@ -35,10 +38,15 @@ functions:
     timeout: 60 # 1 minute
     environment:
       EXECUTOR_LAMBDA_NAME: ${self:provider.environment.EXECUTOR_LAMBDA_NAME}
+      email_sender: ${ssm:/url-checker/email-sender}
+      email_password: ${ssm:/url-checker/email-password}
 
   executor:
     handler: lambda_executor.lambda_handler
     timeout: 300 # 5 minutes
+    environment:
+      email_sender: ${ssm:/url-checker/email-sender}
+      email_password: ${ssm:/url-checker/email-password}
 
 resources:
   Resources:
@@ -73,7 +81,6 @@ package:
     - "!lambda_test.py"
     - "constants.py"
     - "url_check_functions/**"
-
   exclude:
     - package.json
     - package-lock.json
