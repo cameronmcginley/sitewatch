@@ -17,6 +17,9 @@ import {
   getTimeAgo,
   msToTimeStr,
   formatTimeWithTimezone,
+  getNextRunTimeFromCron,
+  isHappeningNowFromCron,
+  cronToPlainText,
 } from "./utils";
 import { cn } from "@/lib/utils";
 import { BADGE_COLOR_CLASS } from "@/lib/constants";
@@ -148,24 +151,19 @@ const formatStatusCell = (item) => {
 
 const formatFrequencyCell = (item) => {
   const delayMs = item.delayMs?.N;
-  const startHour = item.startHour?.N;
+  // const startHour = item.startHour?.N;
+  const cron = item.cron?.S;
 
   // Don't show start hour if runs every 1 hour or less
-  const showStartHour = delayMs !== null && delayMs > 3600000;
+  // const showStartHour = delayMs !== null && delayMs > 3600000;
 
   const getCellContent = () => {
     return delayMs !== null ? msToTimeStr(delayMs) : emptyDash;
   };
 
   const getTooltipContent = () => {
-    if (delayMs !== null && startHour !== null) {
-      const frequencyStr = msToTimeStr(delayMs);
-      const baseContent = `Runs every ${frequencyStr}`;
-
-      if (showStartHour) {
-        const formattedStartHour = formatTimeWithTimezone(Number(startHour));
-        return `${baseContent}, starting at ${formattedStartHour}`;
-      }
+    if (delayMs !== null && cron !== null) {
+      const baseContent = `Runs: ${cronToPlainText(cron)} (${cron})`;
 
       return baseContent;
     }
@@ -192,14 +190,15 @@ const formatFrequencyCell = (item) => {
 const formatNextRunCell = (item) => {
   const lastExecutedAt = item.lastResult?.M.timestamp.S;
   const delayMs = item.delayMs?.N;
-  const startHour = item.startHour?.N;
+  // const startHour = item.startHour?.N;
   const status = item.status?.S;
+  const cron = item.cron?.S;
 
-  const nextRunDate = getNextRunDate(startHour, delayMs);
-  const isHappening = isHappeningNow(lastExecutedAt, startHour, delayMs);
+  const nextRunDate = getNextRunTimeFromCron(cron);
+  const isHappening = isHappeningNowFromCron(lastExecutedAt, cron);
 
   const getCellContent = () => {
-    if (status !== "ACTIVE" || startHour === null || delayMs === null) {
+    if (status !== "ACTIVE" || cron === null || delayMs === null) {
       return emptyDash;
     }
     if (isHappening) {
@@ -211,7 +210,7 @@ const formatNextRunCell = (item) => {
   const getTooltipContent = () => {
     if (
       status === "ACTIVE" &&
-      startHour !== null &&
+      cron !== null &&
       delayMs !== null &&
       !isHappening
     ) {

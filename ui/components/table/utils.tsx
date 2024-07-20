@@ -4,6 +4,7 @@ import {
   intervalToDuration,
 } from "date-fns";
 import cronParser from "cron-parser";
+import cronstrue from "cronstrue";
 
 export const msToTimeStr = (ms: number): string => {
   const duration = intervalToDuration({ start: 0, end: ms });
@@ -13,6 +14,15 @@ export const msToTimeStr = (ms: number): string => {
   });
 
   return formattedDuration;
+};
+
+export const cronToPlainText = (cronExpression: string): string => {
+  try {
+    return cronstrue.toString(cronExpression, { verbose: false, tzOffset: 0 });
+  } catch (err) {
+    console.error("Error parsing cron expression:", err);
+    return "Invalid cron expression";
+  }
 };
 
 export const toSentenceCase = (str: string) => {
@@ -65,7 +75,7 @@ export const getNextRunDate = (startHour: string, delayMs: number): Date => {
   return nextRunDate;
 };
 
-export const getNextRunTimeWithCron = (cronString: string): Date => {
+export const getNextRunTimeFromCron = (cronString: string): Date => {
   const options = {
     currentDate: new Date(),
     utc: true,
@@ -90,6 +100,25 @@ export const isHappeningNow = (
   return nextRunDate
     ? new Date(nextRunDate.getTime() - delayMs) > lastExecutedDate
     : null;
+};
+
+export const isHappeningNowFromCron = (
+  lastExecutedAt: string,
+  cronExpression: string
+): boolean | null => {
+  try {
+    const interval = cronParser.parseExpression(cronExpression);
+    const nextRunDate = interval.next().toDate();
+    const lastExecutedDate = new Date(lastExecutedAt);
+
+    return (
+      new Date(nextRunDate.getTime() - lastExecutedDate.getTime()) >
+      lastExecutedDate
+    );
+  } catch (err) {
+    console.error("Error parsing cron expression:", err);
+    return null;
+  }
 };
 
 export const getTimeAgo = (date: Date) => {
