@@ -1,6 +1,6 @@
-# Store Checker Lambda
+# SiteWatch
 
-The Store Checker Lambda is a versatile and extensible solution for automating the monitoring of websites using a variety of functions. It allows for customizable checks based on user-defined criteria and intervals, ensuring timely notifications when specified conditions are met.
+SiteWatch is a versatile and extensible solution for automating the monitoring of websites using a variety of functions. It allows for customizable checks based on user-defined criteria and intervals, ensuring timely notifications when specified conditions are met.
 
 ## Features
 
@@ -19,12 +19,21 @@ The Store Checker Lambda is a versatile and extensible solution for automating t
 
 ## Current Functionalities
 
-URL is given by user, pointing to exact URL to check. For example, on Ebay Price Threshold Check, the URL will point to the user's desired search query. On the backend, we add (if needed) paramaters to the URL to query and sort for lowest priced "buy-it-now" items, which ensures the lowest priced item will be on the given URL. Each function may work slightly differently in terms of preprocessing.
-
-1. **Keyword Check**: Monitors a specified URL for the presence (or lack thereof) of user-defined keywords, triggering notifications when keywords are detected.
+1. **KEYWORD_CHECK**: Monitors a specified URL for the presence (or lack thereof) of user-defined keywords, triggering notifications when keywords are detected.
    - Parameters: `url: string`, `keyword: string`, `opposite: boolean`
-2. **Ebay Price Threshold Check**: Searches for the lowest priced item on Ebay and alerts the user when the price falls below a predefined threshold.
+2. **EBAY_PRICE_THRESHOLD**: Searches for the lowest priced item on Ebay and alerts the user when the price falls below a predefined threshold.
    - Parameters: `url: string`, `threshold: number`
+
+### URL Preprocessing
+
+Some URL Parameter preprocessing is done after it is submitted by a user, and varies by function. The below list details unique preprocessing done per function.
+
+1. **KEYWORD_CHECK**: 
+    - Basic URL verification
+2. **EBAY_PRICE_THRESHOLD**: 
+   - Verifies URL is valid Ebay link
+   - Verifies search parameter in URL, if not then request from User
+   - Adds URL parameters (if does not exist) to query and sort by "buy it now" and "lowest price first"
 
 ## Project Structure
 
@@ -40,6 +49,50 @@ project-root/
     ├── deploy-core.mjs     # Deployment script for the core service
     └── deploy-api.mjs      # Deployment script for the API service
 ```
+
+1. Core
+   1. Processor Lambda
+      1. Fetches all URLs stored in DynamoDB ready to run
+      2. Batches URLs, spins up Executor Lambda for each batch
+   2. Executor Lambda
+      1. Performs functionality cheks on given URLs
+      2. Sends emails through GMail API when necessary
+2. API
+   1. CRUD Lambdas for interacting with DynamoDB
+3. UI
+   1. Frontend, authentication, user interaction
+4. Deploy
+   1. Serverless Framework deploys for Core and API, see [Deployment](#deployment)
+
+## Architecture
+
+### Frontend
+- TypeScript
+- Next.js
+- React
+- Vercel Hosting
+- NextAuth.js
+  - OAuth-based authentication for Next.js
+- Axios
+  - Promise-based HTTP client
+- Tailwind
+- shadcn/ui
+- Aceternity UI
+  - Fancy hero section
+
+### Backend
+- Lambdas
+  - Core Processor/Executor Lambda (Python 3.8)
+  - API CRUD Lambdas (Node.js 20.x)
+- Amazon EventBridge
+  - Run core processor lambda on timer
+- AWS API Gateway
+  - Manages APIs, integrates with Lambda, provides security
+- DynamoDB
+  - Single-table design
+- Gmail API
+- Serverless Framework
+  - AWS Deployments
 
 ```mermaid
 graph TD
@@ -64,7 +117,7 @@ graph TD
     end
 
     subgraph Hosting
-        G[GitHub Pages]
+        G[Vercel]
     end
 
     U1 --> A1
@@ -81,6 +134,45 @@ graph TD
     G --> A
     J -->|Timer| F
 ```
+
+## Core Functionality
+
+As mentioned above, core functionality is implemented via a `Processor Lambda` and an `Executor Lambda`. The processor is responsible for fetching URLs from DynamoDB, and spinning up executor lambdas each with a batch of URLs to process.
+
+Table here
+
+User interacts via a main table on the front end, where they can see their list of URLs currently being monitored, along with some helpful information. Here they can also create a new URL monitor, selecting a Check Type and entering the required paramaters for that Check type. Supports editing any field.
+
+Implements some nice-to-haves, like:
+    - If you choose to run every 24 hours you can select which hour to run at each day. Similar can be done for every check >1 hour.
+    - Table field indicating when next run will happen, and the result status and time of the previous run
+    - When you were most recently alerted by the specific URL monitor
+    - A flyout page with more information
+    - Sorting by different Check Types will show that type's parameters in the table
+    - Many table fields can be hovered over for more information
+
+### Implementation Details
+
+- Built in Python
+- Built with `aiohttp` and `asyncio` to fetch HTML from URLs asynchronously to improve performance. Note there is a concurrency limit of 1000 on AWS Lambda. 
+ - See `/core/lambda_executor.py`
+- Implements random `header` and `proxy` selection when making requests.
+ - See `/core/fetch_url.py`
+- Easily extensible with new functions, just plug-and-play.
+ - See `/core/url_check_functions/`
+- Test suite for verifying all end to end core functionality
+  - See `/core/lambda_test.py`
+- Generates test data with 100k+ real URLs taken from [Common Crawl](https://data.commoncrawl.org/crawl-data/CC-MAIN-2024-26/index.html) dataset
+
+### Todo
+
+- Unique tests for each unique check function would be nice
+ 
+## Authentication & Permissioning
+
+Uses NextAuth.js, currently allowing sign-in via Google. Implements `middleware` to verify page level access.
+
+Permissions tied to each account. Allows for different limits or tier per account. For example, the current free tier allows for a maximum of 5 URLs being watched, with a minimum delay between runs at 4 hours.
 
 ## Deployment
 
