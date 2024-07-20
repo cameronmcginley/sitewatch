@@ -3,6 +3,7 @@ import {
   formatDuration,
   intervalToDuration,
 } from "date-fns";
+import cronParser from "cron-parser";
 
 export const msToTimeStr = (ms: number): string => {
   const duration = intervalToDuration({ start: 0, end: ms });
@@ -18,7 +19,7 @@ export const toSentenceCase = (str: string) => {
   return str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : "";
 };
 
-export const handleShowDetails = (item) => {
+export const handleShowDetails = (item: any) => {
   let details = `
     PK: ${item.pk?.S ?? "-"}
     SK: ${item.sk?.S ?? "-"}
@@ -64,6 +65,18 @@ export const getNextRunDate = (startHour: string, delayMs: number): Date => {
   return nextRunDate;
 };
 
+export const getNextRunTimeWithCron = (cronString: string): Date => {
+  const options = {
+    currentDate: new Date(),
+    utc: true,
+  };
+
+  const interval = cronParser.parseExpression(cronString, options);
+  const nextRunDate = interval.next().toDate();
+
+  return nextRunDate;
+};
+
 export const isHappeningNow = (
   lastExecutedAt: string,
   startHour: string,
@@ -86,7 +99,7 @@ export const getTimeAgo = (date: Date) => {
 export const getTimeZone = () =>
   Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-export const formatDateWithTimezone = (date) => {
+export const formatDateWithTimezone = (date: any) => {
   return new Intl.DateTimeFormat("en-US", {
     year: "numeric",
     month: "2-digit",
@@ -117,4 +130,67 @@ export const formatTimeWithTimezone = (hour: number): string => {
     timeZone: getTimeZone(),
     timeZoneName: "short",
   });
+};
+
+export const convertDelayToCron = (
+  delay: string,
+  hourOffset?: number
+): string => {
+  const timeUnitToCron = (
+    value: number,
+    unit: string,
+    hour: number = 0,
+    minute: number = 0
+  ): string => {
+    switch (unit) {
+      case "minute":
+      case "minutes":
+        return `*/${value} * * * *`;
+      case "hour":
+      case "hours":
+        return `${minute} */${value} * * *`;
+      case "day":
+      case "days":
+        return `${minute} ${hour} */${value} * *`;
+      case "week":
+      case "weeks":
+        return `${minute} ${hour} * * ${value % 7}`;
+      default:
+        throw new Error("Unsupported time unit");
+    }
+  };
+
+  const regex = /(\d+)\s*(minute|minutes|hour|hours|day|days|week|weeks)/;
+  const match = delay.match(regex);
+
+  if (!match) {
+    throw new Error("Invalid delay format");
+  }
+
+  const value = parseInt(match[1], 10);
+  const unit = match[2].toLowerCase();
+
+  let hour = 0;
+  let minute = 0;
+
+  if (unit === "hour" || unit === "hours") {
+    if (hourOffset === undefined) {
+      throw new Error("Hour offset must be specified for delays over 1 hour");
+    }
+    minute = 0;
+  } else if (
+    unit === "day" ||
+    unit === "days" ||
+    unit === "week" ||
+    unit === "weeks"
+  ) {
+    if (hourOffset === undefined) {
+      throw new Error(
+        "Hour offset must be specified for daily or weekly delays"
+      );
+    }
+    hour = hourOffset;
+  }
+
+  return timeUnitToCron(value, unit, hour, minute);
 };

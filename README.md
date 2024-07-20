@@ -156,11 +156,11 @@ Implements some nice-to-haves, like:
 
 - Built in Python
 - Built with `aiohttp` and `asyncio` to fetch HTML from URLs asynchronously to improve performance. Note there is a concurrency limit of 1000 on AWS Lambda. 
- - See `/core/lambda_executor.py`
+  - See `/core/lambda_executor.py`
 - Implements random `header` and `proxy` selection when making requests.
- - See `/core/fetch_url.py`
+  - See `/core/fetch_url.py`
 - Easily extensible with new functions, just plug-and-play.
- - See `/core/url_check_functions/`
+  - See `/core/url_check_functions/`
 - Test suite for verifying all end to end core functionality
   - See `/core/lambda_test.py`
 - Generates test data with 100k+ real URLs taken from [Common Crawl](https://data.commoncrawl.org/crawl-data/CC-MAIN-2024-26/index.html) dataset
