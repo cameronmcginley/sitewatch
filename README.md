@@ -95,25 +95,18 @@ To deploy the application, follow these steps. Make sure you have the necessary 
 ### Setup
 
 1. **Install dependencies:**
-
-`npm install`
+    - `npm install`
 
 2. **Ensure AWS credentials are configured:**
-
-Set up AWS credentials using the AWS CLI or manually configuring the ~/.aws/credentials file.
+    - Set up AWS credentials using the AWS CLI or manually configuring the ~/.aws/credentials file.
 
 3. **Deploying Core**
-
-Dev: `npm run deploy:core:dev`
-
-Prod: `npm run deploy:core:prod`
+    - Dev: `npm run deploy:core:dev`
+    - Prod: `npm run deploy:core:prod`
 
 3. **Deploying API**
-
-Dev: `npm run deploy:api:dev`
-
-Prod: `npm run deploy:api:prod`
+    - Dev: `npm run deploy:api:dev`
+    - Prod: `npm run deploy:api:prod`
 
 4. **Deploying UI**
-
-Changes to main branch auto-deployed by Vercel.
+    - Changes to main branch auto-deployed by Vercel.
