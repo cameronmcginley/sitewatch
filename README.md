@@ -141,15 +141,16 @@ As mentioned above, core functionality is implemented via a `Processor Lambda` a
 
 Table here
 
-User interacts via a main table on the front end, where they can see their list of URLs currently being monitored, along with some helpful information. Here they can also create a new URL monitor, selecting a Check Type and entering the required paramaters for that Check type. Supports editing any field.
+User interacts via a main table on the front end, where they can see their list of URLs currently being monitored, along with some helpful information. Here they can also create a new URL monitor, selecting a Check Type and entering the required paramaters for that Check Type. Supports editing any field.
 
 Implements some nice-to-haves, like:
-    - If you choose to run every 24 hours you can select which hour to run at each day. Similar can be done for every check >1 hour.
-    - Table field indicating when next run will happen, and the result status and time of the previous run
-    - When you were most recently alerted by the specific URL monitor
-    - A flyout page with more information
-    - Sorting by different Check Types will show that type's parameters in the table
-    - Many table fields can be hovered over for more information
+
+- If you choose to run every 24 hours you can select which hour to run at each day. Similar can be done for every check >1 hour.
+- Table field indicating when next run will happen, and the result status and time of the previous run
+- When you were most recently alerted by the specific URL monitor
+- A flyout page with more information
+- Sorting by different Check Types will show that type's parameters in the table
+- Many table fields can be hovered over for more information
 
 ### Implementation Details
 
