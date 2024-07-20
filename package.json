@@ -8,6 +8,7 @@
     "ui:start": "cd ui && next start",
     "ui:lint": "cd ui && next lint",
     "ui:test": "cd ui && jest",
+    "core:test": "pytest core/test_utils.py",
     "deploy:core:dev": "node deploy/deploy-core.mjs dev",
     "deploy:core:prod": "node deploy/deploy-core.mjs prod",
     "deploy:api:dev": "node deploy/deploy-api.mjs dev",

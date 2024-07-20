@@ -4,3 +4,4 @@ tenacity
 python-dotenv
 psutil
 cssselect
+croniter

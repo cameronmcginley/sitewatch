@@ -4,25 +4,25 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import yarl
 import aiohttp
+from croniter import croniter
+from datetime import datetime, timezone, timedelta
 
 TIMEOUT_LIMIT = 100000
 
 
-# async def fetch_url(session, url):
-#     headers = {
-#         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:106.0) Gecko/20100101 Firefox/106.0"
-#     }
-#     url = yarl.URL(url, encoded=True)
-#     try:
-#         async with session.get(url, timeout=TIMEOUT_LIMIT, headers=headers) as response:
-#             if response.status == 200:
-#                 return await response.read()
-#             else:
-#                 print(f"Error fetching {url}: {response.status}")
-#                 return None
-#     except aiohttp.ClientError as e:
-#         print(f"Error fetching {url}: {str(e)}")
-#         return None
+def is_task_ready_to_run(cron_string, grace_period_seconds=60):
+    now = datetime.now(timezone.utc)
+    cron = croniter(cron_string, now)
+    previous_run_time = cron.get_prev(datetime)
+    next_run_time = cron.get_next(datetime)
+
+    # Include a grace period to account for Lambda execution delay
+    within_grace_period = (
+        (now - timedelta(seconds=grace_period_seconds)) <= previous_run_time <= now
+    )
+    return within_grace_period or next_run_time <= (
+        now + timedelta(seconds=grace_period_seconds)
+    )
 
 
 def send_email(sender, receiver, password, subject, body):
