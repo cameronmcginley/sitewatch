@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import CoreTable from "@/components/table/core-table";
 import DynamicCheckForm from "@/components/items/item-form";
 import { fetchData, addItem, deleteItem } from "@/lib/api/items";
+import { Checkbox } from "@/components/ui/checkbox";
 
 import { generateDummyData } from "@/data/generateDummyData";
 
@@ -13,6 +14,7 @@ import dummyData from "@/data/dummyData";
 function Home() {
   const { data: session, status } = useSession();
   const [data, setData] = useState([]);
+  const [showRealData, setShowRealData] = useState(false);
 
   useEffect(() => {
     if (status === "authenticated" && session?.user?.id) {
@@ -57,9 +59,22 @@ function Home() {
         <DynamicCheckForm onSubmit={handleFormSubmit} />
       </div>
 
+      <div className="flex flex-row gap-2 items-center p-4">
+        <Checkbox
+          onClick={() => {
+            setShowRealData(!showRealData);
+            console.log("Show real data:", showRealData);
+          }}
+        />
+        <p>Show real data</p>
+      </div>
+
       <div>
         <h2 className="text-xl font-semibold mb-2">Existing Checks</h2>
-        <CoreTable data={dummyData} onDelete={handleDelete} />
+        <CoreTable
+          data={showRealData ? data : dummyData}
+          onDelete={handleDelete}
+        />
       </div>
     </div>
   );

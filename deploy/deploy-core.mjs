@@ -36,7 +36,7 @@ if (stage === "prod") {
 }
 
 function deploy(stage, region) {
-  const command = "npx";
+  const command = "npm i && npx";
   const args = [
     "serverless",
     "deploy",

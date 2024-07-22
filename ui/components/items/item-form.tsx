@@ -1,6 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { CHECK_TYPES } from "@/lib/constants";
+import cronstrue from "cronstrue";
+import {
+  convertToCron,
+  cronToPlainText,
+  convertDelayToCron,
+} from "../table/utils";
 
 const frequencyOptions = [
   { label: "5 minutes", value: 300000 },
@@ -13,7 +19,6 @@ const frequencyOptions = [
   { label: "1 week", value: 604800000 },
 ];
 
-// Make in constants also
 interface FormData {
   userid: string;
   type: string;
@@ -27,9 +32,10 @@ interface FormData {
     keyword?: string;
     opposite?: boolean;
   };
+  offset?: number;
+  dayOfWeek?: string;
 }
 
-// Reusable form components
 const FormField = ({ label, id, ...props }) => (
   <div>
     <label htmlFor={id} className="block text-sm font-medium text-gray-700">
@@ -54,14 +60,16 @@ const SelectField = ({ label, id, options, ...props }) => (
       className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
     >
       <option value="">Select {label}</option>
-      {options.map((option: string | { label: string; value: number }) => (
-        <option
-          key={typeof option === "string" ? option : option.value}
-          value={typeof option === "string" ? option : option.value}
-        >
-          {typeof option === "string" ? option : option.label}
-        </option>
-      ))}
+      {options.map(
+        (option: string | { label: string; value: number | string }) => (
+          <option
+            key={typeof option === "string" ? option : option.value}
+            value={typeof option === "string" ? option : option.value}
+          >
+            {typeof option === "string" ? option : option.label}
+          </option>
+        )
+      )}
     </select>
   </div>
 );
@@ -94,6 +102,18 @@ const ItemForm: React.FC<{ onSubmit: (data: FormData) => void }> = ({
     delayMs: 4 * 60 * 60 * 1000,
     attributes: {},
   });
+  const [hourOffsetOptions, sethourOffsetOptions] = useState([]);
+  const [dayOfWeekOptions, setdayOfWeekOptions] = useState([
+    { label: "Sunday", value: "0" },
+    { label: "Monday", value: "1" },
+    { label: "Tuesday", value: "2" },
+    { label: "Wednesday", value: "3" },
+    { label: "Thursday", value: "4" },
+    { label: "Friday", value: "5" },
+    { label: "Saturday", value: "6" },
+  ]);
+  const [cronDescription, setCronDescription] = useState("");
+  const [cronExpression, setCronExpression] = useState<string | null>(null);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -117,9 +137,25 @@ const ItemForm: React.FC<{ onSubmit: (data: FormData) => void }> = ({
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  React.useEffect(() => {
-    console.log(formData);
-  }, [formData]);
+  useEffect(() => {
+    if (formData.delayMs >= 14400000) {
+      const interval = formData.delayMs / 3600000;
+      const options = Array.from({ length: interval }, (_, i) => ({
+        label: `${i} hour${i !== 1 ? "s" : ""}`,
+        value: i,
+      }));
+      sethourOffsetOptions(options);
+    }
+
+    const cronExpression = convertToCron(
+      formData.delayMs,
+      formData.offset,
+      formData.dayOfWeek
+    );
+    const description = cronToPlainText(cronExpression);
+    setCronExpression(cronExpression);
+    setCronDescription(description);
+  }, [formData.delayMs, formData.offset, formData.dayOfWeek]);
 
   const handleCheckboxChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -164,7 +200,6 @@ const ItemForm: React.FC<{ onSubmit: (data: FormData) => void }> = ({
         onChange={(
           e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
         ) => {
-          // Reset attributes when changing check type
           setFormData((prev) => ({ ...prev, attributes: {} }));
           handleInputChange(e);
         }}
@@ -256,6 +291,30 @@ const ItemForm: React.FC<{ onSubmit: (data: FormData) => void }> = ({
         required
       />
 
+      {formData.delayMs >= 14400000 && (
+        <SelectField
+          label="Offset"
+          id="offset"
+          name="offset"
+          value={formData.offset || ""}
+          onChange={handleInputChange}
+          options={hourOffsetOptions}
+          required
+        />
+      )}
+
+      {formData.delayMs === 604800000 && (
+        <SelectField
+          label="Day of Week"
+          id="dayOfWeek"
+          name="dayOfWeek"
+          value={formData.dayOfWeek || ""}
+          onChange={handleInputChange}
+          options={dayOfWeekOptions}
+          required
+        />
+      )}
+
       <div>
         <button
           type="submit"
@@ -264,6 +323,13 @@ const ItemForm: React.FC<{ onSubmit: (data: FormData) => void }> = ({
           Submit
         </button>
       </div>
+
+      {cronDescription && (
+        <div className="mt-4 text-gray-700">
+          <p>Cron Schedule: {cronDescription}</p>
+          <p>Cron Expression: {cronExpression}</p>
+        </div>
+      )}
     </form>
   );
 };

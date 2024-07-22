@@ -26,15 +26,7 @@ functions:
       - http:
           path: items
           method: post
-          cors:
-            origin: "*"
-            headers:
-              - Content-Type
-              - X-Amz-Date
-              - Authorization
-              - X-Api-Key
-              - X-Amz-Security-Token
-              - X-Amz-User-Agent
+          cors: true
 
   getCheck:
     handler: functions/getCheck.handler
@@ -46,15 +38,7 @@ functions:
             parameters:
               querystrings:
                 userid: false
-          cors:
-            origin: "*"
-            headers:
-              - Content-Type
-              - X-Amz-Date
-              - Authorization
-              - X-Api-Key
-              - X-Amz-Security-Token
-              - X-Amz-User-Agent
+          cors: true
 
   updateCheck:
     handler: functions/updateCheck.handler
@@ -62,15 +46,7 @@ functions:
       - http:
           path: items
           method: put
-          cors:
-            origin: "*"
-            headers:
-              - Content-Type
-              - X-Amz-Date
-              - Authorization
-              - X-Api-Key
-              - X-Amz-Security-Token
-              - X-Amz-User-Agent
+          cors: true
 
   deleteCheck:
     handler: functions/deleteCheck.handler
@@ -78,12 +54,16 @@ functions:
       - http:
           path: items
           method: delete
-          cors:
-            origin: "*"
-            headers:
-              - Content-Type
-              - X-Amz-Date
-              - Authorization
-              - X-Api-Key
-              - X-Amz-Security-Token
-              - X-Amz-User-Agent
+          cors: true
+
+  optionsHandler:
+    handler: functions/optionsHandler.handler
+    events:
+      - http:
+          path: items
+          method: options
+          cors: true
+
+package:
+  include:
+    - functions/**

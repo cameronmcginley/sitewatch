@@ -36,6 +36,10 @@ if (stage === "prod") {
 }
 
 function deploy(stage, region) {
+  console.log(chalk.green("Installing dependencies..."));
+  console.log(chalk.green("Executing command: ", "npm i"), "\n");
+  spawn("npm", ["i"], { cwd: "api", stdio: "inherit", shell: true });
+
   const command = "npx";
   const args = [
     "serverless",

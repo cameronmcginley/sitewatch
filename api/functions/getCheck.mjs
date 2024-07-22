@@ -1,11 +1,10 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import { DynamoDBClient, QueryCommand } from '@aws-sdk/client-dynamodb';
-import { getHeaders } from '../utils/db';
+import { DynamoDBClient, QueryCommand } from "@aws-sdk/client-dynamodb";
+import { getHeaders } from "../utils/db.mjs";
 
-const dynamoDb = new DynamoDBClient({ region: 'us-east-2' });
-const tableName = 'webchecks';
+const dynamoDb = new DynamoDBClient({ region: "us-east-2" });
+const tableName = "webchecks";
 
-export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+export const handler = async (event) => {
   const headers = getHeaders();
   const userid = event.queryStringParameters?.userid;
 
@@ -14,18 +13,18 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
       statusCode: 400,
       headers,
       body: JSON.stringify({
-        message: 'Missing required parameter: userid',
+        message: "Missing required parameter: userid",
       }),
     };
   }
 
   const params = {
     TableName: tableName,
-    IndexName: 'userid-sk-index',
-    KeyConditionExpression: 'userid = :userid AND sk = :sk',
+    IndexName: "userid-sk-index",
+    KeyConditionExpression: "userid = :userid AND sk = :sk",
     ExpressionAttributeValues: {
-      ':userid': { S: userid },
-      ':sk': { S: 'CHECK' },
+      ":userid": { S: userid },
+      ":sk": { S: "CHECK" },
     },
   };
 
@@ -42,7 +41,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
         statusCode: 404,
         headers,
         body: JSON.stringify({
-          message: 'No data found for the provided userid',
+          message: "No data found for the provided userid",
         }),
       };
     }
@@ -52,7 +51,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
       statusCode: 500,
       headers,
       body: JSON.stringify({
-        message: 'Failed to fetch data',
+        message: "Failed to fetch data",
         error: error.message,
       }),
     };

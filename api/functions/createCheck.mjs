@@ -1,14 +1,13 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import { DynamoDBClient, PutItemCommand } from '@aws-sdk/client-dynamodb';
-import { randomUUID } from 'crypto';
-import { getHeaders } from '../utils/db';
+import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
+import { randomUUID } from "crypto";
+import { getHeaders } from "../utils/db";
 
-const dynamoDb = new DynamoDBClient({ region: 'us-east-2' });
-const tableName = 'webchecks';
+const dynamoDb = new DynamoDBClient({ region: "us-east-2" });
+const tableName = "webchecks";
 
-export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+export const handler = async (event) => {
   const headers = getHeaders();
-  const item = JSON.parse(event.body || '{}');
+  const item = JSON.parse(event.body || "{}");
 
   const params = {
     TableName: tableName,
@@ -26,7 +25,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     await dynamoDb.send(new PutItemCommand(params));
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: 'Item added successfully' }),
+      body: JSON.stringify({ message: "Item added successfully" }),
       headers,
     };
   } catch (error) {
@@ -34,7 +33,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     return {
       statusCode: 500,
       body: JSON.stringify({
-        message: 'Failed to add item',
+        message: "Failed to add item",
         error: error.message,
       }),
       headers,

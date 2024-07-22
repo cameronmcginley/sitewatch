@@ -223,3 +223,31 @@ export const convertDelayToCron = (
 
   return timeUnitToCron(value, unit, hour, minute);
 };
+
+export const convertToCron = (
+  frequency: number,
+  offset?: number,
+  dayOfWeek?: string
+): string => {
+  const minutes = 0; // Always start at the 0th minute for simplicity
+  const hours = offset || 0; // Offset is now the hours offset
+  const days = dayOfWeek || "0"; // Use Sunday if dayOfWeek is not specified
+
+  if (frequency === 604800000) {
+    // 1 week
+    return `${minutes} ${hours} ? * ${days} *`;
+  } else if (frequency === 86400000) {
+    // 1 day
+    return `${minutes} ${hours} ? * * *`;
+  } else if (frequency === 43200000) {
+    // 12 hours
+    return `${minutes} ${hours}-23/12 ? * * *`;
+  } else if (frequency === 14400000) {
+    // 4 hours
+    return `${minutes} ${hours}-23/4 ? * * *`;
+  } else {
+    // Less than 4 hours, use minute intervals
+    const intervalMinutes = frequency / 60000;
+    return `*/${intervalMinutes} * * * ? *`;
+  }
+};
