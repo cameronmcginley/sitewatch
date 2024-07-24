@@ -27,10 +27,7 @@ import { handleShowDetails } from "./utils";
 const CoreTable = ({ data }) => {
   const [selectedCheckType, setSelectedCheckType] = useState("ALL");
 
-  const checkTypes = [
-    "ALL",
-    ...new Set(data.map((item) => item.check_type?.S)),
-  ];
+  const checkTypes = ["ALL", ...new Set(data.map((item) => item.check_type))];
 
   const columns =
     selectedCheckType === "ALL"
@@ -40,7 +37,7 @@ const CoreTable = ({ data }) => {
   const filteredData =
     selectedCheckType === "ALL"
       ? data
-      : data.filter((item) => item.check_type?.S === selectedCheckType);
+      : data.filter((item) => item.check_type === selectedCheckType);
 
   return (
     <>
@@ -77,7 +74,7 @@ const CoreTable = ({ data }) => {
         <TableBody>
           {filteredData.map((item, index) => (
             <TableRow
-              key={item.pk?.S ?? item.sk?.S ?? index}
+              key={item.pk ?? item.sk ?? index}
               className="hover:bg-neutral-800"
             >
               <TableCell>

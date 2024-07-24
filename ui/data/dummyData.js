@@ -1,2028 +1,727 @@
 export const dummyData = [
   {
-    alias: {
-      S: "Alias 0",
-    },
-    check_type: {
-      S: "EBAY PRICE THRESHOLD",
-    },
-    pk: {
-      S: "CHECK#zss762wq21d",
-    },
-    sk: {
-      S: "CHECK",
-    },
-    type: {
-      S: "CHECK",
-    },
-    url: {
-      S: "https://example0.com",
-    },
-    userid: {
-      S: "118298783964592448941",
-    },
-    createdAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
-    updatedAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
+    alias: "Alias 0",
+    check_type: "EBAY PRICE THRESHOLD",
+    pk: "CHECK#7db7gdnpzp",
+    sk: "CHECK",
+    type: "CHECK",
+    url: "https://example0.com",
+    userid: "118298783964592448941",
+    createdAt: "2024-07-23T02:06:00.975Z",
+    updatedAt: "2024-07-23T02:06:00.975Z",
     lastResult: {
-      M: {
-        status: {
-          S: "FAILED",
-        },
-        message: {
-          S: "Message",
-        },
-        timestamp: {
-          S: "2024-07-22T23:59:11.238Z",
-        },
-      },
+      status: "FAILED",
+      message: "Message",
+      timestamp: "2024-07-17T06:04:59.400Z",
     },
-    status: {
-      S: "PAUSED",
-    },
-    delayMs: {
-      N: "14400000",
-    },
+    status: "PAUSED",
+    delayMs: 600000,
     attributes: {
-      M: {
-        threshold: {
-          N: "100.95",
-        },
-      },
+      threshold: 100.95,
     },
-    email: {
-      S: "exampleemail0@gmail.com",
-    },
-    mostRecentAlert: {
-      S: "2019-10-21T05:39:53.993Z",
-    },
-    startHour: {
-      N: "0",
-    },
-    cron: {
-      S: "0 */4 * * *",
-    },
+    email: "exampleemail0@gmail.com",
+    mostRecentAlert: "2021-04-11T15:12:45.727Z",
+    cron: "*/10 * * * *",
   },
   {
-    alias: {
-      S: "Alias 1",
-    },
-    check_type: {
-      S: "EBAY PRICE THRESHOLD",
-    },
-    pk: {
-      S: "CHECK#frlr2w1wly",
-    },
-    sk: {
-      S: "CHECK",
-    },
-    type: {
-      S: "CHECK",
-    },
-    url: {
-      S: "https://example1.com",
-    },
-    userid: {
-      S: "118298783964592448941",
-    },
-    createdAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
-    updatedAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
+    alias: "Alias 1",
+    check_type: "EBAY PRICE THRESHOLD",
+    pk: "CHECK#r56uay1tpi",
+    sk: "CHECK",
+    type: "CHECK",
+    url: "https://example1.com",
+    userid: "118298783964592448941",
+    createdAt: "2024-07-23T02:06:00.975Z",
+    updatedAt: "2024-07-23T02:06:00.975Z",
     lastResult: {
-      M: {
-        status: {
-          S: "ALERTED",
-        },
-        message: {
-          S: "Message",
-        },
-        timestamp: {
-          S: "2024-07-23T01:48:52.047Z",
-        },
-      },
+      status: "ALERTED",
+      message: "Message",
+      timestamp: "2024-07-23T02:06:00.975Z",
     },
-    status: {
-      S: "ACTIVE",
-    },
-    delayMs: {
-      N: "86400000",
-    },
+    status: "ACTIVE",
+    delayMs: 604800000,
     attributes: {
-      M: {
-        threshold: {
-          N: "100.95",
-        },
-      },
+      threshold: 100.95,
     },
-    email: {
-      S: "exampleemail1@gmail.com",
-    },
-    mostRecentAlert: {
-      S: "2024-07-02T17:47:54.986Z",
-    },
-    startHour: {
-      N: "5",
-    },
-    cron: {
-      S: "0 0 * * *",
-    },
+    email: "exampleemail1@gmail.com",
+    cron: "0 17 * * 3",
   },
   {
-    alias: {
-      S: "Alias 2",
-    },
-    check_type: {
-      S: "KEYWORD CHECK",
-    },
-    pk: {
-      S: "CHECK#2x8d0xmcgmo",
-    },
-    sk: {
-      S: "CHECK",
-    },
-    type: {
-      S: "CHECK",
-    },
-    url: {
-      S: "https://example2.com",
-    },
-    userid: {
-      S: "118298783964592448941",
-    },
-    createdAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
-    updatedAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
+    alias: "Alias 2",
+    check_type: "EBAY PRICE THRESHOLD",
+    pk: "CHECK#fa3aht13smm",
+    sk: "CHECK",
+    type: "CHECK",
+    url: "https://example2.com",
+    userid: "118298783964592448941",
+    createdAt: "2024-07-23T02:06:00.975Z",
+    updatedAt: "2024-07-23T02:06:00.975Z",
     lastResult: {
-      M: {
-        status: {
-          S: "ALERTED",
-        },
-        message: {
-          S: "Message",
-        },
-        timestamp: {
-          S: "2024-05-30T04:28:21.464Z",
-        },
-      },
+      status: "ALERTED",
+      message: "Message",
+      timestamp: "2024-07-23T02:06:00.975Z",
     },
-    status: {
-      S: "PAUSED",
-    },
-    delayMs: {
-      N: "3600000",
-    },
+    status: "ACTIVE",
+    delayMs: 43200000,
     attributes: {
-      M: {
-        keyword: {
-          S: "Keyword",
-        },
-        opposite: {
-          B: "false",
-        },
-      },
+      threshold: 100.95,
     },
-    email: {
-      S: "exampleemail2@gmail.com",
-    },
-    mostRecentAlert: {},
-    startHour: {
-      N: "0",
-    },
-    cron: {
-      S: "0 * * * *",
-    },
+    email: "exampleemail2@gmail.com",
+    cron: "0 */12 * * *",
   },
   {
-    alias: {
-      S: "Alias 3",
-    },
-    check_type: {
-      S: "PAGE DIFFERENCE",
-    },
-    pk: {
-      S: "CHECK#svwiundama",
-    },
-    sk: {
-      S: "CHECK",
-    },
-    type: {
-      S: "CHECK",
-    },
-    url: {
-      S: "https://example3.com",
-    },
-    userid: {
-      S: "118298783964592448941",
-    },
-    createdAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
-    updatedAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
+    alias: "Alias 3",
+    check_type: "EBAY PRICE THRESHOLD",
+    pk: "CHECK#liu6sitq18",
+    sk: "CHECK",
+    type: "CHECK",
+    url: "https://example3.com",
+    userid: "118298783964592448941",
+    createdAt: "2024-07-23T02:06:00.975Z",
+    updatedAt: "2024-07-23T02:06:00.975Z",
     lastResult: {
-      M: {
-        status: {
-          S: "FAILED",
-        },
-        message: {
-          S: "Message",
-        },
-        timestamp: {
-          S: "2024-07-23T01:48:52.047Z",
-        },
-      },
+      status: "NO ALERT",
+      message: "Message",
+      timestamp: "2024-06-20T11:29:47.948Z",
     },
-    status: {
-      S: "ACTIVE",
-    },
-    delayMs: {
-      N: "86400000",
-    },
+    status: "PAUSED",
+    delayMs: 43200000,
     attributes: {
-      M: {
-        percent_diff: {
-          N: "0.05",
-        },
-      },
+      threshold: 100.95,
     },
-    email: {
-      S: "exampleemail3@gmail.com",
-    },
-    mostRecentAlert: {
-      S: "2024-05-27T04:17:35.192Z",
-    },
-    startHour: {
-      N: "20",
-    },
-    cron: {
-      S: "0 9 * * *",
-    },
+    email: "exampleemail3@gmail.com",
+    mostRecentAlert: "2024-07-08T21:06:32.310Z",
+    cron: "0 */12 * * *",
   },
   {
-    alias: {
-      S: "Alias 4",
-    },
-    check_type: {
-      S: "EBAY PRICE THRESHOLD",
-    },
-    pk: {
-      S: "CHECK#pstzu0ovn5m",
-    },
-    sk: {
-      S: "CHECK",
-    },
-    type: {
-      S: "CHECK",
-    },
-    url: {
-      S: "https://example4.com",
-    },
-    userid: {
-      S: "118298783964592448941",
-    },
-    createdAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
-    updatedAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
+    alias: "Alias 4",
+    check_type: "KEYWORD CHECK",
+    pk: "CHECK#h4oxn6bru5",
+    sk: "CHECK",
+    type: "CHECK",
+    url: "https://example4.com",
+    userid: "118298783964592448941",
+    createdAt: "2024-07-23T02:06:00.975Z",
+    updatedAt: "2024-07-23T02:06:00.975Z",
     lastResult: {
-      M: {
-        status: {
-          S: "ALERTED",
-        },
-        message: {
-          S: "Message",
-        },
-        timestamp: {
-          S: "2024-07-23T01:48:52.047Z",
-        },
-      },
+      status: "FAILED",
+      message: "Message",
+      timestamp: "2024-07-23T02:06:00.975Z",
     },
-    status: {
-      S: "ACTIVE",
-    },
-    delayMs: {
-      N: "259200000",
-    },
+    status: "ACTIVE",
+    delayMs: 14400000,
     attributes: {
-      M: {
-        threshold: {
-          N: "100.95",
-        },
-      },
+      keyword: "Keyword",
+      opposite: false,
     },
-    email: {
-      S: "exampleemail4@gmail.com",
-    },
-    mostRecentAlert: {},
-    startHour: {
-      N: "33",
-    },
-    cron: {
-      S: "0 3 */3 * *",
-    },
+    email: "exampleemail4@gmail.com",
+    mostRecentAlert: "2024-07-23T02:00:13.622Z",
+    cron: "0 1-23/4 * * *",
   },
   {
-    alias: {
-      S: "Alias 5",
-    },
-    check_type: {
-      S: "PAGE DIFFERENCE",
-    },
-    pk: {
-      S: "CHECK#7p46ukv4hfw",
-    },
-    sk: {
-      S: "CHECK",
-    },
-    type: {
-      S: "CHECK",
-    },
-    url: {
-      S: "https://example5.com",
-    },
-    userid: {
-      S: "118298783964592448941",
-    },
-    createdAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
-    updatedAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
+    alias: "Alias 5",
+    check_type: "KEYWORD CHECK",
+    pk: "CHECK#ogzqq7ydcmo",
+    sk: "CHECK",
+    type: "CHECK",
+    url: "https://example5.com",
+    userid: "118298783964592448941",
+    createdAt: "2024-07-23T02:06:00.975Z",
+    updatedAt: "2024-07-23T02:06:00.975Z",
     lastResult: {
-      M: {
-        status: {
-          S: "FAILED",
-        },
-        message: {
-          S: "Message",
-        },
-        timestamp: {
-          S: "2023-04-23T02:11:25.248Z",
-        },
-      },
+      status: "NO ALERT",
+      message: "Message",
+      timestamp: "2024-07-23T00:41:50.264Z",
     },
-    status: {
-      S: "PAUSED",
-    },
-    delayMs: {
-      N: "86400000",
-    },
+    status: "PAUSED",
+    delayMs: 43200000,
     attributes: {
-      M: {
-        percent_diff: {
-          N: "0.05",
-        },
-      },
+      keyword: "Keyword",
+      opposite: false,
     },
-    email: {
-      S: "exampleemail5@gmail.com",
-    },
-    mostRecentAlert: {
-      S: "2019-10-06T06:30:00.401Z",
-    },
-    startHour: {
-      N: "14",
-    },
-    cron: {
-      S: "0 9 * * *",
-    },
+    email: "exampleemail5@gmail.com",
+    mostRecentAlert: "2020-08-30T08:07:31.214Z",
+    cron: "0 */12 * * *",
   },
   {
-    alias: {
-      S: "Alias 6",
-    },
-    check_type: {
-      S: "KEYWORD CHECK",
-    },
-    pk: {
-      S: "CHECK#wdy00d44s5d",
-    },
-    sk: {
-      S: "CHECK",
-    },
-    type: {
-      S: "CHECK",
-    },
-    url: {
-      S: "https://example6.com",
-    },
-    userid: {
-      S: "118298783964592448941",
-    },
-    createdAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
-    updatedAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
+    alias: "Alias 6",
+    check_type: "PAGE DIFFERENCE",
+    pk: "CHECK#l1vxzzjpxc",
+    sk: "CHECK",
+    type: "CHECK",
+    url: "https://example6.com",
+    userid: "118298783964592448941",
+    createdAt: "2024-07-23T02:06:00.975Z",
+    updatedAt: "2024-07-23T02:06:00.975Z",
     lastResult: {
-      M: {
-        status: {
-          S: "FAILED",
-        },
-        message: {
-          S: "Message",
-        },
-        timestamp: {
-          S: "2024-06-20T03:16:46.623Z",
-        },
-      },
+      status: "NO ALERT",
+      message: "Message",
+      timestamp: "2024-07-23T02:06:00.975Z",
     },
-    status: {
-      S: "PAUSED",
-    },
-    delayMs: {
-      N: "604800000",
-    },
+    status: "ACTIVE",
+    delayMs: 86400000,
     attributes: {
-      M: {
-        keyword: {
-          S: "Keyword",
-        },
-        opposite: {
-          B: "false",
-        },
-      },
+      percent_diff: 0.05,
     },
-    email: {
-      S: "exampleemail6@gmail.com",
-    },
-    mostRecentAlert: {},
-    startHour: {
-      N: "121",
-    },
-    cron: {
-      S: "0 0 * * 0",
-    },
+    email: "exampleemail6@gmail.com",
+    mostRecentAlert: "2024-05-29T18:41:09.314Z",
+    cron: "0 0 * * *",
   },
   {
-    alias: {
-      S: "Alias 7",
-    },
-    check_type: {
-      S: "PAGE DIFFERENCE",
-    },
-    pk: {
-      S: "CHECK#10gyjg7rk3z",
-    },
-    sk: {
-      S: "CHECK",
-    },
-    type: {
-      S: "CHECK",
-    },
-    url: {
-      S: "https://example7.com",
-    },
-    userid: {
-      S: "118298783964592448941",
-    },
-    createdAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
-    updatedAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
+    alias: "Alias 7",
+    check_type: "EBAY PRICE THRESHOLD",
+    pk: "CHECK#1az4w7mhi9b",
+    sk: "CHECK",
+    type: "CHECK",
+    url: "https://example7.com",
+    userid: "118298783964592448941",
+    createdAt: "2024-07-23T02:06:00.975Z",
+    updatedAt: "2024-07-23T02:06:00.975Z",
     lastResult: {
-      M: {
-        status: {
-          S: "NO ALERT",
-        },
-        message: {
-          S: "Message",
-        },
-        timestamp: {
-          S: "2023-08-15T01:08:14.782Z",
-        },
-      },
+      status: "NO ALERT",
+      message: "Message",
+      timestamp: "2024-07-23T02:02:05.598Z",
     },
-    status: {
-      S: "PAUSED",
-    },
-    delayMs: {
-      N: "86400000",
-    },
+    status: "PAUSED",
+    delayMs: 259200000,
     attributes: {
-      M: {
-        percent_diff: {
-          N: "0.05",
-        },
-      },
+      threshold: 100.95,
     },
-    email: {
-      S: "exampleemail7@gmail.com",
-    },
-    mostRecentAlert: {
-      S: "2024-05-08T14:23:05.709Z",
-    },
-    startHour: {
-      N: "8",
-    },
-    cron: {
-      S: "0 2 * * *",
-    },
+    email: "exampleemail7@gmail.com",
+    mostRecentAlert: "2024-07-22T22:34:32.451Z",
+    cron: "0 3 */3 * *",
   },
   {
-    alias: {
-      S: "Alias 8",
-    },
-    check_type: {
-      S: "KEYWORD CHECK",
-    },
-    pk: {
-      S: "CHECK#mab6r0m3hlj",
-    },
-    sk: {
-      S: "CHECK",
-    },
-    type: {
-      S: "CHECK",
-    },
-    url: {
-      S: "https://example8.com",
-    },
-    userid: {
-      S: "118298783964592448941",
-    },
-    createdAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
-    updatedAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
+    alias: "Alias 8",
+    check_type: "KEYWORD CHECK",
+    pk: "CHECK#q9npvinr9hg",
+    sk: "CHECK",
+    type: "CHECK",
+    url: "https://example8.com",
+    userid: "118298783964592448941",
+    createdAt: "2024-07-23T02:06:00.975Z",
+    updatedAt: "2024-07-23T02:06:00.975Z",
     lastResult: {
-      M: {
-        status: {
-          S: "FAILED",
-        },
-        message: {
-          S: "Message",
-        },
-        timestamp: {
-          S: "2021-06-13T08:04:57.301Z",
-        },
-      },
+      status: "ALERTED",
+      message: "Message",
+      timestamp: "2024-07-22T22:11:48.060Z",
     },
-    status: {
-      S: "PAUSED",
-    },
-    delayMs: {
-      N: "3600000",
-    },
+    status: "PAUSED",
+    delayMs: 86400000,
     attributes: {
-      M: {
-        keyword: {
-          S: "Keyword",
-        },
-        opposite: {
-          B: "false",
-        },
-      },
+      keyword: "Keyword",
+      opposite: false,
     },
-    email: {
-      S: "exampleemail8@gmail.com",
-    },
-    mostRecentAlert: {
-      S: "2022-04-17T00:33:06.387Z",
-    },
-    startHour: {
-      N: "0",
-    },
-    cron: {
-      S: "0 * * * *",
-    },
+    email: "exampleemail8@gmail.com",
+    mostRecentAlert: "2019-07-26T03:45:13.089Z",
+    cron: "0 19 * * *",
   },
   {
-    alias: {
-      S: "Alias 9",
-    },
-    check_type: {
-      S: "KEYWORD CHECK",
-    },
-    pk: {
-      S: "CHECK#np8m4bj9kds",
-    },
-    sk: {
-      S: "CHECK",
-    },
-    type: {
-      S: "CHECK",
-    },
-    url: {
-      S: "https://example9.com",
-    },
-    userid: {
-      S: "118298783964592448941",
-    },
-    createdAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
-    updatedAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
+    alias: "Alias 9",
+    check_type: "KEYWORD CHECK",
+    pk: "CHECK#35g52sw26sy",
+    sk: "CHECK",
+    type: "CHECK",
+    url: "https://example9.com",
+    userid: "118298783964592448941",
+    createdAt: "2024-07-23T02:06:00.975Z",
+    updatedAt: "2024-07-23T02:06:00.975Z",
     lastResult: {
-      M: {
-        status: {
-          S: "ALERTED",
-        },
-        message: {
-          S: "Message",
-        },
-        timestamp: {
-          S: "2024-06-26T07:28:35.325Z",
-        },
-      },
+      status: "FAILED",
+      message: "Message",
+      timestamp: "2023-09-08T07:46:50.662Z",
     },
-    status: {
-      S: "PAUSED",
-    },
-    delayMs: {
-      N: "604800000",
-    },
+    status: "PAUSED",
+    delayMs: 604800000,
     attributes: {
-      M: {
-        keyword: {
-          S: "Keyword",
-        },
-        opposite: {
-          B: "false",
-        },
-      },
+      keyword: "Keyword",
+      opposite: false,
     },
-    email: {
-      S: "exampleemail9@gmail.com",
-    },
-    mostRecentAlert: {
-      S: "2024-07-23T00:07:29.438Z",
-    },
-    startHour: {
-      N: "96",
-    },
-    cron: {
-      S: "0 8 * * 1",
-    },
+    email: "exampleemail9@gmail.com",
+    mostRecentAlert: "2023-11-29T02:40:48.786Z",
+    cron: "0 8 * * 1",
   },
   {
-    alias: {
-      S: "Alias 10",
-    },
-    check_type: {
-      S: "PAGE DIFFERENCE",
-    },
-    pk: {
-      S: "CHECK#l74mbob4wig",
-    },
-    sk: {
-      S: "CHECK",
-    },
-    type: {
-      S: "CHECK",
-    },
-    url: {
-      S: "https://example10.com",
-    },
-    userid: {
-      S: "118298783964592448941",
-    },
-    createdAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
-    updatedAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
+    alias: "Alias 10",
+    check_type: "EBAY PRICE THRESHOLD",
+    pk: "CHECK#uesl77f3rej",
+    sk: "CHECK",
+    type: "CHECK",
+    url: "https://example10.com",
+    userid: "118298783964592448941",
+    createdAt: "2024-07-23T02:06:00.975Z",
+    updatedAt: "2024-07-23T02:06:00.975Z",
     lastResult: {
-      M: {
-        status: {
-          S: "NO ALERT",
-        },
-        message: {
-          S: "Message",
-        },
-        timestamp: {
-          S: "2024-07-23T01:48:52.047Z",
-        },
-      },
+      status: "FAILED",
+      message: "Message",
+      timestamp: "2023-11-18T00:46:54.475Z",
     },
-    status: {
-      S: "ACTIVE",
-    },
-    delayMs: {
-      N: "3600000",
-    },
+    status: "PAUSED",
+    delayMs: 604800000,
     attributes: {
-      M: {
-        percent_diff: {
-          N: "0.05",
-        },
-      },
+      threshold: 100.95,
     },
-    email: {
-      S: "exampleemail10@gmail.com",
-    },
-    mostRecentAlert: {
-      S: "2024-01-18T22:51:41.483Z",
-    },
-    startHour: {
-      N: "0",
-    },
-    cron: {
-      S: "0 * * * *",
-    },
+    email: "exampleemail10@gmail.com",
+    mostRecentAlert: "2024-03-16T15:06:38.344Z",
+    cron: "0 17 * * 3",
   },
   {
-    alias: {
-      S: "Alias 11",
-    },
-    check_type: {
-      S: "KEYWORD CHECK",
-    },
-    pk: {
-      S: "CHECK#5usach68b9e",
-    },
-    sk: {
-      S: "CHECK",
-    },
-    type: {
-      S: "CHECK",
-    },
-    url: {
-      S: "https://example11.com",
-    },
-    userid: {
-      S: "118298783964592448941",
-    },
-    createdAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
-    updatedAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
+    alias: "Alias 11",
+    check_type: "PAGE DIFFERENCE",
+    pk: "CHECK#9inzwhrmvkj",
+    sk: "CHECK",
+    type: "CHECK",
+    url: "https://example11.com",
+    userid: "118298783964592448941",
+    createdAt: "2024-07-23T02:06:00.975Z",
+    updatedAt: "2024-07-23T02:06:00.975Z",
     lastResult: {
-      M: {
-        status: {
-          S: "NO ALERT",
-        },
-        message: {
-          S: "Message",
-        },
-        timestamp: {
-          S: "2024-07-05T22:50:31.467Z",
-        },
-      },
+      status: "NO ALERT",
+      message: "Message",
+      timestamp: "2024-07-06T18:05:44.122Z",
     },
-    status: {
-      S: "PAUSED",
-    },
-    delayMs: {
-      N: "43200000",
-    },
+    status: "PAUSED",
+    delayMs: 300000,
     attributes: {
-      M: {
-        keyword: {
-          S: "Keyword",
-        },
-        opposite: {
-          B: "false",
-        },
-      },
+      percent_diff: 0.05,
     },
-    email: {
-      S: "exampleemail11@gmail.com",
-    },
-    mostRecentAlert: {},
-    startHour: {
-      N: "0",
-    },
-    cron: {
-      S: "0 7/12 * * *",
-    },
+    email: "exampleemail11@gmail.com",
+    mostRecentAlert: "2024-07-23T01:05:13.612Z",
+    cron: "*/5 * * * *",
   },
   {
-    alias: {
-      S: "Alias 12",
-    },
-    check_type: {
-      S: "KEYWORD CHECK",
-    },
-    pk: {
-      S: "CHECK#ahw8zczx51f",
-    },
-    sk: {
-      S: "CHECK",
-    },
-    type: {
-      S: "CHECK",
-    },
-    url: {
-      S: "https://example12.com",
-    },
-    userid: {
-      S: "118298783964592448941",
-    },
-    createdAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
-    updatedAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
+    alias: "Alias 12",
+    check_type: "EBAY PRICE THRESHOLD",
+    pk: "CHECK#yjcgsuamz9g",
+    sk: "CHECK",
+    type: "CHECK",
+    url: "https://example12.com",
+    userid: "118298783964592448941",
+    createdAt: "2024-07-23T02:06:00.975Z",
+    updatedAt: "2024-07-23T02:06:00.975Z",
     lastResult: {
-      M: {
-        status: {
-          S: "ALERTED",
-        },
-        message: {
-          S: "Message",
-        },
-        timestamp: {
-          S: "2024-07-23T01:48:52.047Z",
-        },
-      },
+      status: "ALERTED",
+      message: "Message",
+      timestamp: "2024-07-23T02:06:00.975Z",
     },
-    status: {
-      S: "ACTIVE",
-    },
-    delayMs: {
-      N: "14400000",
-    },
+    status: "ACTIVE",
+    delayMs: 14400000,
     attributes: {
-      M: {
-        keyword: {
-          S: "Keyword",
-        },
-        opposite: {
-          B: "false",
-        },
-      },
+      threshold: 100.95,
     },
-    email: {
-      S: "exampleemail12@gmail.com",
-    },
-    mostRecentAlert: {},
-    startHour: {
-      N: "1",
-    },
-    cron: {
-      S: "0 1-23/4 * * *",
-    },
+    email: "exampleemail12@gmail.com",
+    mostRecentAlert: "2024-07-06T11:00:49.880Z",
+    cron: "0 3-23/4 * * *",
   },
   {
-    alias: {
-      S: "Alias 13",
-    },
-    check_type: {
-      S: "EBAY PRICE THRESHOLD",
-    },
-    pk: {
-      S: "CHECK#hvatqu3h98m",
-    },
-    sk: {
-      S: "CHECK",
-    },
-    type: {
-      S: "CHECK",
-    },
-    url: {
-      S: "https://example13.com",
-    },
-    userid: {
-      S: "118298783964592448941",
-    },
-    createdAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
-    updatedAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
+    alias: "Alias 13",
+    check_type: "PAGE DIFFERENCE",
+    pk: "CHECK#3vut3x0m62g",
+    sk: "CHECK",
+    type: "CHECK",
+    url: "https://example13.com",
+    userid: "118298783964592448941",
+    createdAt: "2024-07-23T02:06:00.975Z",
+    updatedAt: "2024-07-23T02:06:00.975Z",
     lastResult: {
-      M: {
-        status: {
-          S: "ALERTED",
-        },
-        message: {
-          S: "Message",
-        },
-        timestamp: {
-          S: "2024-06-16T08:43:13.699Z",
-        },
-      },
+      status: "NO ALERT",
+      message: "Message",
+      timestamp: "2024-05-26T01:00:55.024Z",
     },
-    status: {
-      S: "PAUSED",
-    },
-    delayMs: {
-      N: "1800000",
-    },
+    status: "PAUSED",
+    delayMs: 14400000,
     attributes: {
-      M: {
-        threshold: {
-          N: "100.95",
-        },
-      },
+      percent_diff: 0.05,
     },
-    email: {
-      S: "exampleemail13@gmail.com",
-    },
-    mostRecentAlert: {
-      S: "2024-06-17T19:48:34.432Z",
-    },
-    startHour: {
-      N: "0",
-    },
-    cron: {
-      S: "*/30 * * * *",
-    },
+    email: "exampleemail13@gmail.com",
+    mostRecentAlert: "2024-04-30T14:03:25.102Z",
+    cron: "0 */4 * * *",
   },
   {
-    alias: {
-      S: "Alias 14",
-    },
-    check_type: {
-      S: "EBAY PRICE THRESHOLD",
-    },
-    pk: {
-      S: "CHECK#df3bw63h9cl",
-    },
-    sk: {
-      S: "CHECK",
-    },
-    type: {
-      S: "CHECK",
-    },
-    url: {
-      S: "https://example14.com",
-    },
-    userid: {
-      S: "118298783964592448941",
-    },
-    createdAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
-    updatedAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
+    alias: "Alias 14",
+    check_type: "PAGE DIFFERENCE",
+    pk: "CHECK#fj6lg3zlj58",
+    sk: "CHECK",
+    type: "CHECK",
+    url: "https://example14.com",
+    userid: "118298783964592448941",
+    createdAt: "2024-07-23T02:06:00.975Z",
+    updatedAt: "2024-07-23T02:06:00.975Z",
     lastResult: {
-      M: {
-        status: {
-          S: "FAILED",
-        },
-        message: {
-          S: "Message",
-        },
-        timestamp: {
-          S: "2024-07-03T05:41:47.756Z",
-        },
-      },
+      status: "FAILED",
+      message: "Message",
+      timestamp: "2024-07-23T02:06:00.975Z",
     },
-    status: {
-      S: "PAUSED",
-    },
-    delayMs: {
-      N: "86400000",
-    },
+    status: "ACTIVE",
+    delayMs: 300000,
     attributes: {
-      M: {
-        threshold: {
-          N: "100.95",
-        },
-      },
+      percent_diff: 0.05,
     },
-    email: {
-      S: "exampleemail14@gmail.com",
-    },
-    mostRecentAlert: {
-      S: "2023-07-28T06:31:42.043Z",
-    },
-    startHour: {
-      N: "3",
-    },
-    cron: {
-      S: "0 2 * * *",
-    },
+    email: "exampleemail14@gmail.com",
+    mostRecentAlert: "2024-07-11T19:45:23.251Z",
+    cron: "*/5 * * * *",
   },
   {
-    alias: {
-      S: "Alias 15",
-    },
-    check_type: {
-      S: "EBAY PRICE THRESHOLD",
-    },
-    pk: {
-      S: "CHECK#92h7zst8osn",
-    },
-    sk: {
-      S: "CHECK",
-    },
-    type: {
-      S: "CHECK",
-    },
-    url: {
-      S: "https://example15.com",
-    },
-    userid: {
-      S: "118298783964592448941",
-    },
-    createdAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
-    updatedAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
+    alias: "Alias 15",
+    check_type: "PAGE DIFFERENCE",
+    pk: "CHECK#1n30haypcun",
+    sk: "CHECK",
+    type: "CHECK",
+    url: "https://example15.com",
+    userid: "118298783964592448941",
+    createdAt: "2024-07-23T02:06:00.975Z",
+    updatedAt: "2024-07-23T02:06:00.975Z",
     lastResult: {
-      M: {
-        status: {
-          S: "FAILED",
-        },
-        message: {
-          S: "Message",
-        },
-        timestamp: {
-          S: "2024-07-23T01:48:52.047Z",
-        },
-      },
+      status: "ALERTED",
+      message: "Message",
+      timestamp: "2020-06-23T17:38:19.930Z",
     },
-    status: {
-      S: "ACTIVE",
-    },
-    delayMs: {
-      N: "86400000",
-    },
+    status: "PAUSED",
+    delayMs: 86400000,
     attributes: {
-      M: {
-        threshold: {
-          N: "100.95",
-        },
-      },
+      percent_diff: 0.05,
     },
-    email: {
-      S: "exampleemail15@gmail.com",
-    },
-    mostRecentAlert: {},
-    startHour: {
-      N: "2",
-    },
-    cron: {
-      S: "0 19 * * *",
-    },
+    email: "exampleemail15@gmail.com",
+    mostRecentAlert: "2021-08-20T18:56:43.953Z",
+    cron: "0 9 * * *",
   },
   {
-    alias: {
-      S: "Alias 16",
-    },
-    check_type: {
-      S: "KEYWORD CHECK",
-    },
-    pk: {
-      S: "CHECK#u5fop5zz6vp",
-    },
-    sk: {
-      S: "CHECK",
-    },
-    type: {
-      S: "CHECK",
-    },
-    url: {
-      S: "https://example16.com",
-    },
-    userid: {
-      S: "118298783964592448941",
-    },
-    createdAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
-    updatedAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
+    alias: "Alias 16",
+    check_type: "KEYWORD CHECK",
+    pk: "CHECK#ilncy2e3re",
+    sk: "CHECK",
+    type: "CHECK",
+    url: "https://example16.com",
+    userid: "118298783964592448941",
+    createdAt: "2024-07-23T02:06:00.975Z",
+    updatedAt: "2024-07-23T02:06:00.975Z",
     lastResult: {
-      M: {
-        status: {
-          S: "FAILED",
-        },
-        message: {
-          S: "Message",
-        },
-        timestamp: {
-          S: "2024-07-23T01:48:52.047Z",
-        },
-      },
+      status: "FAILED",
+      message: "Message",
+      timestamp: "2020-12-18T17:30:02.401Z",
     },
-    status: {
-      S: "ACTIVE",
-    },
-    delayMs: {
-      N: "86400000",
-    },
+    status: "PAUSED",
+    delayMs: 86400000,
     attributes: {
-      M: {
-        keyword: {
-          S: "Keyword",
-        },
-        opposite: {
-          B: "false",
-        },
-      },
+      keyword: "Keyword",
+      opposite: false,
     },
-    email: {
-      S: "exampleemail16@gmail.com",
-    },
-    mostRecentAlert: {
-      S: "2024-06-17T01:50:08.143Z",
-    },
-    startHour: {
-      N: "23",
-    },
-    cron: {
-      S: "0 2 * * *",
-    },
+    email: "exampleemail16@gmail.com",
+    cron: "0 0 * * *",
   },
   {
-    alias: {
-      S: "Alias 17",
-    },
-    check_type: {
-      S: "EBAY PRICE THRESHOLD",
-    },
-    pk: {
-      S: "CHECK#mkvgi912cfc",
-    },
-    sk: {
-      S: "CHECK",
-    },
-    type: {
-      S: "CHECK",
-    },
-    url: {
-      S: "https://example17.com",
-    },
-    userid: {
-      S: "118298783964592448941",
-    },
-    createdAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
-    updatedAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
+    alias: "Alias 17",
+    check_type: "EBAY PRICE THRESHOLD",
+    pk: "CHECK#yxk1qupevf",
+    sk: "CHECK",
+    type: "CHECK",
+    url: "https://example17.com",
+    userid: "118298783964592448941",
+    createdAt: "2024-07-23T02:06:00.975Z",
+    updatedAt: "2024-07-23T02:06:00.975Z",
     lastResult: {
-      M: {
-        status: {
-          S: "NO ALERT",
-        },
-        message: {
-          S: "Message",
-        },
-        timestamp: {
-          S: "2024-07-23T01:48:52.047Z",
-        },
-      },
+      status: "NO ALERT",
+      message: "Message",
+      timestamp: "2024-07-23T02:06:00.975Z",
     },
-    status: {
-      S: "ACTIVE",
-    },
-    delayMs: {
-      N: "604800000",
-    },
+    status: "ACTIVE",
+    delayMs: 43200000,
     attributes: {
-      M: {
-        threshold: {
-          N: "100.95",
-        },
-      },
+      threshold: 100.95,
     },
-    email: {
-      S: "exampleemail17@gmail.com",
-    },
-    mostRecentAlert: {
-      S: "2023-10-07T12:21:56.321Z",
-    },
-    startHour: {
-      N: "162",
-    },
-    cron: {
-      S: "0 8 * * 1",
-    },
+    email: "exampleemail17@gmail.com",
+    cron: "0 */12 * * *",
   },
   {
-    alias: {
-      S: "Alias 18",
-    },
-    check_type: {
-      S: "KEYWORD CHECK",
-    },
-    pk: {
-      S: "CHECK#6814jwd9n1m",
-    },
-    sk: {
-      S: "CHECK",
-    },
-    type: {
-      S: "CHECK",
-    },
-    url: {
-      S: "https://example18.com",
-    },
-    userid: {
-      S: "118298783964592448941",
-    },
-    createdAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
-    updatedAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
+    alias: "Alias 18",
+    check_type: "EBAY PRICE THRESHOLD",
+    pk: "CHECK#iq9w5yd9xxl",
+    sk: "CHECK",
+    type: "CHECK",
+    url: "https://example18.com",
+    userid: "118298783964592448941",
+    createdAt: "2024-07-23T02:06:00.975Z",
+    updatedAt: "2024-07-23T02:06:00.975Z",
     lastResult: {
-      M: {
-        status: {
-          S: "FAILED",
-        },
-        message: {
-          S: "Message",
-        },
-        timestamp: {
-          S: "2024-04-19T07:45:37.592Z",
-        },
-      },
+      status: "NO ALERT",
+      message: "Message",
+      timestamp: "2023-09-10T13:08:47.580Z",
     },
-    status: {
-      S: "PAUSED",
-    },
-    delayMs: {
-      N: "86400000",
-    },
+    status: "PAUSED",
+    delayMs: 43200000,
     attributes: {
-      M: {
-        keyword: {
-          S: "Keyword",
-        },
-        opposite: {
-          B: "false",
-        },
-      },
+      threshold: 100.95,
     },
-    email: {
-      S: "exampleemail18@gmail.com",
-    },
-    mostRecentAlert: {
-      S: "2024-07-18T13:36:17.773Z",
-    },
-    startHour: {
-      N: "8",
-    },
-    cron: {
-      S: "0 9 * * *",
-    },
+    email: "exampleemail18@gmail.com",
+    mostRecentAlert: "2024-07-23T00:34:29.433Z",
+    cron: "0 */12 * * *",
   },
   {
-    alias: {
-      S: "Alias 19",
-    },
-    check_type: {
-      S: "PAGE DIFFERENCE",
-    },
-    pk: {
-      S: "CHECK#o7qiovrz22o",
-    },
-    sk: {
-      S: "CHECK",
-    },
-    type: {
-      S: "CHECK",
-    },
-    url: {
-      S: "https://example19.com",
-    },
-    userid: {
-      S: "118298783964592448941",
-    },
-    createdAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
-    updatedAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
+    alias: "Alias 19",
+    check_type: "KEYWORD CHECK",
+    pk: "CHECK#syes274mhrf",
+    sk: "CHECK",
+    type: "CHECK",
+    url: "https://example19.com",
+    userid: "118298783964592448941",
+    createdAt: "2024-07-23T02:06:00.975Z",
+    updatedAt: "2024-07-23T02:06:00.975Z",
     lastResult: {
-      M: {
-        status: {
-          S: "ALERTED",
-        },
-        message: {
-          S: "Message",
-        },
-        timestamp: {
-          S: "2024-07-22T22:05:16.073Z",
-        },
-      },
+      status: "ALERTED",
+      message: "Message",
+      timestamp: "2024-06-13T20:29:10.263Z",
     },
-    status: {
-      S: "PAUSED",
-    },
-    delayMs: {
-      N: "259200000",
-    },
+    status: "PAUSED",
+    delayMs: 1800000,
     attributes: {
-      M: {
-        percent_diff: {
-          N: "0.05",
-        },
-      },
+      keyword: "Keyword",
+      opposite: false,
     },
-    email: {
-      S: "exampleemail19@gmail.com",
-    },
-    mostRecentAlert: {
-      S: "2021-09-25T15:43:08.556Z",
-    },
-    startHour: {
-      N: "37",
-    },
-    cron: {
-      S: "0 3 */3 * *",
-    },
+    email: "exampleemail19@gmail.com",
+    mostRecentAlert: "2024-05-05T16:20:48.775Z",
+    cron: "*/30 * * * *",
   },
   {
-    alias: {
-      S: "Alias 20",
-    },
-    check_type: {
-      S: "KEYWORD CHECK",
-    },
-    pk: {
-      S: "CHECK#5yx72wigarf",
-    },
-    sk: {
-      S: "CHECK",
-    },
-    type: {
-      S: "CHECK",
-    },
-    url: {
-      S: "https://example20.com",
-    },
-    userid: {
-      S: "118298783964592448941",
-    },
-    createdAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
-    updatedAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
+    alias: "Alias 20",
+    check_type: "KEYWORD CHECK",
+    pk: "CHECK#k4ppnpcrpyb",
+    sk: "CHECK",
+    type: "CHECK",
+    url: "https://example20.com",
+    userid: "118298783964592448941",
+    createdAt: "2024-07-23T02:06:00.975Z",
+    updatedAt: "2024-07-23T02:06:00.975Z",
     lastResult: {
-      M: {
-        status: {
-          S: "NO ALERT",
-        },
-        message: {
-          S: "Message",
-        },
-        timestamp: {
-          S: "2024-07-23T00:34:55.013Z",
-        },
-      },
+      status: "ALERTED",
+      message: "Message",
+      timestamp: "2024-07-23T02:06:00.975Z",
     },
-    status: {
-      S: "PAUSED",
-    },
-    delayMs: {
-      N: "3600000",
-    },
+    status: "ACTIVE",
+    delayMs: 1800000,
     attributes: {
-      M: {
-        keyword: {
-          S: "Keyword",
-        },
-        opposite: {
-          B: "false",
-        },
-      },
+      keyword: "Keyword",
+      opposite: false,
     },
-    email: {
-      S: "exampleemail20@gmail.com",
-    },
-    mostRecentAlert: {
-      S: "2024-06-15T21:28:18.704Z",
-    },
-    startHour: {
-      N: "0",
-    },
-    cron: {
-      S: "0 * * * *",
-    },
+    email: "exampleemail20@gmail.com",
+    mostRecentAlert: "2022-01-31T12:52:26.853Z",
+    cron: "*/30 * * * *",
   },
   {
-    alias: {
-      S: "Alias 21",
-    },
-    check_type: {
-      S: "PAGE DIFFERENCE",
-    },
-    pk: {
-      S: "CHECK#el2llyfjamo",
-    },
-    sk: {
-      S: "CHECK",
-    },
-    type: {
-      S: "CHECK",
-    },
-    url: {
-      S: "https://example21.com",
-    },
-    userid: {
-      S: "118298783964592448941",
-    },
-    createdAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
-    updatedAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
+    alias: "Alias 21",
+    check_type: "PAGE DIFFERENCE",
+    pk: "CHECK#jw9eyt9tsrs",
+    sk: "CHECK",
+    type: "CHECK",
+    url: "https://example21.com",
+    userid: "118298783964592448941",
+    createdAt: "2024-07-23T02:06:00.975Z",
+    updatedAt: "2024-07-23T02:06:00.975Z",
     lastResult: {
-      M: {
-        status: {
-          S: "ALERTED",
-        },
-        message: {
-          S: "Message",
-        },
-        timestamp: {
-          S: "2024-07-23T01:48:52.047Z",
-        },
-      },
+      status: "FAILED",
+      message: "Message",
+      timestamp: "2024-06-29T15:34:15.591Z",
     },
-    status: {
-      S: "ACTIVE",
-    },
-    delayMs: {
-      N: "14400000",
-    },
+    status: "PAUSED",
+    delayMs: 604800000,
     attributes: {
-      M: {
-        percent_diff: {
-          N: "0.05",
-        },
-      },
+      percent_diff: 0.05,
     },
-    email: {
-      S: "exampleemail21@gmail.com",
-    },
-    mostRecentAlert: {
-      S: "2024-06-26T23:34:34.988Z",
-    },
-    startHour: {
-      N: "3",
-    },
-    cron: {
-      S: "0 3-23/4 * * *",
-    },
+    email: "exampleemail21@gmail.com",
+    mostRecentAlert: "2024-02-23T04:30:48.466Z",
+    cron: "0 0 * * 0",
   },
   {
-    alias: {
-      S: "Alias 22",
-    },
-    check_type: {
-      S: "EBAY PRICE THRESHOLD",
-    },
-    pk: {
-      S: "CHECK#q392xabu2i",
-    },
-    sk: {
-      S: "CHECK",
-    },
-    type: {
-      S: "CHECK",
-    },
-    url: {
-      S: "https://example22.com",
-    },
-    userid: {
-      S: "118298783964592448941",
-    },
-    createdAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
-    updatedAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
+    alias: "Alias 22",
+    check_type: "PAGE DIFFERENCE",
+    pk: "CHECK#v2wds6z5pcj",
+    sk: "CHECK",
+    type: "CHECK",
+    url: "https://example22.com",
+    userid: "118298783964592448941",
+    createdAt: "2024-07-23T02:06:00.975Z",
+    updatedAt: "2024-07-23T02:06:00.975Z",
     lastResult: {
-      M: {
-        status: {
-          S: "NO ALERT",
-        },
-        message: {
-          S: "Message",
-        },
-        timestamp: {
-          S: "2024-07-23T01:48:52.047Z",
-        },
-      },
+      status: "NO ALERT",
+      message: "Message",
+      timestamp: "2024-06-09T04:44:45.652Z",
     },
-    status: {
-      S: "ACTIVE",
-    },
-    delayMs: {
-      N: "86400000",
-    },
+    status: "PAUSED",
+    delayMs: 604800000,
     attributes: {
-      M: {
-        threshold: {
-          N: "100.95",
-        },
-      },
+      percent_diff: 0.05,
     },
-    email: {
-      S: "exampleemail22@gmail.com",
-    },
-    mostRecentAlert: {
-      S: "2022-01-27T09:08:24.913Z",
-    },
-    startHour: {
-      N: "12",
-    },
-    cron: {
-      S: "0 9 * * *",
-    },
+    email: "exampleemail22@gmail.com",
+    mostRecentAlert: "2023-12-30T08:21:47.859Z",
+    cron: "0 17 * * 3",
   },
   {
-    alias: {
-      S: "Alias 23",
-    },
-    check_type: {
-      S: "PAGE DIFFERENCE",
-    },
-    pk: {
-      S: "CHECK#l1ye44c4xrk",
-    },
-    sk: {
-      S: "CHECK",
-    },
-    type: {
-      S: "CHECK",
-    },
-    url: {
-      S: "https://example23.com",
-    },
-    userid: {
-      S: "118298783964592448941",
-    },
-    createdAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
-    updatedAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
+    alias: "Alias 23",
+    check_type: "PAGE DIFFERENCE",
+    pk: "CHECK#0u297t4ub2e",
+    sk: "CHECK",
+    type: "CHECK",
+    url: "https://example23.com",
+    userid: "118298783964592448941",
+    createdAt: "2024-07-23T02:06:00.975Z",
+    updatedAt: "2024-07-23T02:06:00.975Z",
     lastResult: {
-      M: {
-        status: {
-          S: "NO ALERT",
-        },
-        message: {
-          S: "Message",
-        },
-        timestamp: {
-          S: "2024-07-01T23:42:30.757Z",
-        },
-      },
+      status: "NO ALERT",
+      message: "Message",
+      timestamp: "2024-07-23T02:06:00.975Z",
     },
-    status: {
-      S: "PAUSED",
-    },
-    delayMs: {
-      N: "604800000",
-    },
+    status: "ACTIVE",
+    delayMs: 259200000,
     attributes: {
-      M: {
-        percent_diff: {
-          N: "0.05",
-        },
-      },
+      percent_diff: 0.05,
     },
-    email: {
-      S: "exampleemail23@gmail.com",
-    },
-    mostRecentAlert: {
-      S: "2023-10-14T07:34:53.313Z",
-    },
-    startHour: {
-      N: "137",
-    },
-    cron: {
-      S: "0 0 * * 0",
-    },
+    email: "exampleemail23@gmail.com",
+    cron: "0 3 */3 * *",
   },
   {
-    alias: {
-      S: "Alias 24",
-    },
-    check_type: {
-      S: "EBAY PRICE THRESHOLD",
-    },
-    pk: {
-      S: "CHECK#5ms2p3wfx84",
-    },
-    sk: {
-      S: "CHECK",
-    },
-    type: {
-      S: "CHECK",
-    },
-    url: {
-      S: "https://example24.com",
-    },
-    userid: {
-      S: "118298783964592448941",
-    },
-    createdAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
-    updatedAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
+    alias: "Alias 24",
+    check_type: "KEYWORD CHECK",
+    pk: "CHECK#8j3tqhrl0gh",
+    sk: "CHECK",
+    type: "CHECK",
+    url: "https://example24.com",
+    userid: "118298783964592448941",
+    createdAt: "2024-07-23T02:06:00.975Z",
+    updatedAt: "2024-07-23T02:06:00.975Z",
     lastResult: {
-      M: {
-        status: {
-          S: "ALERTED",
-        },
-        message: {
-          S: "Message",
-        },
-        timestamp: {
-          S: "2024-07-16T00:12:32.925Z",
-        },
-      },
+      status: "NO ALERT",
+      message: "Message",
+      timestamp: "2024-07-23T02:06:00.975Z",
     },
-    status: {
-      S: "PAUSED",
-    },
-    delayMs: {
-      N: "86400000",
-    },
+    status: "ACTIVE",
+    delayMs: 300000,
     attributes: {
-      M: {
-        threshold: {
-          N: "100.95",
-        },
-      },
+      keyword: "Keyword",
+      opposite: false,
     },
-    email: {
-      S: "exampleemail24@gmail.com",
-    },
-    mostRecentAlert: {
-      S: "2024-07-22T23:00:25.816Z",
-    },
-    startHour: {
-      N: "2",
-    },
-    cron: {
-      S: "0 0 * * *",
-    },
+    email: "exampleemail24@gmail.com",
+    mostRecentAlert: "2021-03-28T09:14:19.366Z",
+    cron: "*/5 * * * *",
   },
   {
-    alias: {
-      S: "Alias 25",
-    },
-    check_type: {
-      S: "PAGE DIFFERENCE",
-    },
-    pk: {
-      S: "CHECK#x5fbs0z3d5j",
-    },
-    sk: {
-      S: "CHECK",
-    },
-    type: {
-      S: "CHECK",
-    },
-    url: {
-      S: "https://example25.com",
-    },
-    userid: {
-      S: "118298783964592448941",
-    },
-    createdAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
-    updatedAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
+    alias: "Alias 25",
+    check_type: "PAGE DIFFERENCE",
+    pk: "CHECK#k6d1mtjoc9a",
+    sk: "CHECK",
+    type: "CHECK",
+    url: "https://example25.com",
+    userid: "118298783964592448941",
+    createdAt: "2024-07-23T02:06:00.975Z",
+    updatedAt: "2024-07-23T02:06:00.975Z",
     lastResult: {
-      M: {
-        status: {
-          S: "NO ALERT",
-        },
-        message: {
-          S: "Message",
-        },
-        timestamp: {
-          S: "2020-07-24T08:06:30.866Z",
-        },
-      },
+      status: "FAILED",
+      message: "Message",
+      timestamp: "2024-07-23T00:59:46.310Z",
     },
-    status: {
-      S: "PAUSED",
-    },
-    delayMs: {
-      N: "14400000",
-    },
+    status: "PAUSED",
+    delayMs: 14400000,
     attributes: {
-      M: {
-        percent_diff: {
-          N: "0.05",
-        },
-      },
+      percent_diff: 0.05,
     },
-    email: {
-      S: "exampleemail25@gmail.com",
-    },
-    mostRecentAlert: {
-      S: "2024-07-22T23:36:05.436Z",
-    },
-    startHour: {
-      N: "0",
-    },
-    cron: {
-      S: "0 */4 * * *",
-    },
+    email: "exampleemail25@gmail.com",
+    mostRecentAlert: "2024-05-14T19:24:02.132Z",
+    cron: "0 1-23/4 * * *",
   },
   {
-    alias: {
-      S: "Alias 26",
-    },
-    check_type: {
-      S: "KEYWORD CHECK",
-    },
-    pk: {
-      S: "CHECK#f1ht2tu49",
-    },
-    sk: {
-      S: "CHECK",
-    },
-    type: {
-      S: "CHECK",
-    },
-    url: {
-      S: "https://example26.com",
-    },
-    userid: {
-      S: "118298783964592448941",
-    },
-    createdAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
-    updatedAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
+    alias: "Alias 26",
+    check_type: "KEYWORD CHECK",
+    pk: "CHECK#635tvt4dr2t",
+    sk: "CHECK",
+    type: "CHECK",
+    url: "https://example26.com",
+    userid: "118298783964592448941",
+    createdAt: "2024-07-23T02:06:00.975Z",
+    updatedAt: "2024-07-23T02:06:00.975Z",
     lastResult: {
-      M: {
-        status: {
-          S: "FAILED",
-        },
-        message: {
-          S: "Message",
-        },
-        timestamp: {
-          S: "2024-07-23T01:48:52.047Z",
-        },
-      },
+      status: "NO ALERT",
+      message: "Message",
+      timestamp: "2020-10-21T03:46:20.049Z",
     },
-    status: {
-      S: "ACTIVE",
-    },
-    delayMs: {
-      N: "86400000",
-    },
+    status: "PAUSED",
+    delayMs: 86400000,
     attributes: {
-      M: {
-        keyword: {
-          S: "Keyword",
-        },
-        opposite: {
-          B: "false",
-        },
-      },
+      keyword: "Keyword",
+      opposite: false,
     },
-    email: {
-      S: "exampleemail26@gmail.com",
-    },
-    mostRecentAlert: {},
-    startHour: {
-      N: "0",
-    },
-    cron: {
-      S: "0 0 * * *",
-    },
+    email: "exampleemail26@gmail.com",
+    mostRecentAlert: "2021-06-24T05:00:41.106Z",
+    cron: "0 19 * * *",
   },
   {
-    alias: {
-      S: "Alias 27",
-    },
-    check_type: {
-      S: "PAGE DIFFERENCE",
-    },
-    pk: {
-      S: "CHECK#88y45clxu9",
-    },
-    sk: {
-      S: "CHECK",
-    },
-    type: {
-      S: "CHECK",
-    },
-    url: {
-      S: "https://example27.com",
-    },
-    userid: {
-      S: "118298783964592448941",
-    },
-    createdAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
-    updatedAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
+    alias: "Alias 27",
+    check_type: "KEYWORD CHECK",
+    pk: "CHECK#ajadjhnfowi",
+    sk: "CHECK",
+    type: "CHECK",
+    url: "https://example27.com",
+    userid: "118298783964592448941",
+    createdAt: "2024-07-23T02:06:00.975Z",
+    updatedAt: "2024-07-23T02:06:00.975Z",
     lastResult: {
-      M: {
-        status: {
-          S: "ALERTED",
-        },
-        message: {
-          S: "Message",
-        },
-        timestamp: {
-          S: "2024-07-23T01:48:52.047Z",
-        },
-      },
+      status: "NO ALERT",
+      message: "Message",
+      timestamp: "2024-07-23T02:06:00.975Z",
     },
-    status: {
-      S: "ACTIVE",
-    },
-    delayMs: {
-      N: "14400000",
-    },
+    status: "ACTIVE",
+    delayMs: 43200000,
     attributes: {
-      M: {
-        percent_diff: {
-          N: "0.05",
-        },
-      },
+      keyword: "Keyword",
+      opposite: false,
     },
-    email: {
-      S: "exampleemail27@gmail.com",
-    },
-    mostRecentAlert: {
-      S: "2024-04-17T17:36:31.830Z",
-    },
-    startHour: {
-      N: "0",
-    },
-    cron: {
-      S: "0 1-23/4 * * *",
-    },
+    email: "exampleemail27@gmail.com",
+    cron: "0 */12 * * *",
   },
   {
-    alias: {
-      S: "Alias 28",
-    },
-    check_type: {
-      S: "EBAY PRICE THRESHOLD",
-    },
-    pk: {
-      S: "CHECK#qqh289txua",
-    },
-    sk: {
-      S: "CHECK",
-    },
-    type: {
-      S: "CHECK",
-    },
-    url: {
-      S: "https://example28.com",
-    },
-    userid: {
-      S: "118298783964592448941",
-    },
-    createdAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
-    updatedAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
+    alias: "Alias 28",
+    check_type: "KEYWORD CHECK",
+    pk: "CHECK#hp7w6upob3w",
+    sk: "CHECK",
+    type: "CHECK",
+    url: "https://example28.com",
+    userid: "118298783964592448941",
+    createdAt: "2024-07-23T02:06:00.975Z",
+    updatedAt: "2024-07-23T02:06:00.975Z",
     lastResult: {
-      M: {
-        status: {
-          S: "ALERTED",
-        },
-        message: {
-          S: "Message",
-        },
-        timestamp: {
-          S: "2024-04-20T10:39:40.676Z",
-        },
-      },
+      status: "FAILED",
+      message: "Message",
+      timestamp: "2024-07-23T02:06:00.975Z",
     },
-    status: {
-      S: "PAUSED",
-    },
-    delayMs: {
-      N: "14400000",
-    },
+    status: "ACTIVE",
+    delayMs: 259200000,
     attributes: {
-      M: {
-        threshold: {
-          N: "100.95",
-        },
-      },
+      keyword: "Keyword",
+      opposite: false,
     },
-    email: {
-      S: "exampleemail28@gmail.com",
-    },
-    mostRecentAlert: {
-      S: "2024-07-22T22:03:13.430Z",
-    },
-    startHour: {
-      N: "3",
-    },
-    cron: {
-      S: "0 1-23/4 * * *",
-    },
+    email: "exampleemail28@gmail.com",
+    mostRecentAlert: "2023-11-23T07:22:19.339Z",
+    cron: "0 3 */3 * *",
   },
   {
-    alias: {
-      S: "Alias 29",
-    },
-    check_type: {
-      S: "EBAY PRICE THRESHOLD",
-    },
-    pk: {
-      S: "CHECK#abrne1wjfm",
-    },
-    sk: {
-      S: "CHECK",
-    },
-    type: {
-      S: "CHECK",
-    },
-    url: {
-      S: "https://example29.com",
-    },
-    userid: {
-      S: "118298783964592448941",
-    },
-    createdAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
-    updatedAt: {
-      S: "2024-07-23T01:48:52.047Z",
-    },
+    alias: "Alias 29",
+    check_type: "EBAY PRICE THRESHOLD",
+    pk: "CHECK#acb488of6ho",
+    sk: "CHECK",
+    type: "CHECK",
+    url: "https://example29.com",
+    userid: "118298783964592448941",
+    createdAt: "2024-07-23T02:06:00.975Z",
+    updatedAt: "2024-07-23T02:06:00.975Z",
     lastResult: {
-      M: {
-        status: {
-          S: "ALERTED",
-        },
-        message: {
-          S: "Message",
-        },
-        timestamp: {
-          S: "2024-04-14T13:27:36.160Z",
-        },
-      },
+      status: "FAILED",
+      message: "Message",
+      timestamp: "2023-10-27T03:18:19.172Z",
     },
-    status: {
-      S: "PAUSED",
-    },
-    delayMs: {
-      N: "14400000",
-    },
+    status: "PAUSED",
+    delayMs: 604800000,
     attributes: {
-      M: {
-        threshold: {
-          N: "100.95",
-        },
-      },
+      threshold: 100.95,
     },
-    email: {
-      S: "exampleemail29@gmail.com",
-    },
-    mostRecentAlert: {
-      S: "2024-05-25T09:58:26.051Z",
-    },
-    startHour: {
-      N: "0",
-    },
-    cron: {
-      S: "0 3-23/4 * * *",
-    },
+    email: "exampleemail29@gmail.com",
+    mostRecentAlert: "2024-06-03T02:18:21.264Z",
+    cron: "0 17 * * 3",
   },
 ];

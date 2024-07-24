@@ -31,32 +31,32 @@ export const toSentenceCase = (str: string) => {
 
 export const handleShowDetails = (item: any) => {
   let details = `
-    PK: ${item.pk?.S ?? "-"}
-    SK: ${item.sk?.S ?? "-"}
-    User ID: ${item.userid?.S ?? "-"}
-    URL: ${item.url?.S ?? "-"}
-    Check Type: ${item.check_type?.S ?? "-"}
-    Delay (ms): ${item.delayMs?.S ?? "-"}
-    Status: ${item.status?.S ?? "-"}
-    Created At: ${item.createdAt?.S ?? "-"}
-    Updated At: ${item.updatedAt?.S ?? "-"}
-    Last Executed At: ${item.lastExecutedAt?.S ?? "-"}
-    Last Result: ${item.lastResult ? JSON.stringify(item.lastResult.S) : "-"}
+    PK: ${item.pk ?? "-"}
+    SK: ${item.sk ?? "-"}
+    User ID: ${item.userid ?? "-"}
+    URL: ${item.url ?? "-"}
+    Check Type: ${item.check_type ?? "-"}
+    Delay (ms): ${item.delayMs ?? "-"}
+    Status: ${item.status ?? "-"}
+    Created At: ${item.createdAt ?? "-"}
+    Updated At: ${item.updatedAt ?? "-"}
+    Last Executed At: ${item.lastExecutedAt ?? "-"}
+    Last Result: ${item.lastResult ? JSON.stringify(item.lastResult) : "-"}
   `;
 
   // Add type-specific details
-  switch (item.check_type?.S) {
+  switch (item.check_type) {
     case "KEYWORD CHECK":
-      details += `\nKeyword: ${item.keyword?.S ?? "-"}`;
+      details += `\nKeyword: ${item.keyword ?? "-"}`;
       break;
     case "EBAY PRICE THRESHOLD":
       details += `
-        Target Price: $${item.targetPrice?.N ?? "-"}
-        Current Price: $${item.currentPrice?.N ?? "-"}
+        Target Price: $${item.targetPrice ?? "-"}
+        Current Price: $${item.currentPrice ?? "-"}
       `;
       break;
     case "PAGE DIFFERENCE":
-      details += `\nDiff Percentage: ${item.diffPercentage?.N ?? "-"}%`;
+      details += `\nDiff Percentage: ${item.diffPercentage ?? "-"}%`;
       break;
   }
 

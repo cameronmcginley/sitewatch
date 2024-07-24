@@ -22,7 +22,7 @@ function Home() {
     if (status === "authenticated" && session?.user?.id) {
       fetchDataForUser(session.user.id);
     }
-    // console.log(generateDummyData(30, "plain"));
+    // console.log(generateDummyData(30));
   }, [status, session]);
 
   async function fetchDataForUser(userid: string) {

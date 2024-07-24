@@ -1,7 +1,9 @@
-import { DynamoDBClient, QueryCommand } from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { DynamoDBDocumentClient, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { getHeaders, getDynamoTableName } from "../utils/db.mjs";
 
-const dynamoDb = new DynamoDBClient({ region: "us-east-2" });
+const dynamoDbClient = new DynamoDBClient({ region: "us-east-2" });
+const dynamoDbDocClient = DynamoDBDocumentClient.from(dynamoDbClient);
 
 export const handler = async (event) => {
   const headers = getHeaders();
@@ -24,13 +26,13 @@ export const handler = async (event) => {
     IndexName: "userid-sk-index",
     KeyConditionExpression: "userid = :userid AND sk = :sk",
     ExpressionAttributeValues: {
-      ":userid": { S: userid },
-      ":sk": { S: "CHECK" },
+      ":userid": userid,
+      ":sk": "CHECK",
     },
   };
 
   try {
-    const data = await dynamoDb.send(new QueryCommand(params));
+    const data = await dynamoDbDocClient.send(new QueryCommand(params));
     if (data.Items && data.Items.length > 0) {
       return {
         statusCode: 200,

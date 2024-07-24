@@ -65,8 +65,8 @@ const defaultTooltipClassName =
   "flex flex-col justify-center items-center gap-1 p-1";
 
 const formatAliasCell = (item) => {
-  const alias = item.alias?.S;
-  const url = item.url?.S;
+  const alias = item.alias;
+  const url = item.url;
 
   const getCellContent = () => {
     return (
@@ -123,17 +123,17 @@ const formatCheckTypeCell = (item) => (
             <InfoCircledIcon />
           </TooltipTrigger>
           <TooltipContent>
-            {check_type_descriptions[item.check_type?.S] ?? emptyDash}
+            {check_type_descriptions[item.check_type] ?? emptyDash}
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-      {item.check_type?.S ?? emptyDash}
+      {item.check_type ?? emptyDash}
     </div>
   </TableCell>
 );
 
 const formatStatusCell = (item) => {
-  const status = item.status?.S;
+  const status = item.status;
 
   const statusToBadgeColor: Record<string, string> = {
     ACTIVE: "GREEN",
@@ -143,16 +143,16 @@ const formatStatusCell = (item) => {
   return (
     <TableCell>
       <Badge className={cn(BADGE_COLOR_CLASS[statusToBadgeColor[status]])}>
-        {toSentenceCase(item.status?.S) ?? emptyDash}
+        {toSentenceCase(item.status) ?? emptyDash}
       </Badge>
     </TableCell>
   );
 };
 
 const formatFrequencyCell = (item) => {
-  const delayMs = item.delayMs?.N;
-  // const startHour = item.startHour?.N;
-  const cron = item.cron?.S;
+  const delayMs = item.delayMs;
+  // const startHour = item.startHour;
+  const cron = item.cron;
 
   // Don't show start hour if runs every 1 hour or less
   // const showStartHour = delayMs !== null && delayMs > 3600000;
@@ -188,11 +188,11 @@ const formatFrequencyCell = (item) => {
 };
 
 const formatNextRunCell = (item) => {
-  const lastExecutedAt = item.lastResult?.M.timestamp.S;
-  const delayMs = item.delayMs?.N;
-  // const startHour = item.startHour?.N;
-  const status = item.status?.S;
-  const cron = item.cron?.S;
+  const lastExecutedAt = item.lastResult.timestamp;
+  const delayMs = item.delayMs;
+  // const startHour = item.startHour;
+  const status = item.status;
+  const cron = item.cron;
 
   const nextRunDate = getNextRunTimeFromCron(cron);
   const isHappening = isHappeningNowFromCron(lastExecutedAt, cron);
@@ -237,10 +237,10 @@ const formatNextRunCell = (item) => {
 };
 
 const formatLastResultCell = (item) => {
-  const status = item.lastResult?.M.status.S;
-  const message = item.lastResult?.M.message.S;
-  const timestamp = item.lastResult?.M.timestamp.S;
-  const email = item.email?.S;
+  const status = item.lastResult.status;
+  const message = item.lastResult.message;
+  const timestamp = item.lastResult.timestamp;
+  const email = item.email;
 
   const statusToBadgeColor: Record<string, string> = {
     ALERTED: "GREEN",
@@ -290,17 +290,17 @@ const formatMostRecentAlertCell = (item) => {
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger className="w-32 text-start cursor-auto select-text">
-            {item.mostRecentAlert?.S ? (
+            {item.mostRecentAlert ? (
               <Badge className={cn(BADGE_COLOR_CLASS.GREEN)}>
-                {getTimeAgo(item.mostRecentAlert?.S)}
+                {getTimeAgo(item.mostRecentAlert)}
               </Badge>
             ) : (
               emptyDash
             )}
           </TooltipTrigger>
-          {item.mostRecentAlert?.S && (
+          {item.mostRecentAlert && (
             <TooltipContent>
-              {formatDateWithTimezone(item.mostRecentAlert?.S)}
+              {formatDateWithTimezone(item.mostRecentAlert)}
             </TooltipContent>
           )}
         </Tooltip>
@@ -310,21 +310,19 @@ const formatMostRecentAlertCell = (item) => {
 };
 
 const formatKeywordCell = (item) => (
-  <TableCell>{item.keyword?.S ?? emptyDash}</TableCell>
+  <TableCell>{item.keyword ?? emptyDash}</TableCell>
 );
 
 const formatTargetPriceCell = (item) => (
   <TableCell>
-    {item.attributes?.M.threshold?.N
-      ? `$${item.attributes?.M.threshold.N}`
-      : emptyDash}
+    {item.attributes.threshold ? `$${item.attributes.threshold}` : emptyDash}
   </TableCell>
 );
 
 const formatDiffPercentageCell = (item) => (
   <TableCell>
-    {item.attributes?.M.percent_diff?.N
-      ? `${item.attributes?.M.percent_diff.N}%`
+    {item.attributes.percent_diff
+      ? `${item.attributes.percent_diff}%`
       : emptyDash}
   </TableCell>
 );

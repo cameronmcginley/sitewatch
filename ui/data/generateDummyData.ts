@@ -18,10 +18,7 @@ const delayToCronMap = [
   { delay: 7 * 24 * 60 * 60 * 1000, cron: "0 17 * * 3" },
 ];
 
-export const generateDummyData = (
-  rows: number,
-  format: "dynamoDB" | "plain"
-) => {
+export const generateDummyData = (rows: number) => {
   const data = [];
   const userId = "118298783964592448941";
   const checkTypes = [
@@ -91,55 +88,28 @@ export const generateDummyData = (
     const mostRecentAlert = previousAlerts[previousAlerts.length - 1];
     const cron = delayToCronMap[delayIndex].cron;
 
-    if (format === "dynamoDB") {
-      data.push({
-        alias: { S: `Alias ${i}` },
-        check_type: { S: checkType },
-        pk: { S: pk },
-        sk: { S: sk },
-        type: { S: "CHECK" },
-        url: { S: url },
-        userid: { S: userId },
-        createdAt: { S: createdAt },
-        updatedAt: { S: updatedAt },
-        lastResult: {
-          M: {
-            status: { S: lastResult },
-            message: { S: "Message" },
-            timestamp: { S: lastExecutedAt },
-          },
-        },
-        status: { S: status },
-        delayMs: { N: delayMs.toString() },
-        attributes: { M: attributes },
-        email: { S: email },
-        mostRecentAlert: { S: mostRecentAlert },
-        cron: { S: cron },
-      });
-    } else {
-      data.push({
-        alias: `Alias ${i}`,
-        check_type: checkType,
-        pk: pk,
-        sk: sk,
-        type: "CHECK",
-        url: url,
-        userid: userId,
-        createdAt: createdAt,
-        updatedAt: updatedAt,
-        lastResult: {
-          status: lastResult,
-          message: "Message",
-          timestamp: lastExecutedAt,
-        },
-        status: status,
-        delayMs: delayMs,
-        attributes: attributes,
-        email: email,
-        mostRecentAlert: mostRecentAlert,
-        cron: cron,
-      });
-    }
+    data.push({
+      alias: `Alias ${i}`,
+      check_type: checkType,
+      pk: pk,
+      sk: sk,
+      type: "CHECK",
+      url: url,
+      userid: userId,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+      lastResult: {
+        status: lastResult,
+        message: "Message",
+        timestamp: lastExecutedAt,
+      },
+      status: status,
+      delayMs: delayMs,
+      attributes: attributes,
+      email: email,
+      mostRecentAlert: mostRecentAlert,
+      cron: cron,
+    });
   }
 
   return data;
