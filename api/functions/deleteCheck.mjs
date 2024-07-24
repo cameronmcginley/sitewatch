@@ -1,12 +1,13 @@
 import { DynamoDBClient, DeleteItemCommand } from "@aws-sdk/client-dynamodb";
-import { getHeaders } from "../utils/db";
+import { getHeaders, getDynamoTableName } from "../utils/db.mjs";
 
 const dynamoDb = new DynamoDBClient({ region: "us-east-2" });
-const tableName = "webchecks";
 
 export const handler = async (event) => {
   const headers = getHeaders();
   const { pk, sk } = JSON.parse(event.body || "{}");
+
+  const tableName = await getDynamoTableName();
 
   const params = {
     TableName: tableName,

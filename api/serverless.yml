@@ -4,6 +4,9 @@ provider:
   name: aws
   runtime: nodejs20.x
   region: us-east-2
+  stage: ${opt:stage, 'dev'}
+  environment:
+    STAGE: ${self:provider.stage}
   iam:
     role:
       statements:
@@ -16,20 +19,37 @@ provider:
             - dynamodb:UpdateItem
             - dynamodb:DeleteItem
           Resource:
-            - arn:aws:dynamodb:us-east-2:992382695229:table/webchecks
-            - arn:aws:dynamodb:us-east-2:992382695229:table/webchecks/index/userid-sk-index
+            - arn:aws:dynamodb:us-east-2:992382695229:table/${ssm:/sitewatch/${self:provider.stage}/dynamodb/tableName}
+            - arn:aws:dynamodb:us-east-2:992382695229:table/${ssm:/sitewatch/${self:provider.stage}/dynamodb/tableName}/index/userid-sk-index
+        - Effect: Allow
+          Action:
+            - ssm:GetParameter
+          Resource:
+            - arn:aws:ssm:us-east-2:992382695229:parameter/sitewatch/${self:provider.stage}/dynamodb/tableName
 
 functions:
   createCheck:
     handler: functions/createCheck.handler
+    environment:
+      STAGE: ${self:provider.stage}
     events:
       - http:
           path: items
           method: post
-          cors: true
+          cors:
+            origin: "*"
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
 
   getCheck:
     handler: functions/getCheck.handler
+    environment:
+      STAGE: ${self:provider.stage}
     events:
       - http:
           path: items
@@ -38,32 +58,75 @@ functions:
             parameters:
               querystrings:
                 userid: false
-          cors: true
+          cors:
+            origin: "*"
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
 
   updateCheck:
     handler: functions/updateCheck.handler
+    environment:
+      STAGE: ${self:provider.stage}
     events:
       - http:
           path: items
           method: put
-          cors: true
+          cors:
+            origin: "*"
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
 
   deleteCheck:
     handler: functions/deleteCheck.handler
+    environment:
+      STAGE: ${self:provider.stage}
     events:
       - http:
           path: items
           method: delete
-          cors: true
+          cors:
+            origin: "*"
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
 
   optionsHandler:
     handler: functions/optionsHandler.handler
+    environment:
+      STAGE: ${self:provider.stage}
     events:
       - http:
           path: items
           method: options
-          cors: true
+          cors:
+            origin: "*"
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
 
 package:
   include:
     - functions/**
+
+custom:
+  testEvents:
+    createCheck:
+      body: '{"alias": {"S": "TEST"}, "type": {"S": "TYPE"}}'

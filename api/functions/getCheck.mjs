@@ -1,8 +1,7 @@
 import { DynamoDBClient, QueryCommand } from "@aws-sdk/client-dynamodb";
-import { getHeaders } from "../utils/db.mjs";
+import { getHeaders, getDynamoTableName } from "../utils/db.mjs";
 
 const dynamoDb = new DynamoDBClient({ region: "us-east-2" });
-const tableName = "webchecks";
 
 export const handler = async (event) => {
   const headers = getHeaders();
@@ -17,6 +16,8 @@ export const handler = async (event) => {
       }),
     };
   }
+
+  const tableName = await getDynamoTableName();
 
   const params = {
     TableName: tableName,
