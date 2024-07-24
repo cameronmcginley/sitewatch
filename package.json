@@ -15,6 +15,8 @@
     "deploy:api:prod": "node deploy/deploy-api.mjs prod"
   },
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.616.0",
+    "@aws-sdk/lib-dynamodb": "^3.616.0",
     "@faker-js/faker": "^8.4.1",
     "@hookform/resolvers": "^3.6.0",
     "@radix-ui/react-avatar": "^1.1.0",

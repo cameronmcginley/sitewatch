@@ -6,7 +6,7 @@ provider:
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'us-east-2'}
   environment:
-    DYNAMODB_TABLE_NAME: ${self:service}-${self:provider.stage}
+    DYNAMODB_TABLE_NAME: ${self:service}-${self:provider.stage}-main-table
     PROCESSOR_LAMBDA_NAME: ${self:service}-${self:provider.stage}-processor
     EXECUTOR_LAMBDA_NAME: ${self:service}-${self:provider.stage}-executor
   iamRoleStatements:
@@ -52,6 +52,7 @@ resources:
   Resources:
     UrlCheckerTable:
       Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
       Properties:
         TableName: ${self:provider.environment.DYNAMODB_TABLE_NAME}
         AttributeDefinitions:

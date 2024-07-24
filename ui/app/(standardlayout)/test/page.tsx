@@ -9,7 +9,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 import { generateDummyData } from "@/data/generateDummyData";
 
-import dummyData from "@/data/dummyData";
+import { dummyData } from "@/data/dummyData";
+import { insertDummyData } from "@/data/insertDummyData";
+import { Button } from "@/components/ui/button";
 
 function Home() {
   const { data: session, status } = useSession();
@@ -20,7 +22,7 @@ function Home() {
     if (status === "authenticated" && session?.user?.id) {
       fetchDataForUser(session.user.id);
     }
-    console.log(generateDummyData(30));
+    // console.log(generateDummyData(30, "plain"));
   }, [status, session]);
 
   async function fetchDataForUser(userid: string) {
@@ -67,6 +69,11 @@ function Home() {
           }}
         />
         <p>Show real data</p>
+      </div>
+
+      <div className="p-4 gap-2 flex flex-col">
+        <p>Insert dummy data to DDB</p>
+        <Button onClick={insertDummyData}>Insert Dummy Data</Button>
       </div>
 
       <div>

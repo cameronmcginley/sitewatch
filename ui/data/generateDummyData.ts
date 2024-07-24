@@ -1,45 +1,27 @@
-// TODO: add dummy alert data
-// new pk/sk. "Past alerts" link to this, page with alert specific details. Same details
-// as email potentialls
-
-// Maybe switch out to only store lastAlert. We could get too much data if storing a row for each alert
-
-const getStartHour = (delayMs: number) => {
-  // Generate random start hour
-  // If 4 hours, then options are 0, 1, 2, 3
-  // If 12 hours, then options are 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
-  // etc
-  // Use UTC time, make string like T21:00:39.520Z
-  const hours = Math.floor(delayMs / (60 * 60 * 1000));
-  const startHour = Math.floor(Math.random() * hours);
-
-  // Create the UTC time string
-  const startTime = `T${startHour.toString().padStart(2, "0")}:00:00:000Z`;
-
-  return startHour;
-};
-
 const delayToCronMap = [
-  { delay: 5 * 60 * 1000, cron: "*/5 * * * *" }, // Every 5 minutes
-  { delay: 10 * 60 * 1000, cron: "*/10 * * * *" }, // Every 10 minutes
-  { delay: 30 * 60 * 1000, cron: "*/30 * * * *" }, // Every 30 minutes
-  { delay: 60 * 60 * 1000, cron: "0 * * * *" }, // Every hour
-  { delay: 4 * 60 * 60 * 1000, cron: "0 */4 * * *" }, // Every 4 hours starting at 00:00
-  { delay: 4 * 60 * 60 * 1000, cron: "0 1-23/4 * * *" }, // Every 4 hours starting at 01:00
-  { delay: 4 * 60 * 60 * 1000, cron: "0 3-23/4 * * *" }, // Every 4 hours starting at 03:00
-  { delay: 12 * 60 * 60 * 1000, cron: "0 */12 * * *" }, // Every 12 hours starting at 00:00
-  { delay: 12 * 60 * 60 * 1000, cron: "0 7/12 * * *" }, // Every 12 hours starting at 07:00
-  { delay: 24 * 60 * 60 * 1000, cron: "0 0 * * *" }, // Every day at midnight
-  { delay: 24 * 60 * 60 * 1000, cron: "0 2 * * *" }, // Every day at 02:00
-  { delay: 24 * 60 * 60 * 1000, cron: "0 9 * * *" }, // Every day at 09:00
-  { delay: 24 * 60 * 60 * 1000, cron: "0 19 * * *" }, // Daily at 19:00 UTC
-  { delay: 3 * 24 * 60 * 60 * 1000, cron: "0 3 */3 * *" }, // Every 3 days at 03:00
-  { delay: 7 * 24 * 60 * 60 * 1000, cron: "0 8 * * 1" }, // Every Monday at 08:00
-  { delay: 7 * 24 * 60 * 60 * 1000, cron: "0 0 * * 0" }, // Every week (Sunday at 00:00)
-  { delay: 7 * 24 * 60 * 60 * 1000, cron: "0 17 * * 3" }, // Every Wednesday at 17:00
+  { delay: 5 * 60 * 1000, cron: "*/5 * * * *" },
+  { delay: 10 * 60 * 1000, cron: "*/10 * * * *" },
+  { delay: 30 * 60 * 1000, cron: "*/30 * * * *" },
+  { delay: 60 * 60 * 1000, cron: "0 * * * *" },
+  { delay: 4 * 60 * 60 * 1000, cron: "0 */4 * * *" },
+  { delay: 4 * 60 * 60 * 1000, cron: "0 1-23/4 * * *" },
+  { delay: 4 * 60 * 60 * 1000, cron: "0 3-23/4 * * *" },
+  { delay: 12 * 60 * 60 * 1000, cron: "0 */12 * * *" },
+  { delay: 12 * 60 * 60 * 1000, cron: "0 7/12 * * *" },
+  { delay: 24 * 60 * 60 * 1000, cron: "0 0 * * *" },
+  { delay: 24 * 60 * 60 * 1000, cron: "0 2 * * *" },
+  { delay: 24 * 60 * 60 * 1000, cron: "0 9 * * *" },
+  { delay: 24 * 60 * 60 * 1000, cron: "0 19 * * *" },
+  { delay: 3 * 24 * 60 * 60 * 1000, cron: "0 3 */3 * *" },
+  { delay: 7 * 24 * 60 * 60 * 1000, cron: "0 8 * * 1" },
+  { delay: 7 * 24 * 60 * 60 * 1000, cron: "0 0 * * 0" },
+  { delay: 7 * 24 * 60 * 60 * 1000, cron: "0 17 * * 3" },
 ];
 
-export const generateDummyData = (rows: number) => {
+export const generateDummyData = (
+  rows: number,
+  format: "dynamoDB" | "plain"
+) => {
   const data = [];
   const userId = "118298783964592448941";
   const checkTypes = [
@@ -51,43 +33,36 @@ export const generateDummyData = (rows: number) => {
   const lastResults = ["ALERTED", "NO ALERT", "FAILED"];
   const attributes_options = {
     "KEYWORD CHECK": {
-      keyword: { S: "Keyword" },
-      opposite: { B: false },
+      keyword: "Keyword",
+      opposite: false,
     },
     "EBAY PRICE THRESHOLD": {
-      threshold: { N: 100.95 },
+      threshold: 100.95,
     },
     "PAGE DIFFERENCE": {
-      percent_diff: { N: 0.05 },
+      percent_diff: 0.05,
     },
   };
 
   const getRandomDate = (status) => {
     const now = new Date();
-
     if (status === "ACTIVE") {
       return now.toISOString();
     }
-
     const rand = Math.random();
-
     if (rand < 0.25) {
-      // within 4 hours
       return new Date(
         now.getTime() - Math.random() * 4 * 60 * 60 * 1000
       ).toISOString();
     } else if (rand < 0.5) {
-      // within 2 months
       return new Date(
         now.getTime() - Math.random() * 2 * 30 * 24 * 60 * 60 * 1000
       ).toISOString();
     } else if (rand < 0.75) {
-      // within 1 year
       return new Date(
         now.getTime() - Math.random() * 365 * 24 * 60 * 60 * 1000
       ).toISOString();
     } else {
-      // within 5 years
       return new Date(
         now.getTime() - Math.random() * 5 * 365 * 24 * 60 * 60 * 1000
       ).toISOString();
@@ -95,9 +70,7 @@ export const generateDummyData = (rows: number) => {
   };
 
   for (let i = 0; i < rows; i++) {
-    // Get random index from delayToCronMap
     const delayIndex = Math.floor(Math.random() * delayToCronMap.length);
-
     const pk = `CHECK#${Math.random().toString(36).substring(2, 15)}`;
     const sk = "CHECK";
     const url = `https://example${i}.com`;
@@ -111,7 +84,6 @@ export const generateDummyData = (rows: number) => {
       lastResults[Math.floor(Math.random() * lastResults.length)];
     const attributes = attributes_options[checkType];
     const email = `exampleemail${i}@gmail.com`;
-    // remove this if not storing alerts
     const previousAlerts = Array.from(
       { length: Math.floor(Math.random() * 5) },
       () => getRandomDate("")
@@ -119,31 +91,55 @@ export const generateDummyData = (rows: number) => {
     const mostRecentAlert = previousAlerts[previousAlerts.length - 1];
     const cron = delayToCronMap[delayIndex].cron;
 
-    data.push({
-      alias: { S: `Alias ${i}` },
-      check_type: { S: checkType },
-      pk: { S: pk },
-      sk: { S: sk },
-      type: { S: "CHECK" },
-      url: { S: url },
-      userid: { S: userId },
-      createdAt: { S: createdAt },
-      updatedAt: { S: updatedAt },
-      lastResult: {
-        M: {
-          status: { S: lastResult },
-          message: { S: "Message" },
-          timestamp: { S: lastExecutedAt },
+    if (format === "dynamoDB") {
+      data.push({
+        alias: { S: `Alias ${i}` },
+        check_type: { S: checkType },
+        pk: { S: pk },
+        sk: { S: sk },
+        type: { S: "CHECK" },
+        url: { S: url },
+        userid: { S: userId },
+        createdAt: { S: createdAt },
+        updatedAt: { S: updatedAt },
+        lastResult: {
+          M: {
+            status: { S: lastResult },
+            message: { S: "Message" },
+            timestamp: { S: lastExecutedAt },
+          },
         },
-      },
-      status: { S: status },
-      delayMs: { N: delayMs },
-      attributes: { M: attributes },
-      email: { S: email },
-      mostRecentAlert: { S: mostRecentAlert },
-      startHour: { N: getStartHour(delayMs) },
-      cron: { S: cron },
-    });
+        status: { S: status },
+        delayMs: { N: delayMs.toString() },
+        attributes: { M: attributes },
+        email: { S: email },
+        mostRecentAlert: { S: mostRecentAlert },
+        cron: { S: cron },
+      });
+    } else {
+      data.push({
+        alias: `Alias ${i}`,
+        check_type: checkType,
+        pk: pk,
+        sk: sk,
+        type: "CHECK",
+        url: url,
+        userid: userId,
+        createdAt: createdAt,
+        updatedAt: updatedAt,
+        lastResult: {
+          status: lastResult,
+          message: "Message",
+          timestamp: lastExecutedAt,
+        },
+        status: status,
+        delayMs: delayMs,
+        attributes: attributes,
+        email: email,
+        mostRecentAlert: mostRecentAlert,
+        cron: cron,
+      });
+    }
   }
 
   return data;

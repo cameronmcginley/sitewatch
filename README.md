@@ -93,6 +93,10 @@ project-root/
 - Gmail API
 - Serverless Framework
   - AWS Deployments
+  - Deploys Processor/Executor Lambdas, API Gateway, API Lambdas, DynamoDB
+  - Dev and Prod environments
+- AWS SSM Parameter Store
+  - Store secrets and parameters
 
 ```mermaid
 graph TD
@@ -114,6 +118,7 @@ graph TD
         J[EventBridge]
         I[Gmail API]
         APIGW[API Gateway]
+        SSM[SSM Parameter Store]
     end
 
     subgraph Hosting
@@ -168,6 +173,22 @@ Implements some nice-to-haves, like:
 ### Todo
 
 - Unique tests for each unique check function would be nice
+
+## API Functionality
+
+The API layer is responsible for interacting with DynamoDB, managing user configurations, and providing endpoints for the frontend to communicate with the backend. It includes CRUD operations for managing URLs and user settings.
+
+### Key Features
+
+1. **CRUD Operations**: Create, Read, Update, Delete operations for managing user configurations.
+2. **Secure Configuration Management**: Uses AWS SSM Parameter Store for securely managing and retrieving configuration parameters and secrets.
+
+### How It Works
+
+1. **Endpoint Handling**: API Gateway routes requests to appropriate Lambda functions.
+2. **SSM Parameter Retrieval**: Lambda functions retrieve sensitive data like database connection strings and API keys from AWS SSM Parameter Store.
+3. **Database Interactions**: Lambda functions perform CRUD operations on DynamoDB using parameters retrieved from SSM.
+
  
 ## Authentication & Permissioning
 
