@@ -224,3 +224,11 @@ To deploy the application, follow these steps. Make sure you have the necessary 
 
 4. **Deploying UI**
     - Changes to main branch auto-deployed by Vercel.
+
+## Adding New Check Function
+
+To add a new custom function:
+
+1. Update ui/constants.ts
+2. Update lib/types.ts
+3. TODO

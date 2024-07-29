@@ -1,5 +1,5 @@
 import { addItem } from "@/lib/api/items";
-import { dummyDataPlain } from "./dummydataPlain";
+import { dummyData } from "./dummyData";
 
 async function batchWriteData(data: any[]) {
   for (const item of data) {
@@ -15,5 +15,5 @@ async function batchWriteData(data: any[]) {
 }
 
 export async function insertDummyData() {
-  await batchWriteData(dummyDataPlain);
+  await batchWriteData(dummyData);
 }

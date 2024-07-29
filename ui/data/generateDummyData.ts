@@ -1,3 +1,10 @@
+import {
+  CheckItem,
+  CheckType,
+  CheckStatus,
+  LastResultStatus,
+} from "../lib/types";
+
 const delayToCronMap = [
   { delay: 5 * 60 * 1000, cron: "*/5 * * * *" },
   { delay: 10 * 60 * 1000, cron: "*/10 * * * *" },
@@ -18,16 +25,16 @@ const delayToCronMap = [
   { delay: 7 * 24 * 60 * 60 * 1000, cron: "0 17 * * 3" },
 ];
 
-export const generateDummyData = (rows: number) => {
+export const generateDummyData = (rows: number): CheckItem[] => {
   const data = [];
   const userId = "118298783964592448941";
-  const checkTypes = [
+  const checkTypes: CheckType[] = [
     "KEYWORD CHECK",
     "EBAY PRICE THRESHOLD",
     "PAGE DIFFERENCE",
   ];
-  const statuses = ["ACTIVE", "PAUSED"];
-  const lastResults = ["ALERTED", "NO ALERT", "FAILED"];
+  const statuses: CheckStatus[] = ["ACTIVE", "PAUSED"];
+  const lastResults: LastResultStatus[] = ["ALERTED", "NO ALERT", "FAILED"];
   const attributes_options = {
     "KEYWORD CHECK": {
       keyword: "Keyword",
@@ -41,7 +48,7 @@ export const generateDummyData = (rows: number) => {
     },
   };
 
-  const getRandomDate = (status) => {
+  const getRandomDate = (status: CheckStatus) => {
     const now = new Date();
     if (status === "ACTIVE") {
       return now.toISOString();
@@ -83,7 +90,7 @@ export const generateDummyData = (rows: number) => {
     const email = `exampleemail${i}@gmail.com`;
     const previousAlerts = Array.from(
       { length: Math.floor(Math.random() * 5) },
-      () => getRandomDate("")
+      () => getRandomDate("PAUSED")
     );
     const mostRecentAlert = previousAlerts[previousAlerts.length - 1];
     const cron = delayToCronMap[delayIndex].cron;

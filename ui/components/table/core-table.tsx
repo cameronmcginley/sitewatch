@@ -23,6 +23,7 @@ import {
   getTypeSpecificColumns,
 } from "./cell-formatters";
 import { handleShowDetails } from "./utils";
+import { CheckItem } from "@/lib/types";
 
 const CoreTable = ({ data }) => {
   const [selectedCheckType, setSelectedCheckType] = useState("ALL");
@@ -37,7 +38,7 @@ const CoreTable = ({ data }) => {
   const filteredData =
     selectedCheckType === "ALL"
       ? data
-      : data.filter((item) => item.check_type === selectedCheckType);
+      : data.filter((item: CheckItem) => item.check_type === selectedCheckType);
 
   return (
     <>
@@ -64,7 +65,7 @@ const CoreTable = ({ data }) => {
             <TableHead>
               <Checkbox />
             </TableHead>
-            {columns.map((column, index) => (
+            {columns.map((column, index: number) => (
               <TableHead key={index}>{column.header}</TableHead>
             ))}
             <TableHead></TableHead>
@@ -72,7 +73,7 @@ const CoreTable = ({ data }) => {
         </TableHeader>
 
         <TableBody>
-          {filteredData.map((item, index) => (
+          {filteredData.map((item: CheckItem, index: number) => (
             <TableRow
               key={item.pk ?? item.sk ?? index}
               className="hover:bg-neutral-800"

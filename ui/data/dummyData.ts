@@ -1,4 +1,6 @@
-export const dummyData = [
+import { CheckItem } from "../lib/types";
+
+export const dummyData: CheckItem[] = [
   {
     alias: "Alias 0",
     check_type: "EBAY PRICE THRESHOLD",
