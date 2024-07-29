@@ -1,6 +1,11 @@
+export type CheckType =
+  | "KEYWORD CHECK"
+  | "EBAY PRICE THRESHOLD"
+  | "PAGE DIFFERENCE";
+
 export interface CheckItem {
   alias: string;
-  check_type: string;
+  check_type: CheckType;
   pk: string;
   sk: string;
   type: string;
@@ -18,23 +23,24 @@ export interface CheckItem {
   email: string;
   mostRecentAlert?: string;
   cron: string;
-  attributes: Partial<{
-    keyword: string;
-    opposite: boolean;
-    threshold: number;
-    percent_diff: number;
-  }>;
+  attributes: CheckItemAttributes[CheckType];
 }
 
-// Helper type to extract check types
-export type CheckType = CheckItem["check_type"];
+export interface CheckItemAttributes {
+  "KEYWORD CHECK": {
+    keyword: string;
+    opposite: boolean;
+  };
+  "EBAY PRICE THRESHOLD": {
+    threshold: number;
+  };
+  "PAGE DIFFERENCE": {
+    percent_diff: number;
+  };
+}
 
-// Helper type to get attributes for a specific check type
-export type AttributesForCheckType<T extends CheckType> = Extract<
-  CheckItem,
-  { check_type: T }
->["attributes"];
+// export type AttributesForCheckType<T extends CheckType> =
+//   CheckItemAttributes[T];
 
-// Define types for statuses
 export type CheckStatus = "ACTIVE" | "PAUSED";
 export type LastResultStatus = "ALERTED" | "NO ALERT" | "FAILED";

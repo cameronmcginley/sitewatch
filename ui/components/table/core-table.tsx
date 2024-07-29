@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import {
   Table,
   TableBody,
@@ -25,8 +25,10 @@ import {
 import { handleShowDetails } from "./utils";
 import { CheckItem } from "@/lib/types";
 
-const CoreTable = ({ data }) => {
+const CoreTable = ({ data, handleDelete }) => {
   const [selectedCheckType, setSelectedCheckType] = useState("ALL");
+  const [selectedItems, setSelectedItems] = useState<CheckItem[]>([]);
+  const [filteredData, setFilteredData] = useState<CheckItem[]>(data);
 
   const checkTypes = ["ALL", ...new Set(data.map((item) => item.check_type))];
 
@@ -35,26 +37,68 @@ const CoreTable = ({ data }) => {
       ? getGenericColumns()
       : getTypeSpecificColumns(selectedCheckType);
 
-  const filteredData =
-    selectedCheckType === "ALL"
-      ? data
-      : data.filter((item: CheckItem) => item.check_type === selectedCheckType);
+  React.useEffect(() => {
+    setFilteredData(
+      selectedCheckType === "ALL"
+        ? data
+        : data.filter(
+            (item: CheckItem) => item.check_type === selectedCheckType
+          )
+    );
+  }, [selectedCheckType, data]);
+
+  const handleSelectItem = (item: CheckItem) => {
+    setSelectedItems((prev) =>
+      prev.includes(item) ? prev.filter((i) => i !== item) : [...prev, item]
+    );
+    console.log(selectedItems);
+  };
+
+  const handleDeleteItems = () => {
+    handleDelete(selectedItems);
+    setFilteredData((prevData) =>
+      prevData.filter(
+        (dataItem) =>
+          !selectedItems.some(
+            (item) => item.pk === dataItem.pk && item.sk === dataItem.sk
+          )
+      )
+    );
+    setSelectedItems([]);
+  };
 
   return (
     <>
-      <div className="mb-4">
-        <Select onValueChange={setSelectedCheckType} defaultValue="ALL">
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Filter by Check Type" />
-          </SelectTrigger>
-          <SelectContent>
-            {checkTypes.map((type) => (
-              <SelectItem key={type} value={type}>
-                {type}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      <div className="flex flex-row mb-4 justify-between">
+        <div className="flex flex-row gap-2">
+          {/* Select CheckType to show */}
+          <Select onValueChange={setSelectedCheckType} defaultValue="ALL">
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Filter by Check Type" />
+            </SelectTrigger>
+            <SelectContent>
+              {checkTypes.map((type) => (
+                <SelectItem key={type} value={type}>
+                  {type}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="flex flex-row gap-2">
+          {/* Delete button */}
+          {selectedItems.length > 0 && (
+            <Button
+              onClick={handleDeleteItems}
+              className=""
+              variant="destructive"
+            >
+              {/* <Trash2 className="mr-2 h-4 w-4" /> */}
+              Delete Selected
+            </Button>
+          )}
+        </div>
       </div>
 
       <Table className="min-w-full divide-y divide-gray-200">
@@ -63,7 +107,12 @@ const CoreTable = ({ data }) => {
         <TableHeader>
           <TableRow>
             <TableHead>
-              <Checkbox />
+              <Checkbox
+                checked={selectedItems.length === filteredData.length}
+                onCheckedChange={(checked) =>
+                  setSelectedItems(checked ? filteredData : [])
+                }
+              />
             </TableHead>
             {columns.map((column, index: number) => (
               <TableHead key={index}>{column.header}</TableHead>
@@ -79,7 +128,10 @@ const CoreTable = ({ data }) => {
               className="hover:bg-neutral-800"
             >
               <TableCell>
-                <Checkbox />
+                <Checkbox
+                  checked={selectedItems.includes(item)}
+                  onCheckedChange={() => handleSelectItem(item)}
+                />
               </TableCell>
 
               {formatCells(item, columns)}

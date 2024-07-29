@@ -1,4 +1,4 @@
-import type { CheckType, CheckItem } from "./types";
+import type { CheckType, CheckItemAttributes } from "./types";
 
 export const unknownError =
   "An unknown error occurred. Please try again later.";
@@ -18,9 +18,7 @@ export const CHECK_TYPES: CheckType[] = [
 ];
 
 export const CHECK_TYPE_ATTRIBUTES: {
-  [K in CheckType]: Array<
-    keyof Extract<CheckItem, { check_type: K }>["attributes"]
-  >;
+  [K in CheckType]: Array<keyof CheckItemAttributes[K]>;
 } = {
   "KEYWORD CHECK": ["keyword", "opposite"],
   "EBAY PRICE THRESHOLD": ["threshold"],

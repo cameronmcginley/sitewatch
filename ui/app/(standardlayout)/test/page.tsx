@@ -12,6 +12,7 @@ import { generateDummyData } from "@/data/generateDummyData";
 import { dummyData } from "@/data/dummyData";
 import { insertDummyData } from "@/data/insertDummyData";
 import { Button } from "@/components/ui/button";
+import { CheckItem } from "@/lib/types";
 
 function Home() {
   const { data: session, status } = useSession();
@@ -28,6 +29,10 @@ function Home() {
   async function fetchDataForUser(userid: string) {
     const fetchedData = await fetchData(userid);
     if (fetchedData) {
+      // Sort by data.createdAt
+      fetchedData.sort((a, b) => {
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      });
       setData(fetchedData);
     }
   }
@@ -42,13 +47,13 @@ function Home() {
     }
   };
 
-  const handleDelete = async (pk, sk) => {
+  const handleDelete = async (items: CheckItem[]) => {
+    console.log("Deleting items:", items);
+
     try {
-      await deleteItem(pk, sk);
-      // Fetch updated data
-      fetchDataForUser(session.user.id);
+      await Promise.all(items.map((item) => deleteItem(item.pk, item.sk)));
     } catch (error) {
-      console.error("Error deleting item:", error);
+      console.error("Error deleting items:", error);
     }
   };
 
@@ -80,7 +85,7 @@ function Home() {
         <h2 className="text-xl font-semibold mb-2">Existing Checks</h2>
         <CoreTable
           data={showRealData ? data : dummyData}
-          onDelete={handleDelete}
+          handleDelete={handleDelete}
         />
       </div>
     </div>

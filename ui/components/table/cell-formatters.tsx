@@ -24,8 +24,9 @@ import {
 import { cn } from "@/lib/utils";
 import { BADGE_COLOR_CLASS } from "@/lib/constants";
 import { time } from "console";
+import { CheckItem, CheckType } from "@/lib/types";
 
-export const formatCells = (item, columns) =>
+export const formatCells = (item: CheckItem, columns) =>
   columns.map((column) => column.formatter(item));
 
 export const getGenericColumns = () => [
@@ -38,7 +39,7 @@ export const getGenericColumns = () => [
   { header: "Most Recent Alert", formatter: formatMostRecentAlertCell },
 ];
 
-export const getTypeSpecificColumns = (checkType) => {
+export const getTypeSpecificColumns = (checkType: CheckType) => {
   const genericColumns = getGenericColumns();
   switch (checkType) {
     case "KEYWORD CHECK":
@@ -64,7 +65,7 @@ export const getTypeSpecificColumns = (checkType) => {
 const defaultTooltipClassName =
   "flex flex-col justify-center items-center gap-1 p-1";
 
-const formatAliasCell = (item) => {
+const formatAliasCell = (item: CheckItem) => {
   const alias = item.alias;
   const url = item.url;
 
@@ -114,7 +115,7 @@ const formatAliasCell = (item) => {
   );
 };
 
-const formatCheckTypeCell = (item) => (
+const formatCheckTypeCell = (item: CheckItem) => (
   <TableCell>
     <div className="flex gap-2 items-center">
       <TooltipProvider>
@@ -132,7 +133,7 @@ const formatCheckTypeCell = (item) => (
   </TableCell>
 );
 
-const formatStatusCell = (item) => {
+const formatStatusCell = (item: CheckItem) => {
   const status = item.status;
 
   const statusToBadgeColor: Record<string, string> = {
@@ -149,7 +150,7 @@ const formatStatusCell = (item) => {
   );
 };
 
-const formatFrequencyCell = (item) => {
+const formatFrequencyCell = (item: CheckItem) => {
   const delayMs = item.delayMs;
   // const startHour = item.startHour;
   const cron = item.cron;
@@ -187,7 +188,7 @@ const formatFrequencyCell = (item) => {
   );
 };
 
-const formatNextRunCell = (item) => {
+const formatNextRunCell = (item: CheckItem) => {
   const lastExecutedAt = item.lastResult.timestamp;
   const delayMs = item.delayMs;
   // const startHour = item.startHour;
@@ -236,7 +237,7 @@ const formatNextRunCell = (item) => {
   );
 };
 
-const formatLastResultCell = (item) => {
+const formatLastResultCell = (item: CheckItem) => {
   const status = item.lastResult.status;
   const message = item.lastResult.message;
   const timestamp = item.lastResult.timestamp;
@@ -284,7 +285,7 @@ const formatLastResultCell = (item) => {
   );
 };
 
-const formatMostRecentAlertCell = (item) => {
+const formatMostRecentAlertCell = (item: CheckItem) => {
   return (
     <TableCell className="w-0">
       <TooltipProvider>
@@ -309,17 +310,17 @@ const formatMostRecentAlertCell = (item) => {
   );
 };
 
-const formatKeywordCell = (item) => (
-  <TableCell>{item.keyword ?? emptyDash}</TableCell>
+const formatKeywordCell = (item: CheckItem) => (
+  <TableCell>{item.attributes.keyword ?? emptyDash}</TableCell>
 );
 
-const formatTargetPriceCell = (item) => (
+const formatTargetPriceCell = (item: CheckItem) => (
   <TableCell>
     {item.attributes.threshold ? `$${item.attributes.threshold}` : emptyDash}
   </TableCell>
 );
 
-const formatDiffPercentageCell = (item) => (
+const formatDiffPercentageCell = (item: CheckItem) => (
   <TableCell>
     {item.attributes.percent_diff
       ? `${item.attributes.percent_diff}%`
