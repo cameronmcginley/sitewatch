@@ -28,6 +28,24 @@ provider:
             - arn:aws:ssm:us-east-2:992382695229:parameter/sitewatch/${self:provider.stage}/dynamodb/tableName
 
 functions:
+  createUser:
+    handler: functions/createUser.handler
+    environment:
+      STAGE: ${self:provider.stage}
+    events:
+      - http:
+          path: users
+          method: post
+          cors:
+            origin: "*"
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+
   createCheck:
     handler: functions/createCheck.handler
     environment:
@@ -53,6 +71,28 @@ functions:
     events:
       - http:
           path: items
+          method: get
+          request:
+            parameters:
+              querystrings:
+                userid: false
+          cors:
+            origin: "*"
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+
+  getUser:
+    handler: functions/getUser.handler
+    environment:
+      STAGE: ${self:provider.stage}
+    events:
+      - http:
+          path: users
           method: get
           request:
             parameters:
@@ -104,13 +144,31 @@ functions:
               - X-Amz-Security-Token
               - X-Amz-User-Agent
 
-  optionsHandler:
+  optionsHandlerItems:
     handler: functions/optionsHandler.handler
     environment:
       STAGE: ${self:provider.stage}
     events:
       - http:
           path: items
+          method: options
+          cors:
+            origin: "*"
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+
+  optionsHandlerUsers:
+    handler: functions/optionsHandler.handler
+    environment:
+      STAGE: ${self:provider.stage}
+    events:
+      - http:
+          path: users
           method: options
           cors:
             origin: "*"

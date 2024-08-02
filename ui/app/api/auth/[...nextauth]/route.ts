@@ -1,8 +1,8 @@
-
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import { NextAuthOptions } from "next-auth";
+import { fetchUser, createUser } from "@/lib/api/users";
 import { SIGN_IN_URL } from "@/lib/constants";
+import { prettyLog } from "@/utils/logger";
 
 const authOptions: NextAuthOptions = {
   providers: [
@@ -12,20 +12,65 @@ const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
+      prettyLog("JWT callback - Token", token);
+      prettyLog("JWT callback - User", user);
+      prettyLog("JWT callback - Account", account);
+
       if (user) {
         token.id = user.id;
+
+        let dbUser = await fetchUser(user.id);
+
+        // Validate user data with database, update info if needed
+        // if (dbUser) {
+        //   if (dbUser.email !== user.email) {
+        //     dbUser.email = user.email;
+
+        //     console.log(
+        //       "Discrepancy between dbUser and auth user:",
+        //       dbUser,
+        //       user
+        //     );
+        //     console.log("Updating user data:", dbUser);
+
+        //     await updateUser(dbUser);
+        //   }
+        // }
+
+        // First time sign in, create in DB
+        if (!dbUser) {
+          dbUser = {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            createdAt: new Date().toISOString(),
+            userType: "default",
+            provider: account?.provider,
+          };
+          console.log("Creating new user:", dbUser);
+          await createUser(dbUser);
+        }
+
+        // Attach additional user data to the token
+        token.id = dbUser.id;
+        token.createdAt = dbUser.createdAt;
+        token.userType = dbUser.userType;
       }
       return token;
     },
     async session({ session, token }: any) {
-      session.user.id = token.sub;
+      prettyLog("Session callback - Session", session);
+      prettyLog("Session callback - Token", token);
+      session.user.id = token.id;
+      session.user.createdAt = token.createdAt;
+      session.user.userType = token.userType;
       return session;
     },
   },
   pages: {
     signIn: SIGN_IN_URL,
-    error: '/error',
+    error: "/error",
   },
   debug: true,
 };

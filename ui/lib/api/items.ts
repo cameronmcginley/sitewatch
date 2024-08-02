@@ -1,6 +1,6 @@
 import axios, { AxiosError } from "axios";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL_ITEMS + "/items";
+const API_URL = process.env.NEXT_PUBLIC_API_URL_DEV + "/items";
 
 export async function fetchData(userid: string) {
   console.log("Fetching data from", API_URL, "for user", userid);

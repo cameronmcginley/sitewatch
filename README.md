@@ -173,6 +173,7 @@ Implements some nice-to-haves, like:
 ### Todo
 
 - Unique tests for each unique check function would be nice
+- pino logging
 
 ## API Functionality
 
@@ -232,3 +233,9 @@ To add a new custom function:
 1. Update ui/constants.ts
 2. Update lib/types.ts
 3. TODO
+
+## Debugging Notes
+
+### NextAuth
+
+See logs in terminal

@@ -47,3 +47,6 @@ lambda_function.zip
 core/data/dummy*
 core/.benchmarks
 core/.pytest_cache
+
+.pytest_cache
+.benchmarks

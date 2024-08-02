@@ -84,7 +84,8 @@ function Home() {
       <div>
         <h2 className="text-xl font-semibold mb-2">Existing Checks</h2>
         <CoreTable
-          data={showRealData ? data : dummyData}
+          // data={showRealData ? data : dummyData}
+          data={data}
           handleDelete={handleDelete}
         />
       </div>
