@@ -20,6 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { PersonIcon } from "@radix-ui/react-icons";
+import { USER_TYPE_TO_DISPLAY_TEXT } from "@/lib/constants";
 
 const navigationMenuItems: {
   title: string;
@@ -118,7 +119,7 @@ const Navbar: React.FC = () => {
                   <div className="flex flex-col">
                     <span className="font-medium">{session.user?.email}</span>
                     <span className="text-sm text-muted-foreground">
-                      Free Tier
+                      {USER_TYPE_TO_DISPLAY_TEXT[session.user?.userType] ?? ""}
                     </span>
                   </div>
                 </DropdownMenuItem>

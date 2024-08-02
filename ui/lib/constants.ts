@@ -31,3 +31,8 @@ export const BADGE_COLOR_CLASS: Record<string, string> = {
   RED: "bg-red-700 text-white hover:bg-red-700",
   GRAY: "bg-gray-700 text-white hover:bg-gray-700",
 };
+
+export const USER_TYPE_TO_DISPLAY_TEXT: Record<string, string> = {
+  default: "Free Tier",
+  admin: "Admin",
+};
