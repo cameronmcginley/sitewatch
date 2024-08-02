@@ -20,6 +20,8 @@ function Home() {
   const [showRealData, setShowRealData] = useState(false);
 
   useEffect(() => {
+    console.log("Session:", session);
+    console.log("Status:", status);
     if (status === "authenticated" && session?.user?.id) {
       fetchDataForUser(session.user.id);
     }
@@ -27,6 +29,7 @@ function Home() {
   }, [status, session]);
 
   async function fetchDataForUser(userid: string) {
+    console.log("Fetching data for user:", userid);
     const fetchedData = await fetchData(userid);
     if (fetchedData) {
       // Sort by data.createdAt

@@ -8,8 +8,8 @@ export function prettyLog(label: string, obj: any): void {
     compact: false,
   });
 
-  console.log(`
-${chalk.blue(label)}:
-${formattedObj}
-  `);
+  console.log(`${chalk.bgBlue(new Date().toLocaleString())} : ${chalk.blue(
+    label
+  )} : ${formattedObj}
+    `);
 }

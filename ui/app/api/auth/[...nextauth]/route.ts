@@ -17,10 +17,11 @@ const authOptions: NextAuthOptions = {
       prettyLog("JWT callback - User", user);
       prettyLog("JWT callback - Account", account);
 
+      // On first sign-in, user will be defined
       if (user) {
-        token.id = user.id;
-
         let dbUser = await fetchUser(user.id);
+        dbUser = dbUser?.[0];
+        prettyLog("Fetched dbUser", dbUser);
 
         // Validate user data with database, update info if needed
         // if (dbUser) {
@@ -48,7 +49,7 @@ const authOptions: NextAuthOptions = {
             userType: "default",
             provider: account?.provider,
           };
-          console.log("Creating new user:", dbUser);
+          prettyLog("Creating new user", dbUser);
           await createUser(dbUser);
         }
 
@@ -57,14 +58,19 @@ const authOptions: NextAuthOptions = {
         token.createdAt = dbUser.createdAt;
         token.userType = dbUser.userType;
       }
+
+      prettyLog("JWT callback - Token after processing", token);
       return token;
     },
     async session({ session, token }: any) {
       prettyLog("Session callback - Session", session);
       prettyLog("Session callback - Token", token);
+
       session.user.id = token.id;
       session.user.createdAt = token.createdAt;
       session.user.userType = token.userType;
+
+      prettyLog("Session callback - Session after processing", session);
       return session;
     },
   },
