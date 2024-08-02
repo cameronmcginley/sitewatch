@@ -13,15 +13,15 @@ import { dummyData } from "@/data/dummyData";
 import { insertDummyData } from "@/data/insertDummyData";
 import { Button } from "@/components/ui/button";
 import { CheckItem } from "@/lib/types";
+import { set } from "date-fns";
 
 function Home() {
   const { data: session, status } = useSession();
   const [data, setData] = useState([]);
   const [showRealData, setShowRealData] = useState(false);
+  const [isDataLoading, setIsDataLoading] = useState(true);
 
   useEffect(() => {
-    console.log("Session:", session);
-    console.log("Status:", status);
     if (status === "authenticated" && session?.user?.id) {
       fetchDataForUser(session.user.id);
     }
@@ -29,14 +29,19 @@ function Home() {
   }, [status, session]);
 
   async function fetchDataForUser(userid: string) {
+    setIsDataLoading(true);
+
     console.log("Fetching data for user:", userid);
+
     const fetchedData = await fetchData(userid);
     if (fetchedData) {
       // Sort by data.createdAt
       fetchedData.sort((a, b) => {
         return new Date(b.createdAt) - new Date(a.createdAt);
       });
+
       setData(fetchedData);
+      setIsDataLoading(false);
     }
   }
 
@@ -90,6 +95,7 @@ function Home() {
           // data={showRealData ? data : dummyData}
           data={data}
           handleDelete={handleDelete}
+          isLoading={isDataLoading}
         />
       </div>
     </div>

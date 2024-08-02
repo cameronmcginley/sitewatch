@@ -17,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   formatCells,
   getGenericColumns,
@@ -25,7 +26,7 @@ import {
 import { handleShowDetails } from "./utils";
 import { CheckItem } from "@/lib/types";
 
-const CoreTable = ({ data, handleDelete }) => {
+const CoreTable = ({ data, handleDelete, isLoading }) => {
   const [selectedCheckType, setSelectedCheckType] = useState("ALL");
   const [selectedItems, setSelectedItems] = useState<CheckItem[]>([]);
   const [filteredData, setFilteredData] = useState<CheckItem[]>(data);
@@ -51,7 +52,6 @@ const CoreTable = ({ data, handleDelete }) => {
     setSelectedItems((prev) =>
       prev.includes(item) ? prev.filter((i) => i !== item) : [...prev, item]
     );
-    console.log(selectedItems);
   };
 
   const handleDeleteItems = () => {
@@ -94,7 +94,6 @@ const CoreTable = ({ data, handleDelete }) => {
               className=""
               variant="destructive"
             >
-              {/* <Trash2 className="mr-2 h-4 w-4" /> */}
               Delete Selected
             </Button>
           )}
@@ -102,13 +101,13 @@ const CoreTable = ({ data, handleDelete }) => {
       </div>
 
       <Table className="min-w-full divide-y divide-gray-200">
-        {/* <TableCaption>A list of your recent checks.</TableCaption> */}
-
         <TableHeader>
           <TableRow>
             <TableHead>
               <Checkbox
-                checked={selectedItems.length === filteredData.length}
+                checked={
+                  selectedItems.length === filteredData.length && !isLoading
+                }
                 onCheckedChange={(checked) =>
                   setSelectedItems(checked ? filteredData : [])
                 }
@@ -122,25 +121,44 @@ const CoreTable = ({ data, handleDelete }) => {
         </TableHeader>
 
         <TableBody>
-          {filteredData.map((item: CheckItem, index: number) => (
-            <TableRow
-              key={item.pk ?? item.sk ?? index}
-              className="hover:bg-neutral-800"
-            >
-              <TableCell>
-                <Checkbox
-                  checked={selectedItems.includes(item)}
-                  onCheckedChange={() => handleSelectItem(item)}
-                />
-              </TableCell>
+          {isLoading
+            ? // Show skeletons if data is loading
+              Array.from({ length: 5 }).map((_, index) => (
+                <TableRow key={index}>
+                  <TableCell>
+                    <Skeleton className="h-4 w-full" />
+                  </TableCell>
+                  {columns.map((_, colIndex) => (
+                    <TableCell key={colIndex}>
+                      <Skeleton className="h-4 w-full" />
+                    </TableCell>
+                  ))}
+                  <TableCell className="w-0">
+                    <Skeleton className="h-4 w-[100px]" />
+                  </TableCell>
+                </TableRow>
+              ))
+            : filteredData.map((item: CheckItem, index: number) => (
+                <TableRow
+                  key={item.pk ?? item.sk ?? index}
+                  className="hover:bg-neutral-800"
+                >
+                  <TableCell>
+                    <Checkbox
+                      checked={selectedItems.includes(item)}
+                      onCheckedChange={() => handleSelectItem(item)}
+                    />
+                  </TableCell>
 
-              {formatCells(item, columns)}
+                  {formatCells(item, columns)}
 
-              <TableCell className="w-0">
-                <Button onClick={() => handleShowDetails(item)}>Details</Button>
-              </TableCell>
-            </TableRow>
-          ))}
+                  <TableCell className="w-0">
+                    <Button onClick={() => handleShowDetails(item)}>
+                      Details
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
         </TableBody>
       </Table>
     </>
