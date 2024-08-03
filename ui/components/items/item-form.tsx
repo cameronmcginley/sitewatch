@@ -34,6 +34,10 @@ interface FormData {
   };
   offset?: number;
   dayOfWeek?: string;
+  cron: string;
+  lastResult: null;
+  mostRecentAlert: null;
+  status: string;
 }
 
 const FormField = ({ label, id, ...props }) => (
@@ -91,9 +95,9 @@ const CheckboxField = ({ label, id, ...props }) => (
 const ItemForm: React.FC<{ onSubmit: (data: FormData) => void }> = ({
   onSubmit,
 }) => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [formData, setFormData] = useState<FormData>({
-    userid: session?.user?.id || "",
+    userid: "",
     type: "CHECK",
     check_type: "",
     url: "",
@@ -101,6 +105,10 @@ const ItemForm: React.FC<{ onSubmit: (data: FormData) => void }> = ({
     email: "",
     delayMs: 4 * 60 * 60 * 1000,
     attributes: {},
+    cron: "",
+    lastResult: null,
+    mostRecentAlert: null,
+    status: "ACTIVE",
   });
   const [hourOffsetOptions, sethourOffsetOptions] = useState([]);
   const [dayOfWeekOptions, setdayOfWeekOptions] = useState([
@@ -138,6 +146,12 @@ const ItemForm: React.FC<{ onSubmit: (data: FormData) => void }> = ({
   };
 
   useEffect(() => {
+    if (status === "authenticated" && session?.user?.id) {
+      setFormData((prev) => ({ ...prev, userid: session.user.id }));
+    }
+  }, [status, session]);
+
+  useEffect(() => {
     if (formData.delayMs >= 14400000) {
       const interval = formData.delayMs / 3600000;
       const options = Array.from({ length: interval }, (_, i) => ({
@@ -155,6 +169,7 @@ const ItemForm: React.FC<{ onSubmit: (data: FormData) => void }> = ({
     const description = cronToPlainText(cronExpression);
     setCronExpression(cronExpression);
     setCronDescription(description);
+    setFormData((prev) => ({ ...prev, cron: cronExpression }));
   }, [formData.delayMs, formData.offset, formData.dayOfWeek]);
 
   const handleCheckboxChange = (

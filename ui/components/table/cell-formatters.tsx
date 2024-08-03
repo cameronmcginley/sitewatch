@@ -189,32 +189,28 @@ const formatFrequencyCell = (item: CheckItem) => {
 };
 
 const formatNextRunCell = (item: CheckItem) => {
-  const lastExecutedAt = item.lastResult.timestamp;
   const delayMs = item.delayMs;
-  // const startHour = item.startHour;
   const status = item.status;
   const cron = item.cron;
+  const lastExecutedAt = item.lastResult?.timestamp;
 
   const nextRunDate = getNextRunTimeFromCron(cron);
-  const isHappening = isHappeningNowFromCron(lastExecutedAt, cron);
+  const isHappeningNow = lastExecutedAt
+    ? isHappeningNowFromCron(cron, lastExecutedAt)
+    : false;
 
   const getCellContent = () => {
     if (status !== "ACTIVE" || cron === null || delayMs === null) {
       return emptyDash;
     }
-    if (isHappening) {
+    if (isHappeningNow) {
       return loadingDots;
     }
     return nextRunDate ? toSentenceCase(getTimeAgo(nextRunDate)) : emptyDash;
   };
 
   const getTooltipContent = () => {
-    if (
-      status === "ACTIVE" &&
-      cron !== null &&
-      delayMs !== null &&
-      !isHappening
-    ) {
+    if (status === "ACTIVE") {
       return formatDateWithTimezone(nextRunDate);
     }
     return null;

@@ -1,6 +1,6 @@
 # SiteWatch
 
-SiteWatch is a versatile and extensible solution for automating the monitoring of websites using a variety of functions. It allows for customizable checks based on user-defined criteria and intervals, ensuring timely notifications when specified conditions are met.
+SiteWatch is an extensible solution for automating the website monitoring and alerting using a variety of functions. It allows for customizable checks based on user-defined criteria and intervals, sending out email notifications when conditions are met.
 
 ## Features
 
@@ -23,6 +23,10 @@ SiteWatch is a versatile and extensible solution for automating the monitoring o
    - Parameters: `url: string`, `keyword: string`, `opposite: boolean`
 2. **EBAY_PRICE_THRESHOLD**: Searches for the lowest priced item on Ebay and alerts the user when the price falls below a predefined threshold.
    - Parameters: `url: string`, `threshold: number`
+3. **AI_CHECK**: Lets a user define a LLM prompt with a notification condition, gets alerted if LLM determines condition met.
+   - Parameters: `prompt: string`, `notify_condition: string`
+4. **PAGE_DIFFERENCE**: Each run, stores the current HTML from given URL. If the current run find X% difference, alerts user. Percent defined by user.
+   - Parameters: `percent_diff: number | "ANY"`
 
 ### URL Preprocessing
 
@@ -46,8 +50,8 @@ project-root/
 ├── ui/
 │   └── ...                 # User interface components and logic
 └── deploy/
-    ├── deploy-core.mjs     # Deployment script for the core service
-    └── deploy-api.mjs      # Deployment script for the API service
+    ├── deploy-core.mjs
+    └── deploy-api.mjs
 ```
 
 1. Core
@@ -98,47 +102,7 @@ project-root/
 - AWS SSM Parameter Store
   - Store secrets and parameters
 
-```mermaid
-graph TD
-    subgraph User
-        U1[User]
-    end
-
-    subgraph Frontend
-        A[Next.js App]
-            A1[Next Auth Sign-In]
-            A2[Website Notification Settings]
-    end
-
-    subgraph AWS
-        B[DynamoDB]
-        C[S3]
-        F[Processor Lambda]
-        E[Executor Lambdas]
-        J[EventBridge]
-        I[Gmail API]
-        APIGW[API Gateway]
-        SSM[SSM Parameter Store]
-    end
-
-    subgraph Hosting
-        G[Vercel]
-    end
-
-    U1 --> A1
-    A --> A2
-    A1 --> A
-    A2 -->|CRUD Operations| APIGW
-    APIGW -->|Invoke| B
-    F -->|Get Links/Data to Check| B
-    F -->|Invoke| E
-    E -->|Check Website| Internet
-    E -->|Get/Store HTML| C
-    E -->|Criteria Met| I
-    I -->|Email User| U1
-    G --> A
-    J -->|Timer| F
-```
+![Architecture Diagram](assets/architecture_diagram.png)
 
 ## Core Functionality
 
