@@ -17,7 +17,7 @@ SiteWatch is an extensible solution for automating the website monitoring and al
 2. **Automated Checks**: The Lambda function executes the specified checks at the defined intervals.
 3. **Notification**: Sends an email notification when the criteria for any check are met.
 
-## Current Functionalities
+## Current Check Functions
 
 1. **KEYWORD_CHECK**: Monitors a specified URL for the presence (or lack thereof) of user-defined keywords, triggering notifications when keywords are detected.
    - Parameters: `url: string`, `keyword: string`, `opposite: boolean`
@@ -30,11 +30,9 @@ SiteWatch is an extensible solution for automating the website monitoring and al
 
 ### URL Preprocessing
 
-Some URL Parameter preprocessing is done after it is submitted by a user, and varies by function. The below list details unique preprocessing done per function.
+Some URL Parameter preprocessing is done after it is submitted by a user, and is typically just a validity check. Some functions have unique processing:
 
-1. **KEYWORD_CHECK**: 
-    - Basic URL verification
-2. **EBAY_PRICE_THRESHOLD**: 
+1. **EBAY_PRICE_THRESHOLD**: 
    - Verifies URL is valid Ebay link
    - Verifies search parameter in URL, if not then request from User
    - Adds URL parameters (if does not exist) to query and sort by "buy it now" and "lowest price first"

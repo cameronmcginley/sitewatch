@@ -60,16 +60,16 @@ async def scan_table():
     return items
 
 
-async def invoke_lambda(batch):
+async def invoke_executor(batch):
     """
-    Asynchronously invoke the processor Lambda function.
+    Asynchronously invoke the executor Lambda function.
 
     Args:
         batch (list): A batch of items to be processed by the Lambda function.
     """
     await asyncio.to_thread(
         lambda_client.invoke,
-        FunctionName=os.environ["PROCESSOR_LAMBDA_NAME"],
+        FunctionName=os.environ["EXECUTOR_LAMBDA_NAME"],
         InvocationType="Event",
         Payload=json.dumps({"links": batch}),
     )
@@ -93,8 +93,8 @@ async def lambda_handler(event, context):
         for i in range(0, len(transformed_items), BATCH_SIZE)
     ]
 
-    # Invoke a new Lambda function for each batch
-    await asyncio.gather(*[invoke_lambda(batch) for batch in batches])
+    # Invoke a new executor Lambda function for each batch
+    await asyncio.gather(*[invoke_executor(batch) for batch in batches])
 
     return {
         "statusCode": 200,

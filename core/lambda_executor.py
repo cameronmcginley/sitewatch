@@ -127,6 +127,18 @@ async def main_handler(event, context):
     print(f"Execution time: {time.time() - start_time:.2f} seconds")
     print(f"Errors: {error_counter['errors']} out of {error_counter['total']}")
 
+    await send_alerts(links)
+
+
+async def send_alerts(links):
+    """
+    Send email alerts for products that have updates.
+
+    Args:
+        links (list): A list of links to be processed.
+
+    This function groups products by email and sends email alerts for each group.
+    """
     urls_to_alert = [link for link in links if link.get("send_alert") is True]
 
     if not urls_to_alert:
@@ -141,7 +153,7 @@ async def main_handler(event, context):
     EMAIL_PASSWORD = os.environ["email_password"]
 
     for email, urls in urls_by_email.items():
-        subject = f"Alert: {len(urls)} url(s) update"
+        subject = f"SiteWatch Alert on {len(urls)} URL{"s" if len(urls) > 1 else ""}"
         body = "The following urls have updates:\n\n"
 
         for url in urls:
