@@ -1,5 +1,5 @@
 aiohttp
-lxml
+beautifulsoup4
 tenacity
 python-dotenv
 psutil

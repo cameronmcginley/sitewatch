@@ -2,7 +2,7 @@ service: sitewatch-core
 
 provider:
   name: aws
-  runtime: python3.8
+  runtime: python3.9
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'us-east-2'}
   environment:
@@ -41,7 +41,8 @@ functions:
   processor:
     handler: lambda_processor.lambda_handler
     events:
-      - schedule: rate(5 minutes)
+      - schedule:
+          rate: cron(0/5 * * * ? *) # Runs every 5 minutes
     timeout: 60 # 1 minute
     environment:
       EXECUTOR_LAMBDA_NAME: ${self:provider.environment.EXECUTOR_LAMBDA_NAME}
@@ -77,12 +78,12 @@ resources:
 plugins:
   - serverless-python-requirements
 
-# custom:
-#   pythonRequirements:
-#     dockerizePip: non-linux
 custom:
   pythonRequirements:
-    dockerizePip: true
+    dockerizePip: non-linux
+# custom:
+#   pythonRequirements:
+#     dockerizePip: true
 
 package:
   individually: true

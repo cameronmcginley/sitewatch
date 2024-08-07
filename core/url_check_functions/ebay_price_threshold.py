@@ -1,4 +1,4 @@
-from lxml import html
+from bs4 import BeautifulSoup
 from utils import sum_of_numbers
 from fetch_url import fetch_url
 
@@ -25,22 +25,22 @@ async def check_ebay_price_threshold(session, link):
         result["message"] = "Failed to fetch URL content"
         return result
 
-    tree = html.fromstring(content)
-    first_item = tree.cssselect("ul.srp-results.srp-grid.clearfix > li:nth-of-type(2)")
+    soup = BeautifulSoup(content, "html.parser")
+    first_item = soup.select_one("ul.srp-results.srp-grid.clearfix > li:nth-of-type(2)")
 
     if not first_item:
         result["message"] = "No items found on the page"
         return result
 
-    price_element = first_item[0].cssselect("span.s-item__price")
-    shipping_element = first_item[0].cssselect("span.s-item__shipping")
+    price_element = first_item.select_one("span.s-item__price")
+    shipping_element = first_item.select_one("span.s-item__shipping")
 
     if not (price_element and shipping_element):
         result["message"] = "Price or shipping elements missing"
         return result
 
-    price = price_element[0].text_content().strip()
-    shipping = shipping_element[0].text_content().strip()
+    price = price_element.get_text(strip=True)
+    shipping = shipping_element.get_text(strip=True)
 
     try:
         total_price = sum_of_numbers(price, shipping)

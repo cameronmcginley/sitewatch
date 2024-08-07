@@ -27,25 +27,25 @@ def transform_item(item):
     Returns:
         dict: The transformed item.
     """
-    logger.info(f"Transforming item: {item['pk']['S']}")
+    logger.info(f"Transforming item: {item['pk']}")
     transformed = {
-        "alias": item["alias"]["S"],
-        "type": item["check_type"]["S"],
-        "url": item["url"]["S"],
-        "email": item["email"]["S"],
-        "pk": item["pk"]["S"],
-        "sk": item["sk"]["S"],
-        "cron": item["cron"]["S"],
+        "alias": item["alias"],
+        "type": item["check_type"],
+        "url": item["url"],
+        "email": item["email"],
+        "pk": item["pk"],
+        "sk": item["sk"],
+        "cron": item["cron"],
     }
 
-    if item["check_type"]["S"] == "EBAY PRICE THRESHOLD":
-        transformed["threshold"] = float(item["attributes"]["M"]["threshold"]["N"])
+    if item["check_type"] == "EBAY PRICE THRESHOLD":
+        transformed["threshold"] = float(item["attributes"]["threshold"])
         logger.debug(
             f"Added threshold {transformed['threshold']} for EBAY PRICE THRESHOLD item"
         )
-    elif item["check_type"]["S"] == "KEYWORD CHECK":
-        transformed["keyword"] = item["attributes"]["M"]["keyword"]["S"]
-        transformed["opposite"] = item["attributes"]["M"]["opposite"]["B"]
+    elif item["check_type"] == "KEYWORD CHECK":
+        transformed["keyword"] = item["attributes"]["keyword"]
+        transformed["opposite"] = item["attributes"]["opposite"]
         logger.debug(f"Added keyword '{transformed['keyword']}' for KEYWORD CHECK item")
 
     return transformed
@@ -109,8 +109,9 @@ async def main_handler(event, context):
 
     items = await scan_table()
     logger.info(f"Retrieved {len(items)} items from DynamoDB")
+    logger.info(f"Items: type: {type(items)}, item #1: {items[0]}")
 
-    items_to_run = [item for item in items if is_task_ready_to_run(item["cron"]["S"])]
+    items_to_run = [item for item in items if is_task_ready_to_run(item["cron"])]
     logger.info(
         f"{len(items_to_run)} items are ready to run based on their cron schedule"
     )
