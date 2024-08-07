@@ -10,6 +10,7 @@ from datetime import datetime, timezone
 # Set up environment variables
 os.environ["DYNAMODB_TABLE_NAME"] = "mock-table"
 os.environ["PROCESSOR_LAMBDA_NAME"] = "mock-processor"
+os.environ["EXECUTOR_LAMBDA_NAME"] = "mock-executor"
 os.environ["email_sender"] = "sender@example.com"
 os.environ["email_password"] = "password123"
 
@@ -53,6 +54,7 @@ dummy_data = [
         "status": {"S": "ACTIVE"},
         "attributes": {"M": {"threshold": {"N": "100.95"}}},
         "email": {"S": "exampleemail0@gmail.com"},
+        "cron": {"S": "0 17 * * 3"},  ## every Wednesday at 5:00 PM
     },
     {
         "alias": {"S": "Alias 1"},
@@ -65,6 +67,7 @@ dummy_data = [
         "status": {"S": "ACTIVE"},
         "attributes": {"M": {"threshold": {"N": "100.95"}}},
         "email": {"S": "exampleemail1@gmail.com"},
+        "cron": {"S": "0 */12 * * *"},  ## every 12 hours
     },
     {
         "alias": {"S": "Alias 2"},
@@ -77,6 +80,7 @@ dummy_data = [
         "status": {"S": "ACTIVE"},
         "attributes": {"M": {"keyword": {"S": "Keyword"}, "opposite": {"B": False}}},
         "email": {"S": "exampleemail2@gmail.com"},
+        "cron": {"S": "*/5 * * * *"},  ## every 5 minutes
     },
 ]
 

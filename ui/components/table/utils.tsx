@@ -75,17 +75,17 @@ export const getNextRunDate = (startHour: string, delayMs: number): Date => {
   return nextRunDate;
 };
 
-export const getNextRunTimeFromCron = (cronString: string): Date => {
-  const options = {
-    currentDate: new Date(),
-    utc: true,
-  };
+// export const getNextRunTimeFromCron = (cronString: string): Date => {
+//   const options = {
+//     currentDate: new Date(),
+//     utc: true,
+//   };
 
-  const interval = cronParser.parseExpression(cronString, options);
-  const nextRunDate = interval.next().toDate();
+//   const interval = cronParser.parseExpression(cronString, options);
+//   const nextRunDate = interval.next().toDate();
 
-  return nextRunDate;
-};
+//   return nextRunDate;
+// };
 
 export const isHappeningNow = (
   lastExecutedAt: string,
@@ -224,30 +224,125 @@ export const convertDelayToCron = (
   return timeUnitToCron(value, unit, hour, minute);
 };
 
+// export const convertToCron = (
+//   frequency: number,
+//   offset?: number,
+//   dayOfWeek?: string
+// ): string => {
+//   const minutes = 0; // Always start at the 0th minute for simplicity
+//   const hours = offset || 0; // Offset is now the hours offset
+//   const days = dayOfWeek || "0"; // Use Sunday if dayOfWeek is not specified
+
+//   if (frequency === 604800000) {
+//     // 1 week
+//     return `${minutes} ${hours} ? * ${days} *`;
+//   } else if (frequency === 86400000) {
+//     // 1 day
+//     return `${minutes} ${hours} ? * * *`;
+//   } else if (frequency === 43200000) {
+//     // 12 hours
+//     return `${minutes} ${hours}-23/12 ? * * *`;
+//   } else if (frequency === 14400000) {
+//     // 4 hours
+//     return `${minutes} ${hours}-23/4 ? * * *`;
+//   } else {
+//     // Less than 4 hours, use minute intervals
+//     const intervalMinutes = frequency / 60000;
+//     return `*/${intervalMinutes} * * * ? *`;
+//   }
+// };
+
+// export const convertToCron = (
+//   intervalMs: number,
+//   hoursOffset: number = 0,
+//   dayOfWeek?: string
+// ): string => {
+//   const minutes = 0; // Always set to 0 as per requirement
+//   const hours = hoursOffset;
+//   const dayOfWeekExpression = dayOfWeek || "?"; // Use ? as default for AWS compatibility
+
+//   if (intervalMs === 604800000) {
+//     // Weekly
+//     return `cron(${minutes} ${hours} ? * ${dayOfWeekExpression} *)`;
+//   } else if (intervalMs === 86400000) {
+//     // Daily
+//     return `cron(${minutes} ${hours} * ? * *)`;
+//   } else if (intervalMs === 43200000) {
+//     // Twice daily (every 12 hours)
+//     return `cron(${minutes} ${hours},${(hours + 12) % 24} * ? * *)`;
+//   } else if (intervalMs === 14400000) {
+//     // Every 4 hours
+//     return `cron(${minutes} ${hours},${(hours + 4) % 24},${(hours + 8) % 24},${
+//       (hours + 12) % 24
+//     },${(hours + 16) % 24},${(hours + 20) % 24} * ? * *)`;
+//   } else if (intervalMs >= 3600000) {
+//     // Hourly or more (but less than daily)
+//     const intervalHours = intervalMs / 3600000;
+//     return `cron(${minutes} */${intervalHours} * ? * *)`;
+//   } else {
+//     // Less than hourly, use minute intervals
+//     const intervalMinutes = Math.max(1, intervalMs / 60000);
+//     return `cron(*/${Math.floor(intervalMinutes)} * * ? * *)`;
+//   }
+// };
+
+// export const parseAWSCron = (awsCronString: string): string => {
+//   const cronContent = awsCronString;
+
+//   // Split the cron string into its components
+//   const [minute, hour, dayOfMonth, month, dayOfWeek, year] =
+//     cronContent.split(" ");
+
+//   // Replace '?' with '*' for compatibility with cron-parser
+//   const parsableCron = `${minute} ${hour} ${
+//     dayOfMonth === "?" ? "*" : dayOfMonth
+//   } ${month} ${dayOfWeek === "?" ? "*" : dayOfWeek}`;
+
+//   return parsableCron;
+// };
+
 export const convertToCron = (
-  frequency: number,
-  offset?: number,
+  intervalMs: number,
+  hoursOffset: number = 0,
   dayOfWeek?: string
 ): string => {
-  const minutes = 0; // Always start at the 0th minute for simplicity
-  const hours = offset || 0; // Offset is now the hours offset
-  const days = dayOfWeek || "0"; // Use Sunday if dayOfWeek is not specified
+  const minutes = 0; // Always set to 0 as per requirement
+  const hours = hoursOffset;
+  const dayOfWeekExpression = dayOfWeek || "0";
 
-  if (frequency === 604800000) {
-    // 1 week
-    return `${minutes} ${hours} ? * ${days} *`;
-  } else if (frequency === 86400000) {
-    // 1 day
-    return `${minutes} ${hours} ? * * *`;
-  } else if (frequency === 43200000) {
-    // 12 hours
-    return `${minutes} ${hours}-23/12 ? * * *`;
-  } else if (frequency === 14400000) {
-    // 4 hours
-    return `${minutes} ${hours}-23/4 ? * * *`;
+  if (intervalMs === 604800000) {
+    // Weekly
+    return `${minutes} ${hours} * * ${dayOfWeekExpression}`;
+  } else if (intervalMs === 86400000) {
+    // Daily
+    return `${minutes} ${hours} * * *`;
+  } else if (intervalMs === 43200000) {
+    // Twice daily (every 12 hours)
+    return `${minutes} ${hours},${(hours + 12) % 24} * * *`;
+  } else if (intervalMs === 14400000) {
+    // Every 4 hours
+    return `${minutes} ${hours},${(hours + 4) % 24},${(hours + 8) % 24},${
+      (hours + 12) % 24
+    },${(hours + 16) % 24},${(hours + 20) % 24} * * *`;
+  } else if (intervalMs >= 3600000) {
+    // Hourly or more (but less than daily)
+    const intervalHours = intervalMs / 3600000;
+    return `${minutes} */${intervalHours} * * *`;
   } else {
-    // Less than 4 hours, use minute intervals
-    const intervalMinutes = frequency / 60000;
-    return `*/${intervalMinutes} * * * ? *`;
+    // Less than hourly, use minute intervals
+    const intervalMinutes = Math.max(1, intervalMs / 60000);
+    return `*/${Math.floor(intervalMinutes)} * * * *`;
   }
+};
+
+export const getNextRunTimeFromCron = (awsCronString: string): Date => {
+  const options = {
+    currentDate: new Date(),
+    utc: true,
+  };
+
+  const interval = cronParser.parseExpression(awsCronString, options);
+  const nextRunDate = interval.next().toDate();
+
+  return nextRunDate;
 };

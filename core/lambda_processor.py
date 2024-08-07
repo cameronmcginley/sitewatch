@@ -2,8 +2,14 @@ import os
 import json
 import asyncio
 import boto3
+import logging
 from boto3.dynamodb.conditions import Attr
 from constants import BATCH_SIZE
+from utils import is_task_ready_to_run
+
+# Set up logging
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 # Initialize DynamoDB and Lambda clients
 dynamodb = boto3.resource("dynamodb")
@@ -21,6 +27,7 @@ def transform_item(item):
     Returns:
         dict: The transformed item.
     """
+    logger.info(f"Transforming item: {item['pk']['S']}")
     transformed = {
         "alias": item["alias"]["S"],
         "type": item["check_type"]["S"],
@@ -28,13 +35,18 @@ def transform_item(item):
         "email": item["email"]["S"],
         "pk": item["pk"]["S"],
         "sk": item["sk"]["S"],
+        "cron": item["cron"]["S"],
     }
 
     if item["check_type"]["S"] == "EBAY PRICE THRESHOLD":
         transformed["threshold"] = float(item["attributes"]["M"]["threshold"]["N"])
+        logger.debug(
+            f"Added threshold {transformed['threshold']} for EBAY PRICE THRESHOLD item"
+        )
     elif item["check_type"]["S"] == "KEYWORD CHECK":
         transformed["keyword"] = item["attributes"]["M"]["keyword"]["S"]
         transformed["opposite"] = item["attributes"]["M"]["opposite"]["B"]
+        logger.debug(f"Added keyword '{transformed['keyword']}' for KEYWORD CHECK item")
 
     return transformed
 
@@ -46,17 +58,22 @@ async def scan_table():
     Returns:
         list: A list of active items from the DynamoDB table.
     """
+    logger.info("Starting DynamoDB table scan")
     items = []
     scan_kwargs = {"FilterExpression": Attr("status").eq("ACTIVE")}
 
     while True:
         response = await asyncio.to_thread(table.scan, **scan_kwargs)
         items.extend(response["Items"])
+        logger.info(
+            f"Scanned {len(response['Items'])} items, total items: {len(items)}"
+        )
 
         if "LastEvaluatedKey" not in response:
             break
         scan_kwargs["ExclusiveStartKey"] = response["LastEvaluatedKey"]
 
+    logger.info(f"Completed table scan, found {len(items)} active items")
     return items
 
 
@@ -67,15 +84,17 @@ async def invoke_executor(batch):
     Args:
         batch (list): A batch of items to be processed by the Lambda function.
     """
+    logger.info(f"Invoking executor for batch of {len(batch)} items")
     await asyncio.to_thread(
         lambda_client.invoke,
         FunctionName=os.environ["EXECUTOR_LAMBDA_NAME"],
         InvocationType="Event",
         Payload=json.dumps({"links": batch}),
     )
+    logger.debug(f"Executor invoked successfully for batch of {len(batch)} items")
 
 
-async def lambda_handler(event, context):
+async def main_handler(event, context):
     """
     Main Lambda handler function.
 
@@ -86,20 +105,42 @@ async def lambda_handler(event, context):
     Returns:
         dict: A response containing the status code and a summary of the processing.
     """
+    logger.info("Starting Processor Lambda execution")
+
     items = await scan_table()
-    transformed_items = [transform_item(item) for item in items]
+    logger.info(f"Retrieved {len(items)} items from DynamoDB")
+
+    items_to_run = [item for item in items if is_task_ready_to_run(item["cron"]["S"])]
+    logger.info(
+        f"{len(items_to_run)} items are ready to run based on their cron schedule"
+    )
+
+    transformed_items = [transform_item(item) for item in items_to_run]
+    logger.info(f"Transformed {len(transformed_items)} items for processing")
+
     batches = [
         transformed_items[i : i + BATCH_SIZE]
         for i in range(0, len(transformed_items), BATCH_SIZE)
     ]
+    logger.info(
+        f"Created {len(batches)} batches of items, each with up to {BATCH_SIZE} items"
+    )
 
     # Invoke a new executor Lambda function for each batch
     await asyncio.gather(*[invoke_executor(batch) for batch in batches])
+    logger.info(f"Invoked {len(batches)} Executor Lambda functions")
+
+    summary = f"Processed {len(items)} URLs, with {len(items_to_run)} set to run in {len(batches)} batches"
+    logger.info(f"Processor Lambda execution completed. Summary: {summary}")
 
     return {
         "statusCode": 200,
-        "body": json.dumps(f"Processed {len(items)} URLs in {len(batches)} batches"),
+        "body": json.dumps(summary),
     }
+
+
+def lambda_handler(event, context):
+    return asyncio.run(main_handler(event, context))
 
 
 if __name__ == "__main__":

@@ -234,9 +234,9 @@ const formatNextRunCell = (item: CheckItem) => {
 };
 
 const formatLastResultCell = (item: CheckItem) => {
-  const status = item.lastResult.status;
-  const message = item.lastResult.message;
-  const timestamp = item.lastResult.timestamp;
+  const status = item.lastResult?.status;
+  const message = item.lastResult?.message;
+  const timestamp = item.lastResult?.timestamp;
   const email = item.email;
 
   const statusToBadgeColor: Record<string, string> = {
@@ -247,36 +247,40 @@ const formatLastResultCell = (item: CheckItem) => {
 
   return (
     <TableCell>
-      <div className="flex flex-col items-start gap-1">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger className="cursor-auto select-text">
-              <Badge
-                className={cn(BADGE_COLOR_CLASS[statusToBadgeColor[status]])}
-              >
-                {toSentenceCase(status)}
-              </Badge>
-            </TooltipTrigger>
-            {email && status === "ALERTED" && (
-              <TooltipContent>Email sent to {email}</TooltipContent>
-            )}
-            {message && status === "FAILED" && (
-              <TooltipContent>{message}</TooltipContent>
-            )}
-          </Tooltip>
-        </TooltipProvider>
+      {!status ? (
+        emptyDash
+      ) : (
+        <div className="flex flex-col items-start gap-1">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger className="cursor-auto select-text">
+                <Badge
+                  className={cn(BADGE_COLOR_CLASS[statusToBadgeColor[status]])}
+                >
+                  {toSentenceCase(status)}
+                </Badge>
+              </TooltipTrigger>
+              {email && status === "ALERTED" && (
+                <TooltipContent>Email sent to {email}</TooltipContent>
+              )}
+              {message && status === "FAILED" && (
+                <TooltipContent>{message}</TooltipContent>
+              )}
+            </Tooltip>
+          </TooltipProvider>
 
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger className="cursor-auto select-text text-sm text-gray-500 text-start">
-              {timestamp ? "Last ran " + getTimeAgo(timestamp) : emptyDash}
-            </TooltipTrigger>
-            <TooltipContent>
-              {timestamp ? formatDateWithTimezone(timestamp) : emptyDash}
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </div>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger className="cursor-auto select-text text-sm text-gray-500 text-start">
+                {timestamp ? "Last ran " + getTimeAgo(timestamp) : emptyDash}
+              </TooltipTrigger>
+              <TooltipContent>
+                {timestamp ? formatDateWithTimezone(timestamp) : emptyDash}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+      )}
     </TableCell>
   );
 };

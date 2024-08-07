@@ -27,7 +27,7 @@ export const handler = async (event) => {
     KeyConditionExpression: "userid = :userid AND sk = :sk",
     ExpressionAttributeValues: {
       ":userid": userid,
-      ":sk": "CHECK",
+      ":sk": "CHECK", // change to DEFINITION
     },
   };
 

@@ -5,6 +5,7 @@ old
 myenv
 package
 lambda_function.zip
+*.requirements.zip
 
 # ui
 # dependencies

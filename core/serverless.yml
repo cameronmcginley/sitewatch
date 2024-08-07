@@ -29,6 +29,13 @@ provider:
         - ssm:GetParameter
       Resource:
         - "arn:aws:ssm:${self:provider.region}:*:parameter/url-checker/*"
+    - Effect: Allow
+      Action:
+        - logs:CreateLogGroup
+        - logs:CreateLogStream
+        - logs:PutLogEvents
+      Resource:
+        - "arn:aws:logs:${self:provider.region}:*:log-group:/aws/lambda/*:*"
 
 functions:
   processor:
@@ -70,9 +77,12 @@ resources:
 plugins:
   - serverless-python-requirements
 
+# custom:
+#   pythonRequirements:
+#     dockerizePip: non-linux
 custom:
   pythonRequirements:
-    dockerizePip: non-linux
+    dockerizePip: true
 
 package:
   individually: true
@@ -81,6 +91,7 @@ package:
     - "!venv/**"
     - "!lambda_test.py"
     - "constants.py"
+    - "utils.py"
     - "url_check_functions/**"
   exclude:
     - package.json
