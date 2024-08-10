@@ -164,7 +164,7 @@ const formatFrequencyCell = (item: CheckItem) => {
 
   const getTooltipContent = () => {
     if (delayMs !== null && cron !== null) {
-      const baseContent = `Runs: ${cronToPlainText(cron)} (${cron})`;
+      const baseContent = `Runs: ${cronToPlainText(cron)}`;
 
       return baseContent;
     }

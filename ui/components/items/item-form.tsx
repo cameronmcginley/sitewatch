@@ -98,6 +98,7 @@ const ItemForm: React.FC<{ onSubmit: (data: FormData) => void }> = ({
   }, [formData.delayMs, formData.offset, formData.dayOfWeek]);
 
   const handleInputChange = (name: string, value: any) => {
+    console.log(formData);
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -114,201 +115,188 @@ const ItemForm: React.FC<{ onSubmit: (data: FormData) => void }> = ({
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
-      <CardHeader>
-        <CardTitle>Create New Check</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="space-y-2">
+        <Label htmlFor="check_type">Check Type</Label>
+        <Select
+          required={true}
+          value={formData.check_type}
+          onValueChange={(value) => {
+            setFormData((prev) => ({
+              ...prev,
+              check_type: value,
+              attributes: {},
+            }));
+          }}
+        >
+          <SelectTrigger id="check_type">
+            <SelectValue placeholder="Select Check Type" />
+          </SelectTrigger>
+          <SelectContent>
+            {CHECK_TYPES.map((type) => (
+              <SelectItem key={type} value={type}>
+                {type}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {formData.check_type === "KEYWORD CHECK" && (
+        <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="check_type">Check Type</Label>
-            <Select
-              value={formData.check_type}
-              onValueChange={(value) => {
-                setFormData((prev) => ({
-                  ...prev,
-                  check_type: value,
-                  attributes: {},
-                }));
-              }}
-            >
-              <SelectTrigger id="check_type">
-                <SelectValue placeholder="Select Check Type" />
-              </SelectTrigger>
-              <SelectContent>
-                {CHECK_TYPES.map((type) => (
-                  <SelectItem key={type} value={type}>
-                    {type}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {formData.check_type === "KEYWORD CHECK" && (
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="keyword">Keyword</Label>
-                <Input
-                  id="keyword"
-                  value={formData.attributes.keyword || ""}
-                  onChange={(e) =>
-                    handleAttributeChange("keyword", e.target.value)
-                  }
-                  required
-                />
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="opposite"
-                  checked={formData.attributes.opposite || false}
-                  onCheckedChange={(checked) =>
-                    handleAttributeChange("opposite", checked)
-                  }
-                />
-                <Label htmlFor="opposite">Opposite</Label>
-              </div>
-            </div>
-          )}
-
-          {formData.check_type === "PAGE DIFFERENCE" && (
-            <div className="space-y-2">
-              <Label htmlFor="percent_diff">Percent Difference</Label>
-              <Slider
-                id="percent_diff"
-                min={0}
-                max={100}
-                step={1}
-                value={[formData.attributes.percent_diff || 0]}
-                onValueChange={(value) =>
-                  handleAttributeChange("percent_diff", value[0])
-                }
-              />
-              <div className="text-sm text-gray-500 mt-1">
-                {formData.attributes.percent_diff || 0}%
-              </div>
-            </div>
-          )}
-
-          <div className="space-y-2">
-            <Label htmlFor="url">URL</Label>
+            <Label htmlFor="keyword">Keyword</Label>
             <Input
-              id="url"
-              type="url"
-              value={formData.url}
-              onChange={(e) => handleInputChange("url", e.target.value)}
+              id="keyword"
+              value={formData.attributes.keyword || ""}
+              onChange={(e) => handleAttributeChange("keyword", e.target.value)}
               required
             />
           </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="alias">Alias</Label>
-            <Input
-              id="alias"
-              value={formData.alias}
-              onChange={(e) => handleInputChange("alias", e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              value={formData.email}
-              onChange={(e) => handleInputChange("email", e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="frequency">Frequency</Label>
-            <Select
-              value={formData.delayMs.toString()}
-              onValueChange={(value) =>
-                handleInputChange("delayMs", Number(value))
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="opposite"
+              checked={formData.attributes.opposite || false}
+              onCheckedChange={(checked) =>
+                handleAttributeChange("opposite", checked)
               }
-            >
-              <SelectTrigger id="frequency">
-                <SelectValue placeholder="Select Frequency" />
-              </SelectTrigger>
-              <SelectContent>
-                {frequencyOptions.map((option) => (
-                  <SelectItem
-                    key={option.value}
-                    value={option.value.toString()}
-                  >
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            />
+            <Label htmlFor="opposite">Opposite</Label>
           </div>
+        </div>
+      )}
 
-          {formData.delayMs >= 14400000 && (
-            <div className="space-y-2">
-              <Label htmlFor="offset">Offset (hours)</Label>
-              <Select
-                value={formData.offset?.toString() || ""}
-                onValueChange={(value) =>
-                  handleInputChange("offset", Number(value))
-                }
-              >
-                <SelectTrigger id="offset">
-                  <SelectValue placeholder="Select Offset" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Array.from(
-                    { length: formData.delayMs / 3600000 },
-                    (_, i) => (
-                      <SelectItem key={i} value={i.toString()}>
-                        {i} hour{i !== 1 ? "s" : ""}
-                      </SelectItem>
-                    )
-                  )}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
+      {formData.check_type === "PAGE DIFFERENCE" && (
+        <div className="space-y-2">
+          <Label htmlFor="percent_diff">Percent Difference</Label>
+          <Slider
+            id="percent_diff"
+            min={0}
+            max={100}
+            step={1}
+            value={[formData.attributes.percent_diff || 0]}
+            onValueChange={(value) =>
+              handleAttributeChange("percent_diff", value[0])
+            }
+          />
+          <div className="text-sm text-gray-500 mt-1">
+            {formData.attributes.percent_diff || 0}%
+          </div>
+        </div>
+      )}
 
-          {formData.delayMs === 604800000 && (
-            <div className="space-y-2">
-              <Label htmlFor="dayOfWeek">Day of Week</Label>
-              <Select
-                value={formData.dayOfWeek || ""}
-                onValueChange={(value) => handleInputChange("dayOfWeek", value)}
-              >
-                <SelectTrigger id="dayOfWeek">
-                  <SelectValue placeholder="Select Day of Week" />
-                </SelectTrigger>
-                <SelectContent>
-                  {dayOfWeekOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
+      <div className="space-y-2">
+        <Label htmlFor="url">URL</Label>
+        <Input
+          id="url"
+          type="url"
+          value={formData.url}
+          onChange={(e) => handleInputChange("url", e.target.value)}
+          required
+        />
+      </div>
 
-          <Button type="submit" className="w-full">
-            Submit
-          </Button>
+      <div className="space-y-2">
+        <Label htmlFor="alias">Alias</Label>
+        <Input
+          id="alias"
+          value={formData.alias}
+          onChange={(e) => handleInputChange("alias", e.target.value)}
+          required
+        />
+      </div>
 
-          {cronDescription && (
-            <div className="mt-4 text-sm text-gray-600">
-              <p>
-                Will Run {formData.delayMs > 60 * 60 * 1000 && "In UTC Time"}{" "}
-                {cronDescription}
-              </p>
-              {/* <p>Cron Expression: {cronExpression}</p> */}
-            </div>
-          )}
-        </form>
-      </CardContent>
-    </Card>
+      <div className="space-y-2">
+        <Label htmlFor="email">Email</Label>
+        <Input
+          id="email"
+          type="email"
+          value={formData.email}
+          onChange={(e) => handleInputChange("email", e.target.value)}
+          required
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="frequency">Frequency</Label>
+        <Select
+          required
+          value={formData.delayMs.toString()}
+          onValueChange={(value) => handleInputChange("delayMs", Number(value))}
+        >
+          <SelectTrigger id="frequency">
+            <SelectValue placeholder="Select Frequency" />
+          </SelectTrigger>
+          <SelectContent>
+            {frequencyOptions.map((option) => (
+              <SelectItem key={option.value} value={option.value.toString()}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {formData.delayMs >= 14400000 && (
+        <div className="space-y-2">
+          <Label htmlFor="offset">Offset (hours)</Label>
+          <Select
+            required
+            value={formData.offset?.toString() || ""}
+            onValueChange={(value) =>
+              handleInputChange("offset", Number(value))
+            }
+          >
+            <SelectTrigger id="offset">
+              <SelectValue placeholder="Select Offset" />
+            </SelectTrigger>
+            <SelectContent>
+              {Array.from({ length: formData.delayMs / 3600000 }, (_, i) => (
+                <SelectItem key={i} value={i.toString()}>
+                  {i} hour{i !== 1 ? "s" : ""}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
+
+      {formData.delayMs === 604800000 && (
+        <div className="space-y-2">
+          <Label htmlFor="dayOfWeek">Day of Week</Label>
+          <Select
+            required
+            value={formData.dayOfWeek || ""}
+            onValueChange={(value) => handleInputChange("dayOfWeek", value)}
+          >
+            <SelectTrigger id="dayOfWeek">
+              <SelectValue placeholder="Select Day of Week" />
+            </SelectTrigger>
+            <SelectContent>
+              {dayOfWeekOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
+
+      <Button type="submit" className="w-full">
+        Submit
+      </Button>
+
+      {cronDescription && (
+        <div className="mt-4 text-sm text-gray-600">
+          <p>
+            Will Run {formData.delayMs > 60 * 60 * 1000 && "In UTC Time"}{" "}
+            {cronDescription}
+          </p>
+          {/* <p>Cron Expression: {cronExpression}</p> */}
+        </div>
+      )}
+    </form>
   );
 };
 

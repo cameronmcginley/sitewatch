@@ -1,8 +1,7 @@
-import React, { use, useState } from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -25,11 +24,28 @@ import {
 } from "./cell-formatters";
 import { handleShowDetails } from "./utils";
 import { CheckItem } from "@/lib/types";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import ItemForm from "@/components/items/item-form";
+import { MutatingDots } from "react-loader-spinner";
 
-const CoreTable = ({ data, handleDelete, isLoading }) => {
+const CoreTable = ({
+  data,
+  handleDelete,
+  isLoading,
+  handleCreateItemSubmit,
+  isCreateItemLoading,
+  isFormDialogOpen,
+  setIsFormDialogOpen,
+}) => {
   const [selectedCheckType, setSelectedCheckType] = useState("ALL");
   const [selectedItems, setSelectedItems] = useState<CheckItem[]>([]);
-  const [filteredData, setFilteredData] = useState<CheckItem[]>(data);
+  // const [isFormDialogOpen, setIsFormDialogOpen] = useState(false);
 
   const checkTypes = ["ALL", ...new Set(data.map((item) => item.check_type))];
 
@@ -38,15 +54,10 @@ const CoreTable = ({ data, handleDelete, isLoading }) => {
       ? getGenericColumns()
       : getTypeSpecificColumns(selectedCheckType);
 
-  React.useEffect(() => {
-    setFilteredData(
-      selectedCheckType === "ALL"
-        ? data
-        : data.filter(
-            (item: CheckItem) => item.check_type === selectedCheckType
-          )
-    );
-  }, [selectedCheckType, data]);
+  const filteredData =
+    selectedCheckType === "ALL"
+      ? data
+      : data.filter((item: CheckItem) => item.check_type === selectedCheckType);
 
   const handleSelectItem = (item: CheckItem) => {
     setSelectedItems((prev) =>
@@ -56,14 +67,6 @@ const CoreTable = ({ data, handleDelete, isLoading }) => {
 
   const handleDeleteItems = () => {
     handleDelete(selectedItems);
-    setFilteredData((prevData) =>
-      prevData.filter(
-        (dataItem) =>
-          !selectedItems.some(
-            (item) => item.pk === dataItem.pk && item.sk === dataItem.sk
-          )
-      )
-    );
     setSelectedItems([]);
   };
 
@@ -89,21 +92,51 @@ const CoreTable = ({ data, handleDelete, isLoading }) => {
         <div className="flex flex-row gap-2">
           {/* Delete button */}
           {selectedItems.length > 0 && (
-            <Button
-              onClick={handleDeleteItems}
-              className=""
-              variant="destructive"
-            >
-              Delete Selected
+            <Button onClick={handleDeleteItems} variant="destructive">
+              Delete {selectedItems.length} items
             </Button>
           )}
+          {/* Create button */}
+          <Dialog
+            open={isFormDialogOpen || isCreateItemLoading}
+            onOpenChange={setIsFormDialogOpen}
+          >
+            <DialogTrigger asChild>
+              <Button className="mb-4">Create Check</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>
+                  {isCreateItemLoading
+                    ? "Creating Item..."
+                    : "Create New Check"}
+                </DialogTitle>
+              </DialogHeader>
+              {isCreateItemLoading ? (
+                <div className="flex flex-col justify-center items-center">
+                  <MutatingDots
+                    height="100"
+                    width="100"
+                    color="#fff"
+                    secondaryColor="#fff"
+                    radius="12.5"
+                    ariaLabel="mutating-dots-loading"
+                    wrapperStyle={{}}
+                    wrapperClass=""
+                  />
+                </div>
+              ) : (
+                <ItemForm onSubmit={handleCreateItemSubmit} />
+              )}
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 
-      <Table className="min-w-full divide-y divide-gray-200">
+      <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>
+            <TableHead className="w-[50px]">
               <Checkbox
                 checked={
                   selectedItems.length === filteredData.length && !isLoading
@@ -116,33 +149,29 @@ const CoreTable = ({ data, handleDelete, isLoading }) => {
             {columns.map((column, index: number) => (
               <TableHead key={index}>{column.header}</TableHead>
             ))}
-            <TableHead></TableHead>
+            <TableHead className="w-[100px]"></TableHead>
           </TableRow>
         </TableHeader>
 
         <TableBody>
           {isLoading
-            ? // Show skeletons if data is loading
-              Array.from({ length: 5 }).map((_, index) => (
+            ? Array.from({ length: 5 }).map((_, index) => (
                 <TableRow key={index}>
                   <TableCell>
-                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-4" />
                   </TableCell>
                   {columns.map((_, colIndex) => (
                     <TableCell key={colIndex}>
                       <Skeleton className="h-4 w-full" />
                     </TableCell>
                   ))}
-                  <TableCell className="w-0">
+                  <TableCell>
                     <Skeleton className="h-4 w-[100px]" />
                   </TableCell>
                 </TableRow>
               ))
             : filteredData.map((item: CheckItem, index: number) => (
-                <TableRow
-                  key={item.pk ?? item.sk ?? index}
-                  className="hover:bg-neutral-800"
-                >
+                <TableRow key={item.pk ?? item.sk ?? index}>
                   <TableCell>
                     <Checkbox
                       checked={selectedItems.includes(item)}
@@ -152,8 +181,12 @@ const CoreTable = ({ data, handleDelete, isLoading }) => {
 
                   {formatCells(item, columns)}
 
-                  <TableCell className="w-0">
-                    <Button onClick={() => handleShowDetails(item)}>
+                  <TableCell>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleShowDetails(item)}
+                    >
                       Details
                     </Button>
                   </TableCell>

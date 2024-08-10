@@ -5,98 +5,100 @@ import { useSession } from "next-auth/react";
 import CoreTable from "@/components/table/core-table";
 import DynamicCheckForm from "@/components/items/item-form";
 import { fetchData, addItem, deleteItem } from "@/lib/api/items";
-import { Checkbox } from "@/components/ui/checkbox";
-
-import { generateDummyData } from "@/data/generateDummyData";
-
-import { dummyData } from "@/data/dummyData";
-import { insertDummyData } from "@/data/insertDummyData";
 import { Button } from "@/components/ui/button";
 import { CheckItem } from "@/lib/types";
-import { set } from "date-fns";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+// import { Pagination } from "@/components/ui/pagination";
+import { CustomPagination } from "@/components/table/custom-pagination";
 
 function Home() {
   const { data: session, status } = useSession();
-  const [data, setData] = useState([]);
-  const [showRealData, setShowRealData] = useState(false);
+  const [data, setData] = useState<CheckItem[]>([]);
   const [isDataLoading, setIsDataLoading] = useState(true);
+  const [isFormDialogOpen, setIsFormDialogOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isCreateItemLoading, setIsCreateItemLoading] = useState(false);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     if (status === "authenticated" && session?.user?.id) {
       fetchDataForUser(session.user.id);
     }
-    // console.log(generateDummyData(30));
   }, [status, session]);
 
   async function fetchDataForUser(userid: string) {
     setIsDataLoading(true);
-
     console.log("Fetching data for user:", userid);
 
     const fetchedData = await fetchData(userid);
     if (fetchedData) {
-      // Sort by data.createdAt
-      fetchedData.sort((a, b) => {
-        return new Date(b.createdAt) - new Date(a.createdAt);
-      });
-
+      fetchedData.sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
       setData(fetchedData);
       setIsDataLoading(false);
     }
   }
 
-  const handleFormSubmit = async (formData) => {
+  const handleCreateItemSubmit = async (formData) => {
     try {
+      console.log("Adding item:", formData);
+      setIsCreateItemLoading(true);
       await addItem(formData);
-      // Fetch updated data
-      fetchDataForUser(session.user.id);
+      await fetchDataForUser(session.user.id);
+      setIsCreateItemLoading(false);
+      setIsFormDialogOpen(false);
     } catch (error) {
+      setIsCreateItemLoading(false);
       console.error("Error adding item:", error);
     }
   };
 
   const handleDelete = async (items: CheckItem[]) => {
     console.log("Deleting items:", items);
-
     try {
       await Promise.all(items.map((item) => deleteItem(item.pk, item.sk)));
+      fetchDataForUser(session.user.id);
     } catch (error) {
       console.error("Error deleting items:", error);
     }
   };
 
+  const paginatedData = data.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
     <div className="container mx-auto px-4">
       <h1 className="text-2xl font-bold mb-4">Check Management</h1>
 
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-2">Add New Check</h2>
-        <DynamicCheckForm onSubmit={handleFormSubmit} />
-      </div>
-
-      <div className="flex flex-row gap-2 items-center p-4">
-        <Checkbox
-          onClick={() => {
-            setShowRealData(!showRealData);
-            console.log("Show real data:", showRealData);
-          }}
-        />
-        <p>Show real data</p>
-      </div>
-
-      <div className="p-4 gap-2 flex flex-col">
-        <p>Insert dummy data to DDB</p>
-        <Button onClick={insertDummyData}>Insert Dummy Data</Button>
-      </div>
-
       <div>
-        <h2 className="text-xl font-semibold mb-2">Existing Checks</h2>
         <CoreTable
-          // data={showRealData ? data : dummyData}
-          data={data}
+          data={paginatedData}
           handleDelete={handleDelete}
           isLoading={isDataLoading}
+          handleCreateItemSubmit={handleCreateItemSubmit}
+          isCreateItemLoading={isCreateItemLoading}
+          isFormDialogOpen={isFormDialogOpen}
+          setIsFormDialogOpen={setIsFormDialogOpen}
         />
+        {data.length > 0 && (
+          <div className="mt-4">
+            <CustomPagination
+              currentPage={currentPage}
+              totalPages={Math.ceil(data.length / itemsPerPage)}
+              onPageChange={setCurrentPage}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
