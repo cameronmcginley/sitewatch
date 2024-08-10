@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/dialog";
 import ItemForm from "@/components/items/item-form";
 import { MutatingDots } from "react-loader-spinner";
+import { CustomPagination } from "./custom-pagination";
 
 const CoreTable = ({
   data,
@@ -45,6 +46,8 @@ const CoreTable = ({
 }) => {
   const [selectedCheckType, setSelectedCheckType] = useState("ALL");
   const [selectedItems, setSelectedItems] = useState<CheckItem[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const checkTypes = ["ALL", ...new Set(data.map((item) => item.check_type))];
 
@@ -57,6 +60,11 @@ const CoreTable = ({
     selectedCheckType === "ALL"
       ? data
       : data.filter((item: CheckItem) => item.check_type === selectedCheckType);
+
+  const paginatedData = filteredData.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const handleSelectItem = (item: CheckItem) => {
     setSelectedItems((prev) =>
@@ -169,7 +177,7 @@ const CoreTable = ({
                   </TableCell>
                 </TableRow>
               ))
-            : filteredData.map((item: CheckItem, index: number) => (
+            : paginatedData.map((item: CheckItem, index: number) => (
                 <TableRow key={item.pk ?? item.sk ?? index}>
                   <TableCell>
                     <Checkbox
@@ -193,6 +201,15 @@ const CoreTable = ({
               ))}
         </TableBody>
       </Table>
+      {data.length > 0 && (
+        <div className="mt-4">
+          <CustomPagination
+            currentPage={currentPage}
+            totalPages={Math.ceil(filteredData.length / itemsPerPage)}
+            onPageChange={setCurrentPage}
+          />
+        </div>
+      )}
     </>
   );
 };

@@ -14,9 +14,7 @@ function Home() {
   const [data, setData] = useState<CheckItem[]>([]);
   const [isDataLoading, setIsDataLoading] = useState(true);
   const [isCreateItemModalOpen, setIsCreateItemModalOpen] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
   const [isCreateItemLoading, setIsCreateItemLoading] = useState(false);
-  const itemsPerPage = 10;
 
   useEffect(() => {
     if (status === "authenticated" && session?.user?.id) {
@@ -65,18 +63,13 @@ function Home() {
     }
   };
 
-  const paginatedData = data.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
   return (
     <div className="container mx-auto px-4">
       <h1 className="text-2xl font-bold mb-4">Check Management</h1>
 
       <div>
         <CoreTable
-          data={paginatedData}
+          data={data}
           handleDelete={handleDelete}
           isLoading={isDataLoading}
           handleCreateItemSubmit={handleCreateItemSubmit}
@@ -84,15 +77,6 @@ function Home() {
           isCreateItemModalOpen={isCreateItemModalOpen}
           setIsCreateItemModalOpen={setIsCreateItemModalOpen}
         />
-        {data.length > 0 && (
-          <div className="mt-4">
-            <CustomPagination
-              currentPage={currentPage}
-              totalPages={Math.ceil(data.length / itemsPerPage)}
-              onPageChange={setCurrentPage}
-            />
-          </div>
-        )}
       </div>
     </div>
   );
