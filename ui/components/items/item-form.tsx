@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { CHECK_TYPES } from "@/lib/constants";
-import cronstrue from "cronstrue";
-import {
-  convertToCron,
-  cronToPlainText,
-  convertDelayToCron,
-} from "../table/utils";
+import { convertToCron, cronToPlainText } from "../table/utils";
 
 const frequencyOptions = [
   { label: "5 minutes", value: 300000 },
@@ -131,6 +126,9 @@ const ItemForm: React.FC<{ onSubmit: (data: FormData) => void }> = ({
 
     if (name === "frequency") {
       name = "delayMs";
+      value = Number(value);
+    }
+    if (name === "offset") {
       value = Number(value);
     }
 
@@ -311,7 +309,7 @@ const ItemForm: React.FC<{ onSubmit: (data: FormData) => void }> = ({
           label="Offset"
           id="offset"
           name="offset"
-          value={formData.offset || ""}
+          value={formData.offset}
           onChange={handleInputChange}
           options={hourOffsetOptions}
           required

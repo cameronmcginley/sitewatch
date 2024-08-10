@@ -310,7 +310,10 @@ export const convertToCron = (
   const hours = hoursOffset;
   const dayOfWeekExpression = dayOfWeek || "0";
 
-  if (intervalMs === 604800000) {
+  if (intervalMs > 604800000) {
+    // Greater than weekly, default to weekly
+    return `${minutes} ${hours} * * ${dayOfWeekExpression}`;
+  } else if (intervalMs === 604800000) {
     // Weekly
     return `${minutes} ${hours} * * ${dayOfWeekExpression}`;
   } else if (intervalMs === 86400000) {
@@ -326,12 +329,12 @@ export const convertToCron = (
     },${(hours + 16) % 24},${(hours + 20) % 24} * * *`;
   } else if (intervalMs >= 3600000) {
     // Hourly or more (but less than daily)
-    const intervalHours = intervalMs / 3600000;
+    const intervalHours = Math.floor(intervalMs / 3600000);
     return `${minutes} */${intervalHours} * * *`;
   } else {
     // Less than hourly, use minute intervals
-    const intervalMinutes = Math.max(1, intervalMs / 60000);
-    return `*/${Math.floor(intervalMinutes)} * * * *`;
+    const intervalMinutes = Math.max(1, Math.floor(intervalMs / 60000));
+    return `${minutes} */${intervalMinutes} * * *`;
   }
 };
 
