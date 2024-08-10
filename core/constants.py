@@ -1,4 +1,5 @@
-from url_check_functions import keyword_check, ebay_price_threshold
+from url_check_functions.keyword_check import keyword_check
+from url_check_functions.ebay_price_threshold import ebay_price_threshold
 
 BATCH_SIZE = 500
 

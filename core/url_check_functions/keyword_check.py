@@ -20,7 +20,10 @@ async def keyword_check(session, link):
             "message": "Failed to fetch URL content",
         }
 
-    keyword_found = link["keyword"].lower() in content.text().lower()
+    # Decode the content from bytes to string
+    content_str = content.decode("utf-8") if isinstance(content, bytes) else content
+
+    keyword_found = link["keyword"].lower() in content_str.lower()
     send_alert = keyword_found if not link["opposite"] else not keyword_found
 
     result = {

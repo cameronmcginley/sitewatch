@@ -13,16 +13,16 @@ logger = logging.getLogger(__name__)
 
 
 def is_task_ready_to_run(cron_string, grace_period_seconds=60):
-    logger.info(f"Checking if task is ready to run for cron: {cron_string}")
+    # logger.info(f"Checking if task is ready to run for cron: {cron_string}")
 
     now = datetime.now(timezone.utc)
     cron = croniter(cron_string, now)
     previous_run_time = cron.get_prev(datetime)
     next_run_time = cron.get_next(datetime)
 
-    logger.debug(f"Current time (UTC): {now}")
-    logger.debug(f"Previous run time: {previous_run_time}")
-    logger.debug(f"Next run time: {next_run_time}")
+    # logger.debug(f"Current time (UTC): {now}")
+    # logger.debug(f"Previous run time: {previous_run_time}")
+    # logger.debug(f"Next run time: {next_run_time}")
 
     # Include a grace period to account for Lambda execution delay
     within_grace_period = (
@@ -32,14 +32,14 @@ def is_task_ready_to_run(cron_string, grace_period_seconds=60):
         now + timedelta(seconds=grace_period_seconds)
     )
 
-    if within_grace_period:
-        logger.debug("Task is within grace period of previous run time")
-    elif is_ready:
-        logger.debug("Task is ready for next run")
-    else:
-        logger.debug("Task is not ready to run")
+    # if within_grace_period:
+    #     logger.debug("Task is within grace period of previous run time")
+    # elif is_ready:
+    #     logger.debug("Task is ready for next run")
+    # else:
+    #     logger.debug("Task is not ready to run")
 
-    logger.info(f"Task ready status: {is_ready}")
+    # logger.info(f"Task ready status: {is_ready}")
 
     return is_ready
 

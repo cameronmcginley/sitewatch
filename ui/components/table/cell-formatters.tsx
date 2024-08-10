@@ -196,7 +196,7 @@ const formatNextRunCell = (item: CheckItem) => {
 
   const nextRunDate = getNextRunTimeFromCron(cron);
   const isHappeningNow = lastExecutedAt
-    ? isHappeningNowFromCron(cron, lastExecutedAt)
+    ? isHappeningNowFromCron(lastExecutedAt, cron)
     : false;
 
   const getCellContent = () => {
@@ -261,11 +261,18 @@ const formatLastResultCell = (item: CheckItem) => {
                 </Badge>
               </TooltipTrigger>
               {email && status === "ALERTED" && (
-                <TooltipContent>Email sent to {email}</TooltipContent>
+                <TooltipContent>
+                  <>
+                    <p>{message}</p>
+                    <p>Email sent to {email}</p>
+                  </>
+                </TooltipContent>
               )}
-              {message && status === "FAILED" && (
-                <TooltipContent>{message}</TooltipContent>
-              )}
+              {message &&
+                message != "Message" &&
+                (status === "FAILED" || status === "NO ALERT") && (
+                  <TooltipContent>{message}</TooltipContent>
+                )}
             </Tooltip>
           </TooltipProvider>
 

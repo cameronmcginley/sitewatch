@@ -76,17 +76,17 @@ async def process_link(session, link):
                 link["found_price"] = result["found_price"]
 
             last_result = {
-                "status": {"S": "ALERTED" if result["send_alert"] else "NO ALERT"},
-                "message": {"S": result["message"]},
-                "timestamp": {
-                    "S": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
-                },
+                "status": "ALERTED" if result["send_alert"] else "NO ALERT",
+                "message": result["message"],
+                "timestamp": datetime.now(timezone.utc).strftime(
+                    "%Y-%m-%dT%H:%M:%S.%fZ"
+                ),
             }
 
             if "found_price" in result:
                 last_result["found_price"] = {"N": str(result["found_price"])}
 
-            await update_dynamodb_item(link["pk"], link["sk"], {"M": last_result})
+            await update_dynamodb_item(link["pk"], link["sk"], last_result)
             logger.info(
                 f"Processed {link['url']}: {'ALERTED' if result['send_alert'] else 'NO ALERT'}"
             )
@@ -99,13 +99,11 @@ async def process_link(session, link):
 
         # Update DynamoDB with error information
         last_result = {
-            "status": {"S": "FAILED"},
-            "message": {"S": str(e)},
-            "timestamp": {
-                "S": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
-            },
+            "status": "FAILED",
+            "message": str(e),
+            "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
         }
-        await update_dynamodb_item(link["pk"], link["sk"], {"M": last_result})
+        await update_dynamodb_item(link["pk"], link["sk"], last_result)
     finally:
         elapsed_time = time.time() - start_time
         if elapsed_time > TIMEOUT_LIMIT:
@@ -142,6 +140,28 @@ async def main_handler(event, context):
     await send_alerts(urls_to_alert)
 
 
+async def update_most_recent_alert(pk, sk):
+    """
+    Update the most recent alert timestamp for a user.
+
+    Args:
+        pk (str): The partition key of the item to update.
+        sk (str): The sort key of the item to update.
+    """
+    try:
+        update_time = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+        response = await asyncio.to_thread(
+            table.update_item,
+            Key={"pk": pk, "sk": sk},
+            UpdateExpression="SET mostRecentAlert = :ua",
+            ExpressionAttributeValues={":ua": update_time},
+        )
+        logger.info(f"Updated most recent alert for user: PK={pk}, SK={sk}")
+        logger.debug(f"Updated At: {update_time}")
+    except ClientError as e:
+        logger.error(f"Error updating most recent alert for user {pk}: {e}")
+
+
 async def send_alerts(urls_to_alert):
     """
     Send email alerts for products that have updates.
@@ -154,6 +174,12 @@ async def send_alerts(urls_to_alert):
     if not urls_to_alert:
         logger.info("No alerts to send")
         return
+
+    # Update most recent alert for all URLs concurrently
+    update_tasks = [
+        update_most_recent_alert(url["pk"], url["sk"]) for url in urls_to_alert
+    ]
+    await asyncio.gather(*update_tasks)
 
     # Group products by email
     urls_by_email = defaultdict(list)

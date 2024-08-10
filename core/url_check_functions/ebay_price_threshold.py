@@ -3,7 +3,7 @@ from utils import sum_of_numbers
 from fetch_url import fetch_url
 
 
-async def check_ebay_price_threshold(session, link):
+async def ebay_price_threshold(session, link):
     """
     Checks the eBay price threshold for a given link.
 
