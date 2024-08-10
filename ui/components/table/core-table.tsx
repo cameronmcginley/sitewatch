@@ -40,12 +40,11 @@ const CoreTable = ({
   isLoading,
   handleCreateItemSubmit,
   isCreateItemLoading,
-  isFormDialogOpen,
-  setIsFormDialogOpen,
+  isCreateItemModalOpen,
+  setIsCreateItemModalOpen,
 }) => {
   const [selectedCheckType, setSelectedCheckType] = useState("ALL");
   const [selectedItems, setSelectedItems] = useState<CheckItem[]>([]);
-  // const [isFormDialogOpen, setIsFormDialogOpen] = useState(false);
 
   const checkTypes = ["ALL", ...new Set(data.map((item) => item.check_type))];
 
@@ -98,8 +97,8 @@ const CoreTable = ({
           )}
           {/* Create button */}
           <Dialog
-            open={isFormDialogOpen || isCreateItemLoading}
-            onOpenChange={setIsFormDialogOpen}
+            open={isCreateItemModalOpen || isCreateItemLoading}
+            onOpenChange={setIsCreateItemModalOpen}
           >
             <DialogTrigger asChild>
               <Button className="mb-4">Create Check</Button>
@@ -126,7 +125,7 @@ const CoreTable = ({
                   />
                 </div>
               ) : (
-                <ItemForm onSubmit={handleCreateItemSubmit} />
+                <ItemForm handleCreateItemSubmit={handleCreateItemSubmit} />
               )}
             </DialogContent>
           </Dialog>

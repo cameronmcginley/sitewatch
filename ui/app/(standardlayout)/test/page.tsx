@@ -3,25 +3,17 @@
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import CoreTable from "@/components/table/core-table";
-import DynamicCheckForm from "@/components/items/item-form";
 import { fetchData, addItem, deleteItem } from "@/lib/api/items";
-import { Button } from "@/components/ui/button";
 import { CheckItem } from "@/lib/types";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-// import { Pagination } from "@/components/ui/pagination";
 import { CustomPagination } from "@/components/table/custom-pagination";
+import { createItemFormSchema } from "@/components/items/schema";
+import { z } from "zod";
 
 function Home() {
   const { data: session, status } = useSession();
   const [data, setData] = useState<CheckItem[]>([]);
   const [isDataLoading, setIsDataLoading] = useState(true);
-  const [isFormDialogOpen, setIsFormDialogOpen] = useState(false);
+  const [isCreateItemModalOpen, setIsCreateItemModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [isCreateItemLoading, setIsCreateItemLoading] = useState(false);
   const itemsPerPage = 10;
@@ -47,14 +39,16 @@ function Home() {
     }
   }
 
-  const handleCreateItemSubmit = async (formData) => {
+  const handleCreateItemSubmit = async (
+    values: z.infer<typeof createItemFormSchema>
+  ) => {
     try {
-      console.log("Adding item:", formData);
+      console.log("Adding item:", values);
       setIsCreateItemLoading(true);
-      await addItem(formData);
+      await addItem(values);
       await fetchDataForUser(session.user.id);
       setIsCreateItemLoading(false);
-      setIsFormDialogOpen(false);
+      setIsCreateItemModalOpen(false);
     } catch (error) {
       setIsCreateItemLoading(false);
       console.error("Error adding item:", error);
@@ -87,8 +81,8 @@ function Home() {
           isLoading={isDataLoading}
           handleCreateItemSubmit={handleCreateItemSubmit}
           isCreateItemLoading={isCreateItemLoading}
-          isFormDialogOpen={isFormDialogOpen}
-          setIsFormDialogOpen={setIsFormDialogOpen}
+          isCreateItemModalOpen={isCreateItemModalOpen}
+          setIsCreateItemModalOpen={setIsCreateItemModalOpen}
         />
         {data.length > 0 && (
           <div className="mt-4">
