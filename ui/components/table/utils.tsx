@@ -334,7 +334,7 @@ export const convertToCron = (
   } else {
     // Less than hourly, use minute intervals
     const intervalMinutes = Math.max(1, Math.floor(intervalMs / 60000));
-    return `${minutes} */${intervalMinutes} * * *`;
+    return `*/${intervalMinutes} * * * *`;
   }
 };
 

@@ -2,6 +2,19 @@ import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { CHECK_TYPES } from "@/lib/constants";
 import { convertToCron, cronToPlainText } from "../table/utils";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
 
 const frequencyOptions = [
   { label: "5 minutes", value: 300000 },
@@ -12,6 +25,16 @@ const frequencyOptions = [
   { label: "12 hours", value: 43200000 },
   { label: "1 day", value: 86400000 },
   { label: "1 week", value: 604800000 },
+];
+
+const dayOfWeekOptions = [
+  { label: "Sunday", value: "0" },
+  { label: "Monday", value: "1" },
+  { label: "Tuesday", value: "2" },
+  { label: "Wednesday", value: "3" },
+  { label: "Thursday", value: "4" },
+  { label: "Friday", value: "5" },
+  { label: "Saturday", value: "6" },
 ];
 
 interface FormData {
@@ -35,58 +58,6 @@ interface FormData {
   status: string;
 }
 
-const FormField = ({ label, id, ...props }) => (
-  <div>
-    <label htmlFor={id} className="block text-sm font-medium text-gray-700">
-      {label}
-    </label>
-    <input
-      id={id}
-      {...props}
-      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-    />
-  </div>
-);
-
-const SelectField = ({ label, id, options, ...props }) => (
-  <div>
-    <label htmlFor={id} className="block text-sm font-medium text-gray-700">
-      {label}
-    </label>
-    <select
-      id={id}
-      {...props}
-      className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-    >
-      <option value="">Select {label}</option>
-      {options.map(
-        (option: string | { label: string; value: number | string }) => (
-          <option
-            key={typeof option === "string" ? option : option.value}
-            value={typeof option === "string" ? option : option.value}
-          >
-            {typeof option === "string" ? option : option.label}
-          </option>
-        )
-      )}
-    </select>
-  </div>
-);
-
-const CheckboxField = ({ label, id, ...props }) => (
-  <div className="flex items-center">
-    <input
-      type="checkbox"
-      id={id}
-      {...props}
-      className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-    />
-    <label htmlFor={id} className="ml-2 block text-sm text-gray-900">
-      {label}
-    </label>
-  </div>
-);
-
 const ItemForm: React.FC<{ onSubmit: (data: FormData) => void }> = ({
   onSubmit,
 }) => {
@@ -105,43 +76,8 @@ const ItemForm: React.FC<{ onSubmit: (data: FormData) => void }> = ({
     mostRecentAlert: null,
     status: "ACTIVE",
   });
-  const [hourOffsetOptions, sethourOffsetOptions] = useState([]);
-  const [dayOfWeekOptions, setdayOfWeekOptions] = useState([
-    { label: "Sunday", value: "0" },
-    { label: "Monday", value: "1" },
-    { label: "Tuesday", value: "2" },
-    { label: "Wednesday", value: "3" },
-    { label: "Thursday", value: "4" },
-    { label: "Friday", value: "5" },
-    { label: "Saturday", value: "6" },
-  ]);
   const [cronDescription, setCronDescription] = useState("");
   const [cronExpression, setCronExpression] = useState<string | null>(null);
-
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-    isAttribute: boolean = false
-  ) => {
-    let { name, value } = e.target as { name: string; value: any };
-
-    if (name === "frequency") {
-      name = "delayMs";
-      value = Number(value);
-    }
-    if (name === "offset") {
-      value = Number(value);
-    }
-
-    if (isAttribute) {
-      setFormData((prev) => ({
-        ...prev,
-        attributes: { ...prev.attributes, [name]: value },
-      }));
-      return;
-    }
-
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
 
   useEffect(() => {
     if (status === "authenticated" && session?.user?.id) {
@@ -150,15 +86,6 @@ const ItemForm: React.FC<{ onSubmit: (data: FormData) => void }> = ({
   }, [status, session]);
 
   useEffect(() => {
-    if (formData.delayMs >= 14400000) {
-      const interval = formData.delayMs / 3600000;
-      const options = Array.from({ length: interval }, (_, i) => ({
-        label: `${i} hour${i !== 1 ? "s" : ""}`,
-        value: i,
-      }));
-      sethourOffsetOptions(options);
-    }
-
     const cronExpression = convertToCron(
       formData.delayMs,
       formData.offset,
@@ -170,21 +97,15 @@ const ItemForm: React.FC<{ onSubmit: (data: FormData) => void }> = ({
     setFormData((prev) => ({ ...prev, cron: cronExpression }));
   }, [formData.delayMs, formData.offset, formData.dayOfWeek]);
 
-  const handleCheckboxChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    isAttribute: boolean = false
-  ) => {
-    const { name, checked } = e.target;
+  const handleInputChange = (name: string, value: any) => {
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
-    if (isAttribute) {
-      setFormData((prev) => ({
-        ...prev,
-        attributes: { ...prev.attributes, [name]: checked },
-      }));
-      return;
-    }
-
-    setFormData((prev) => ({ ...prev, [name]: checked }));
+  const handleAttributeChange = (name: string, value: any) => {
+    setFormData((prev) => ({
+      ...prev,
+      attributes: { ...prev.attributes, [name]: value },
+    }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -192,158 +113,202 @@ const ItemForm: React.FC<{ onSubmit: (data: FormData) => void }> = ({
     onSubmit(formData);
   };
 
-  const getCurrentFrequency = () => {
-    const delayMs = parseInt(formData.delayMs);
-    return frequencyOptions
-      .reduce((prev, curr) =>
-        Math.abs(curr.value - delayMs) < Math.abs(prev.value - delayMs)
-          ? curr
-          : prev
-      )
-      .value.toString();
-  };
-
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 text-black">
-      <SelectField
-        label="Check Type"
-        id="check_type"
-        name="check_type"
-        value={formData.check_type}
-        onChange={(
-          e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-        ) => {
-          setFormData((prev) => ({ ...prev, attributes: {} }));
-          handleInputChange(e);
-        }}
-        options={CHECK_TYPES}
-        required
-      />
+    <Card className="w-full max-w-2xl mx-auto">
+      <CardHeader>
+        <CardTitle>Create New Check</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="check_type">Check Type</Label>
+            <Select
+              value={formData.check_type}
+              onValueChange={(value) => {
+                setFormData((prev) => ({
+                  ...prev,
+                  check_type: value,
+                  attributes: {},
+                }));
+              }}
+            >
+              <SelectTrigger id="check_type">
+                <SelectValue placeholder="Select Check Type" />
+              </SelectTrigger>
+              <SelectContent>
+                {CHECK_TYPES.map((type) => (
+                  <SelectItem key={type} value={type}>
+                    {type}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-      {formData.check_type === "KEYWORD CHECK" && (
-        <>
-          <FormField
-            label="Keyword"
-            id="keyword"
-            name="keyword"
-            type="text"
-            value={formData.keyword}
-            onChange={(
-              e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-            ) => handleInputChange(e, true)}
-            required
-          />
+          {formData.check_type === "KEYWORD CHECK" && (
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="keyword">Keyword</Label>
+                <Input
+                  id="keyword"
+                  value={formData.attributes.keyword || ""}
+                  onChange={(e) =>
+                    handleAttributeChange("keyword", e.target.value)
+                  }
+                  required
+                />
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="opposite"
+                  checked={formData.attributes.opposite || false}
+                  onCheckedChange={(checked) =>
+                    handleAttributeChange("opposite", checked)
+                  }
+                />
+                <Label htmlFor="opposite">Opposite</Label>
+              </div>
+            </div>
+          )}
 
-          <CheckboxField
-            label="Opposite"
-            id="opposite"
-            name="opposite"
-            checked={formData.opposite}
-            onChange={(
-              e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-            ) => handleCheckboxChange(e, true)}
-            required
-          />
-        </>
-      )}
+          {formData.check_type === "PAGE DIFFERENCE" && (
+            <div className="space-y-2">
+              <Label htmlFor="percent_diff">Percent Difference</Label>
+              <Slider
+                id="percent_diff"
+                min={0}
+                max={100}
+                step={1}
+                value={[formData.attributes.percent_diff || 0]}
+                onValueChange={(value) =>
+                  handleAttributeChange("percent_diff", value[0])
+                }
+              />
+              <div className="text-sm text-gray-500 mt-1">
+                {formData.attributes.percent_diff || 0}%
+              </div>
+            </div>
+          )}
 
-      {formData.check_type === "PAGE DIFFERENCE" && (
-        <FormField
-          label="Percent Difference"
-          id="percent_diff"
-          name="percent_diff"
-          type="number"
-          value={formData.attributes.percent_diff || ""}
-          onChange={(
-            e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-          ) => handleInputChange(e, true)}
-          step="1"
-          min="0"
-          max="100"
-          required
-        />
-      )}
+          <div className="space-y-2">
+            <Label htmlFor="url">URL</Label>
+            <Input
+              id="url"
+              type="url"
+              value={formData.url}
+              onChange={(e) => handleInputChange("url", e.target.value)}
+              required
+            />
+          </div>
 
-      <FormField
-        label="URL"
-        id="url"
-        name="url"
-        type="url"
-        value={formData.url}
-        onChange={handleInputChange}
-        required
-      />
+          <div className="space-y-2">
+            <Label htmlFor="alias">Alias</Label>
+            <Input
+              id="alias"
+              value={formData.alias}
+              onChange={(e) => handleInputChange("alias", e.target.value)}
+              required
+            />
+          </div>
 
-      <FormField
-        label="Alias"
-        id="alias"
-        name="alias"
-        type="text"
-        value={formData.alias}
-        onChange={handleInputChange}
-        required
-      />
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              value={formData.email}
+              onChange={(e) => handleInputChange("email", e.target.value)}
+              required
+            />
+          </div>
 
-      <FormField
-        label="Email"
-        id="email"
-        name="email"
-        type="email"
-        value={formData.email}
-        onChange={handleInputChange}
-        required
-      />
+          <div className="space-y-2">
+            <Label htmlFor="frequency">Frequency</Label>
+            <Select
+              value={formData.delayMs.toString()}
+              onValueChange={(value) =>
+                handleInputChange("delayMs", Number(value))
+              }
+            >
+              <SelectTrigger id="frequency">
+                <SelectValue placeholder="Select Frequency" />
+              </SelectTrigger>
+              <SelectContent>
+                {frequencyOptions.map((option) => (
+                  <SelectItem
+                    key={option.value}
+                    value={option.value.toString()}
+                  >
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-      <SelectField
-        label="Frequency"
-        id="frequency"
-        name="frequency"
-        value={getCurrentFrequency()}
-        onChange={handleInputChange}
-        options={frequencyOptions}
-        required
-      />
+          {formData.delayMs >= 14400000 && (
+            <div className="space-y-2">
+              <Label htmlFor="offset">Offset (hours)</Label>
+              <Select
+                value={formData.offset?.toString() || ""}
+                onValueChange={(value) =>
+                  handleInputChange("offset", Number(value))
+                }
+              >
+                <SelectTrigger id="offset">
+                  <SelectValue placeholder="Select Offset" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Array.from(
+                    { length: formData.delayMs / 3600000 },
+                    (_, i) => (
+                      <SelectItem key={i} value={i.toString()}>
+                        {i} hour{i !== 1 ? "s" : ""}
+                      </SelectItem>
+                    )
+                  )}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
-      {formData.delayMs >= 14400000 && (
-        <SelectField
-          label="Offset"
-          id="offset"
-          name="offset"
-          value={formData.offset}
-          onChange={handleInputChange}
-          options={hourOffsetOptions}
-          required
-        />
-      )}
+          {formData.delayMs === 604800000 && (
+            <div className="space-y-2">
+              <Label htmlFor="dayOfWeek">Day of Week</Label>
+              <Select
+                value={formData.dayOfWeek || ""}
+                onValueChange={(value) => handleInputChange("dayOfWeek", value)}
+              >
+                <SelectTrigger id="dayOfWeek">
+                  <SelectValue placeholder="Select Day of Week" />
+                </SelectTrigger>
+                <SelectContent>
+                  {dayOfWeekOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
-      {formData.delayMs === 604800000 && (
-        <SelectField
-          label="Day of Week"
-          id="dayOfWeek"
-          name="dayOfWeek"
-          value={formData.dayOfWeek || ""}
-          onChange={handleInputChange}
-          options={dayOfWeekOptions}
-          required
-        />
-      )}
+          <Button type="submit" className="w-full">
+            Submit
+          </Button>
 
-      <div>
-        <button
-          type="submit"
-          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        >
-          Submit
-        </button>
-      </div>
-
-      {cronDescription && (
-        <div className="mt-4 text-gray-700">
-          <p>Cron Schedule: {cronDescription}</p>
-          <p>Cron Expression: {cronExpression}</p>
-        </div>
-      )}
-    </form>
+          {cronDescription && (
+            <div className="mt-4 text-sm text-gray-600">
+              <p>
+                Will Run {formData.delayMs > 60 * 60 * 1000 && "In UTC Time"}{" "}
+                {cronDescription}
+              </p>
+              {/* <p>Cron Expression: {cronExpression}</p> */}
+            </div>
+          )}
+        </form>
+      </CardContent>
+    </Card>
   );
 };
 
