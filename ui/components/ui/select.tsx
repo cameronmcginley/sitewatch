@@ -6,27 +6,7 @@ import { Check, ChevronDown, ChevronUp } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-// const Select = SelectPrimitive.Root
-
-const Select = React.forwardRef<
-  React.ElementRef<typeof SelectPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Root> & {
-    required?: boolean;
-    name?: string;
-    autoComplete?: string;
-  }
->(({ required, name, autoComplete, ...props }, ref) => (
-  <SelectPrimitive.Root
-    {...props}
-    required={required}
-    name={name}
-    autoComplete={autoComplete}
-    ref={ref}
-  >
-    {props.children}
-  </SelectPrimitive.Root>
-));
-Select.displayName = SelectPrimitive.Root.displayName;
+const Select = SelectPrimitive.Root;
 
 const SelectGroup = SelectPrimitive.Group;
 

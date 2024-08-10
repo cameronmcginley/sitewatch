@@ -195,6 +195,10 @@ To add a new custom function:
 1. Update ui/constants.ts
 2. Update lib/types.ts
 3. TODO
+4. Update Create Item Form
+   1. Add attributes to:
+      1. Schema .superRefine for form validation
+      2. To useEffect that resets attributes on switch
 
 ## Debugging Notes
 
