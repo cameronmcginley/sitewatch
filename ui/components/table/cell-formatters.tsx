@@ -65,21 +65,39 @@ export const getTypeSpecificColumns = (checkType: CheckType) => {
 const defaultTooltipClassName =
   "flex flex-col justify-center items-center gap-1 p-1";
 
+// Define column widths
+const columnWidths = {
+  alias: "w-[200px]",
+  checkType: "w-[150px]",
+  status: "w-[100px]",
+  frequency: "w-[120px]",
+  nextRun: "w-[150px]",
+  lastResult: "w-[200px]",
+  mostRecentAlert: "w-[150px]",
+  keyword: "w-[150px]",
+  targetPrice: "w-[120px]",
+  diffPercentage: "w-[150px]",
+};
+
+// Style for text wrapping with ellipsis
+const ellipsisStyle = "truncate text-elipsis text-start";
+
 const formatAliasCell = (item: CheckItem) => {
   const alias = item.alias;
   const url = item.url;
 
   const getCellContent = () => {
     return (
-      <div className="flex flex-col items-start">
-        <div className="text-ellipsis cursor-auto select-text">
+      <div className={`flex flex-col items-start`}>
+        <div
+          className={`text-ellipsis cursor-auto select-text ${ellipsisStyle} ${columnWidths.alias}`}
+        >
           {alias ?? emptyDash}
         </div>
-        <div className="text-xs text-gray-500 text-ellipsis">
-          <a
-            className="hover:text-gray-400 hover:underline text-ellipsis"
-            href={url}
-          >
+        <div
+          className={`text-xs text-gray-500 ${ellipsisStyle} ${columnWidths.alias}`}
+        >
+          <a className={`hover:text-gray-400 hover:underline`} href={url}>
             {url ?? emptyDash}
           </a>
         </div>
@@ -104,7 +122,7 @@ const formatAliasCell = (item: CheckItem) => {
   const tooltipContent = getTooltipContent();
 
   return (
-    <TableCell>
+    <TableCell className={columnWidths.alias}>
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger>{cellContent}</TooltipTrigger>
@@ -116,8 +134,8 @@ const formatAliasCell = (item: CheckItem) => {
 };
 
 const formatCheckTypeCell = (item: CheckItem) => (
-  <TableCell>
-    <div className="flex gap-2 items-center">
+  <TableCell className={columnWidths.checkType}>
+    <div className="flex gap-2 items-center truncate">
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger>
@@ -128,7 +146,7 @@ const formatCheckTypeCell = (item: CheckItem) => (
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-      {item.check_type ?? emptyDash}
+      <span className="truncate">{item.check_type ?? emptyDash}</span>
     </div>
   </TableCell>
 );
@@ -142,8 +160,13 @@ const formatStatusCell = (item: CheckItem) => {
   };
 
   return (
-    <TableCell>
-      <Badge className={cn(BADGE_COLOR_CLASS[statusToBadgeColor[status]])}>
+    <TableCell className={columnWidths.status}>
+      <Badge
+        className={cn(
+          BADGE_COLOR_CLASS[statusToBadgeColor[status]],
+          "truncate"
+        )}
+      >
         {toSentenceCase(item.status) ?? emptyDash}
       </Badge>
     </TableCell>
@@ -152,11 +175,7 @@ const formatStatusCell = (item: CheckItem) => {
 
 const formatFrequencyCell = (item: CheckItem) => {
   const delayMs = item.delayMs;
-  // const startHour = item.startHour;
   const cron = item.cron;
-
-  // Don't show start hour if runs every 1 hour or less
-  // const showStartHour = delayMs !== null && delayMs > 3600000;
 
   const getCellContent = () => {
     return delayMs !== null ? msToTimeStr(delayMs) : emptyDash;
@@ -164,9 +183,7 @@ const formatFrequencyCell = (item: CheckItem) => {
 
   const getTooltipContent = () => {
     if (delayMs !== null && cron !== null) {
-      const baseContent = `Runs: ${cronToPlainText(cron)}`;
-
-      return baseContent;
+      return `Runs: ${cronToPlainText(cron)}`;
     }
     return null;
   };
@@ -175,10 +192,10 @@ const formatFrequencyCell = (item: CheckItem) => {
   const tooltipContent = getTooltipContent();
 
   return (
-    <TableCell>
+    <TableCell className={columnWidths.frequency}>
       <TooltipProvider>
         <Tooltip>
-          <TooltipTrigger className="text-start cursor-auto select-text">
+          <TooltipTrigger className="text-start cursor-auto select-text truncate">
             {cellContent}
           </TooltipTrigger>
           {tooltipContent && <TooltipContent>{tooltipContent}</TooltipContent>}
@@ -220,10 +237,10 @@ const formatNextRunCell = (item: CheckItem) => {
   const tooltipContent = getTooltipContent();
 
   return (
-    <TableCell>
+    <TableCell className={columnWidths.nextRun}>
       <TooltipProvider>
         <Tooltip>
-          <TooltipTrigger className="text-start cursor-auto select-text">
+          <TooltipTrigger className="text-start cursor-auto select-text truncate">
             {cellContent}
           </TooltipTrigger>
           {tooltipContent && <TooltipContent>{tooltipContent}</TooltipContent>}
@@ -246,16 +263,19 @@ const formatLastResultCell = (item: CheckItem) => {
   };
 
   return (
-    <TableCell>
+    <TableCell className={columnWidths.lastResult}>
       {!status ? (
         emptyDash
       ) : (
         <div className="flex flex-col items-start gap-1">
           <TooltipProvider>
             <Tooltip>
-              <TooltipTrigger className="cursor-auto select-text">
+              <TooltipTrigger className="cursor-auto select-text truncate">
                 <Badge
-                  className={cn(BADGE_COLOR_CLASS[statusToBadgeColor[status]])}
+                  className={cn(
+                    BADGE_COLOR_CLASS[statusToBadgeColor[status]],
+                    "truncate"
+                  )}
                 >
                   {toSentenceCase(status)}
                 </Badge>
@@ -278,7 +298,7 @@ const formatLastResultCell = (item: CheckItem) => {
 
           <TooltipProvider>
             <Tooltip>
-              <TooltipTrigger className="cursor-auto select-text text-sm text-gray-500 text-start">
+              <TooltipTrigger className="cursor-auto select-text text-sm text-gray-500 text-start truncate">
                 {timestamp ? "Last ran " + getTimeAgo(timestamp) : emptyDash}
               </TooltipTrigger>
               <TooltipContent>
@@ -294,12 +314,12 @@ const formatLastResultCell = (item: CheckItem) => {
 
 const formatMostRecentAlertCell = (item: CheckItem) => {
   return (
-    <TableCell className="w-0">
+    <TableCell className={columnWidths.mostRecentAlert}>
       <TooltipProvider>
         <Tooltip>
-          <TooltipTrigger className="w-32 text-start cursor-auto select-text">
+          <TooltipTrigger className="text-start cursor-auto select-text truncate">
             {item.mostRecentAlert ? (
-              <Badge className={cn(BADGE_COLOR_CLASS.GREEN)}>
+              <Badge className={cn(BADGE_COLOR_CLASS.GREEN, "truncate")}>
                 {getTimeAgo(item.mostRecentAlert)}
               </Badge>
             ) : (
@@ -318,17 +338,19 @@ const formatMostRecentAlertCell = (item: CheckItem) => {
 };
 
 const formatKeywordCell = (item: CheckItem) => (
-  <TableCell>{item.attributes.keyword ?? emptyDash}</TableCell>
+  <TableCell className={`${columnWidths.keyword} truncate`}>
+    {item.attributes.keyword ?? emptyDash}
+  </TableCell>
 );
 
 const formatTargetPriceCell = (item: CheckItem) => (
-  <TableCell>
+  <TableCell className={`${columnWidths.targetPrice} truncate`}>
     {item.attributes.threshold ? `$${item.attributes.threshold}` : emptyDash}
   </TableCell>
 );
 
 const formatDiffPercentageCell = (item: CheckItem) => (
-  <TableCell>
+  <TableCell className={`${columnWidths.diffPercentage} truncate`}>
     {item.attributes.percent_diff
       ? `${item.attributes.percent_diff}%`
       : emptyDash}
