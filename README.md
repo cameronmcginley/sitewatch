@@ -205,3 +205,19 @@ To add a new custom function:
 ### NextAuth
 
 See logs in terminal
+
+## URL Fetching Mechanism - Move to a section dedicated for implementation details
+
+### Key Features
+
+Located in `/core/fetch_url.py`, the `fetch_url` function incorporates:
+
+- Asynchronous execution via `aiohttp` and `asyncio`
+- Concurrency management with `asyncio.Semaphore`
+  - Not really necessary, Lambda has default of 1000
+- Randomized User-Agent selection
+- Optional proxy integration, uses `oxylabs`
+- Content size limiting, currently 100 kB
+- Exponential backoff retry algorithm
+  - Currently retries disabled
+- Exception handling for various errors

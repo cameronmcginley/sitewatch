@@ -29,6 +29,7 @@ async def fetch_url(
     base_delay: float = 1.0,
     timeout_total: float = 30.0,
     timeout_connect: float = 10.0,
+    max_content_size: int = 100 * 1024,
 ) -> Optional[bytes]:
     """
     Fetch a URL with configurable retries and timeouts.
@@ -36,10 +37,12 @@ async def fetch_url(
     Args:
         session (ClientSession): The aiohttp ClientSession to use.
         url (str): The URL to fetch.
+        useProxy (bool): Whether to use a proxy for the request.
         max_retries (int): Maximum number of retry attempts.
         base_delay (float): Base delay for exponential backoff.
         timeout_total (float): Total timeout for the request in seconds.
         timeout_connect (float): Connection timeout in seconds.
+        max_content_size (int): Maximum allowed content size in bytes.
 
     Returns:
         Optional[bytes]: The content of the URL if successful, None otherwise.
@@ -64,7 +67,13 @@ async def fetch_url(
                     proxy=proxy,
                 ) as response:
                     if response.status == 200:
-                        return await response.read()
+                        content = b""
+                        async for chunk in response.content.iter_chunked(1024):
+                            content += chunk
+                            if len(content) > max_content_size:
+                                print(f"Reached max content size for {url}")
+                                return content[:max_content_size]
+                        return content
                     else:
                         print(f"Error fetching {url}: HTTP {response.status}")
                         return None
