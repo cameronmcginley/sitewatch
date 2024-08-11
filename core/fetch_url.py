@@ -4,6 +4,7 @@ from typing import Optional, List
 from aiohttp import ClientSession, ClientTimeout, ClientError, TCPConnector
 import yarl
 import os
+import logging
 
 # List of User-Agents to rotate
 USER_AGENTS: List[str] = [
@@ -21,6 +22,7 @@ RATE_LIMIT = asyncio.Semaphore(1000)
 
 
 async def fetch_url(
+    logger: logging.Logger,
     session: ClientSession,
     url: str,
     useProxy: bool = False,
@@ -29,12 +31,13 @@ async def fetch_url(
     base_delay: float = 1.0,
     timeout_total: float = 30.0,
     timeout_connect: float = 10.0,
-    max_content_size: int = 100 * 1024,
+    max_content_size: int = 1024 * 1024,
 ) -> Optional[bytes]:
     """
     Fetch a URL with configurable retries and timeouts.
 
     Args:
+        logger (logging.Logger): The logger to use for output.
         session (ClientSession): The aiohttp ClientSession to use.
         url (str): The URL to fetch.
         useProxy (bool): Whether to use a proxy for the request.
@@ -58,7 +61,11 @@ async def fetch_url(
                     "Accept": "text/html",
                 }
                 proxy = PROXIES[0] if PROXIES[0] and useProxy else None
-                print(f"Using proxy: {proxy}, User-Agent: {headers['User-Agent']}")
+
+                logger.info(
+                    f"Using proxy: {proxy}, User-Agent: {headers['User-Agent']}"
+                ) if useProxy else logger.info("Not using proxy")
+                logger.info(f"User-Agent: {headers['User-Agent']}")
 
                 async with session.get(
                     url,
@@ -71,23 +78,23 @@ async def fetch_url(
                         async for chunk in response.content.iter_chunked(1024):
                             content += chunk
                             if len(content) > max_content_size:
-                                print(f"Reached max content size for {url}")
+                                logger.warn(f"Reached max content size for {url}")
                                 return content[:max_content_size]
                         return content
                     else:
-                        print(f"Error fetching {url}: HTTP {response.status}")
+                        logger.error(f"Error fetching {url}: HTTP {response.status}")
                         return None
         except asyncio.TimeoutError:
-            print(f"Timeout error fetching {url}")
+            logger.error(f"Timeout error fetching {url}")
         except ClientError as e:
-            print(f"Error fetching {url}: {str(e)}")
+            logger.error(f"Error fetching {url}: {str(e)}")
 
         if attempt < max_retries - 1:
             delay = (2**attempt) * base_delay + random.uniform(0, 1)
-            print(f"Retrying {url} in {delay:.2f} seconds...")
+            logger.warn(f"Retrying {url} in {delay:.2f} seconds...")
             await asyncio.sleep(delay)
 
-    print(f"Failed to fetch {url} after {max_retries} attempts")
+    logger.error(f"Failed to fetch {url} after {max_retries} attempts")
     return None
 
 

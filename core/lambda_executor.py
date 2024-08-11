@@ -15,7 +15,7 @@ from fetch_url import fetch_url
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-print("Loading function")
+logger.info("Starting Executor Lambda")
 
 dynamodb = boto3.resource("dynamodb")
 table = dynamodb.Table(os.environ["DYNAMODB_TABLE_NAME"])
@@ -67,7 +67,9 @@ async def process_link(session, link):
 
     try:
         if link["type"] in CHECKTYPE_TO_FUNCTION_MAP:
-            content = await fetch_url(session, link["url"], useProxy=link["useProxy"])
+            content = await fetch_url(
+                logger, session, link["url"], useProxy=link["useProxy"]
+            )
 
             if not content:
                 raise Exception("Failed to fetch URL content")

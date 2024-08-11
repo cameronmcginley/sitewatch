@@ -217,7 +217,7 @@ Located in `/core/fetch_url.py`, the `fetch_url` function incorporates:
   - Not really necessary, Lambda has default of 1000
 - Randomized User-Agent selection
 - Optional proxy integration, uses `oxylabs`
-- Content size limiting, currently 100 kB
+- Content size limiting, currently 1 MB
 - Exponential backoff retry algorithm
   - Currently retries disabled
 - Exception handling for various errors
