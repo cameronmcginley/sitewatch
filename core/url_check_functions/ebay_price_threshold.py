@@ -1,9 +1,8 @@
 from bs4 import BeautifulSoup
 from utils import sum_of_numbers
-from fetch_url import fetch_url
 
 
-async def ebay_price_threshold(session, link):
+async def ebay_price_threshold(item, content):
     """
     Checks the eBay price threshold for a given link.
 
@@ -14,16 +13,11 @@ async def ebay_price_threshold(session, link):
     Returns:
         dict: A dictionary containing the result of the eBay price threshold check.
     """
-    content = await fetch_url(session, link["url"])
     result = {
         "send_alert": False,
         "message": "Unable to check price",
         "found_price": None,
     }
-
-    if not content:
-        result["message"] = "Failed to fetch URL content"
-        return result
 
     soup = BeautifulSoup(content, "html.parser")
     first_item = soup.select_one("ul.srp-results.srp-grid.clearfix > li:nth-of-type(2)")
@@ -46,7 +40,7 @@ async def ebay_price_threshold(session, link):
         total_price = sum_of_numbers(price, shipping)
         result["found_price"] = total_price
 
-        if total_price < link["threshold"]:
+        if total_price < item["threshold"]:
             result["send_alert"] = True
             result["message"] = f"Price threshold met. Found price: ${total_price:.2f}"
         else:

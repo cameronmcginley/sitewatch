@@ -64,6 +64,7 @@ const ItemForm = ({ handleCreateItemSubmit }) => {
       type: "CHECK",
       check_type: "",
       url: "",
+      useProxy: false,
       alias: "",
       email: "",
       delayMs: 14400000,
@@ -237,6 +238,29 @@ const ItemForm = ({ handleCreateItemSubmit }) => {
               </FormControl>
               <FormDescription>Website to perform check on.</FormDescription>
               <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="useProxy"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+              <div className="space-y-0.5">
+                <FormLabel className="text-base">Use Proxy</FormLabel>
+                <FormDescription>
+                  Uses proxy to fetch website content for better success rate.
+                  Disabled for free users.
+                </FormDescription>
+              </div>
+              <FormControl>
+                <Switch
+                  checked={
+                    session?.user?.userType !== "default" ? false : field.value
+                  }
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
             </FormItem>
           )}
         />

@@ -3,6 +3,7 @@ import random
 from typing import Optional, List
 from aiohttp import ClientSession, ClientTimeout, ClientError, TCPConnector
 import yarl
+import os
 
 # List of User-Agents to rotate
 USER_AGENTS: List[str] = [
@@ -11,12 +12,8 @@ USER_AGENTS: List[str] = [
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Safari/605.1.15",
 ]
 
-# List of proxy servers
-PROXIES: List[str] = [
-    # "http://proxy1.example.com:8080",
-    # "http://proxy2.example.com:8080",
-    # Add more proxies here
-]
+
+PROXIES: List[str] = [os.environ.get("OXYLAB_PROXY", "")]
 
 # Semaphore for rate limiting
 # Lambda region limit is 1000
@@ -26,12 +23,12 @@ RATE_LIMIT = asyncio.Semaphore(1000)
 async def fetch_url(
     session: ClientSession,
     url: str,
+    useProxy: bool = False,
     *,
-    max_retries: int = 3,
+    max_retries: int = 1,
     base_delay: float = 1.0,
     timeout_total: float = 30.0,
     timeout_connect: float = 10.0,
-    use_proxies: bool = False,
 ) -> Optional[bytes]:
     """
     Fetch a URL with configurable retries and timeouts.
@@ -43,7 +40,6 @@ async def fetch_url(
         base_delay (float): Base delay for exponential backoff.
         timeout_total (float): Total timeout for the request in seconds.
         timeout_connect (float): Connection timeout in seconds.
-        use_proxies (bool): Whether to use proxies or not.
 
     Returns:
         Optional[bytes]: The content of the URL if successful, None otherwise.
@@ -54,25 +50,24 @@ async def fetch_url(
     for attempt in range(max_retries):
         try:
             async with RATE_LIMIT:
-                headers = {"User-Agent": random.choice(USER_AGENTS)}
-                proxy = random.choice(PROXIES) if PROXIES and use_proxies else None
+                headers = {
+                    "User-Agent": random.choice(USER_AGENTS),
+                    "Accept": "text/html",
+                }
+                proxy = PROXIES[0] if PROXIES[0] and useProxy else None
+                print(f"Using proxy: {proxy}, User-Agent: {headers['User-Agent']}")
 
-                # Create a new session with a new connector for each request to use a different proxy
-                connector = TCPConnector(ssl=False) if proxy else None
-                async with ClientSession(connector=connector) as session:
-                    async with session.get(
-                        url,
-                        timeout=timeout,
-                        headers=headers,
-                        proxy=proxy,
-                    ) as response:
-                        if response.status == 200:
-                            return await response.read()
-                        elif response.status == 403:
-                            print(f"Access denied (403) for {url}. Retrying...")
-                        else:
-                            print(f"Error fetching {url}: HTTP {response.status}")
-                            return None
+                async with session.get(
+                    url,
+                    timeout=timeout,
+                    headers=headers,
+                    proxy=proxy,
+                ) as response:
+                    if response.status == 200:
+                        return await response.read()
+                    else:
+                        print(f"Error fetching {url}: HTTP {response.status}")
+                        return None
         except asyncio.TimeoutError:
             print(f"Timeout error fetching {url}")
         except ClientError as e:
@@ -94,25 +89,12 @@ async def fetch_url_fast(
     timeout_total: float = 10.0,
     timeout_connect: float = 5.0,
 ) -> Optional[bytes]:
-    """
-    Fetch a URL quickly without retries.
-
-    Args:
-        session (ClientSession): The aiohttp ClientSession to use.
-        url (str): The URL to fetch.
-        timeout_total (float): Total timeout for the request in seconds.
-        timeout_connect (float): Connection timeout in seconds.
-
-    Returns:
-        Optional[bytes]: The content of the URL if successful, None otherwise.
-    """
     return await fetch_url(
         session,
         url,
         max_retries=1,
         timeout_total=timeout_total,
         timeout_connect=timeout_connect,
-        use_proxies=False,
     )
 
 

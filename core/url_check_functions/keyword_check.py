@@ -1,7 +1,7 @@
 from fetch_url import fetch_url
 
 
-async def keyword_check(session, link):
+async def keyword_check(item, content):
     """
     Performs a keyword check on the given URL and returns a result dictionary.
 
@@ -12,19 +12,8 @@ async def keyword_check(session, link):
     Returns:
         dict: A dictionary containing the result of the keyword check.
     """
-    content = await fetch_url(session, link["url"])
-
-    if not content:
-        return {
-            "send_alert": False,
-            "message": "Failed to fetch URL content",
-        }
-
-    # Decode the content from bytes to string
-    content_str = content.decode("utf-8") if isinstance(content, bytes) else content
-
-    keyword_found = link["keyword"].lower() in content_str.lower()
-    send_alert = keyword_found if not link["opposite"] else not keyword_found
+    keyword_found = item["keyword"].lower() in content.lower()
+    send_alert = keyword_found if not item["opposite"] else not keyword_found
 
     result = {
         "send_alert": send_alert,
@@ -32,8 +21,8 @@ async def keyword_check(session, link):
     }
 
     if send_alert:
-        result["message"] += f" - Alert condition met"
+        result["message"] += " - Alert condition met"
     else:
-        result["message"] += f" - No alert needed"
+        result["message"] += " - No alert needed"
 
     return result

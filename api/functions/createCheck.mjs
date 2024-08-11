@@ -50,6 +50,7 @@ export const handler = async (event) => {
       email: item.email,
       mostRecentAlert: item.mostRecentAlert,
       cron: item.cron,
+      useProxy: item.useProxy,
     },
   };
 

@@ -9,6 +9,7 @@ import boto3
 from botocore.exceptions import ClientError
 from collections import defaultdict
 from datetime import datetime, timezone
+from fetch_url import fetch_url
 
 # Set up logging
 logger = logging.getLogger()
@@ -62,18 +63,21 @@ async def process_link(session, link):
     error_counter["total"] += 1
     start_time = time.time()
 
-    logger.info(f"Processing link: {link['url']}")
+    logger.info(f"Starting to process link: {link['url']} at {start_time}")
 
     try:
         if link["type"] in CHECKTYPE_TO_FUNCTION_MAP:
-            result = await CHECKTYPE_TO_FUNCTION_MAP[link["type"]](session, link)
+            content = await fetch_url(session, link["url"], useProxy=link["useProxy"])
 
-            link["send_alert"] = result["send_alert"]
+            if not content:
+                raise Exception("Failed to fetch URL content")
 
-            # Custom fields for different check types
-            # Just attach result instead?
-            if "found_price" in result:
-                link["found_price"] = result["found_price"]
+            # Decode the content from bytes to string
+            content_str = (
+                content.decode("utf-8") if isinstance(content, bytes) else content
+            )
+
+            result = await CHECKTYPE_TO_FUNCTION_MAP[link["type"]](link, content_str)
 
             last_result = {
                 "status": "ALERTED" if result["send_alert"] else "NO ALERT",
@@ -83,6 +87,7 @@ async def process_link(session, link):
                 ),
             }
 
+            # Attach unique fields for different check types
             if "found_price" in result:
                 last_result["found_price"] = {"N": str(result["found_price"])}
 
@@ -109,7 +114,9 @@ async def process_link(session, link):
         if elapsed_time > TIMEOUT_LIMIT:
             logger.warning(f"Processing {link['url']} took {elapsed_time:.2f} seconds")
         else:
-            logger.info(f"Processed {link['url']} in {elapsed_time:.2f} seconds")
+            logger.info(
+                f"Finished processing {link['url']} at {time.time()} in {elapsed_time:.2f} seconds"
+            )
 
 
 async def main_handler(event, context):

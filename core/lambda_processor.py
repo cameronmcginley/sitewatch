@@ -29,13 +29,14 @@ def transform_item(item):
     """
     logger.info(f"Transforming item: {item['pk']}")
     transformed = {
-        "alias": item["alias"],
-        "type": item["check_type"],
-        "url": item["url"],
-        "email": item["email"],
-        "pk": item["pk"],
-        "sk": item["sk"],
-        "cron": item["cron"],
+        "alias": item.get("alias"),
+        "type": item.get("check_type"),
+        "url": item.get("url"),
+        "email": item.get("email"),
+        "pk": item.get("pk"),
+        "sk": item.get("sk"),
+        "cron": item.get("cron"),
+        "useProxy": item.get("useProxy", False),
     }
 
     if item["check_type"] == "EBAY PRICE THRESHOLD":

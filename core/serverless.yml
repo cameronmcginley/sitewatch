@@ -29,6 +29,7 @@ provider:
         - ssm:GetParameter
       Resource:
         - "arn:aws:ssm:${self:provider.region}:*:parameter/url-checker/*"
+        - "arn:aws:ssm:${self:provider.region}:*:parameter/sitewatch/*"
     - Effect: Allow
       Action:
         - logs:CreateLogGroup
@@ -40,6 +41,7 @@ provider:
 functions:
   processor:
     handler: lambda_processor.lambda_handler
+    memorySize: 512
     events:
       - schedule:
           rate: cron(0/5 * * * ? *) # Runs every 5 minutes
@@ -51,8 +53,10 @@ functions:
 
   executor:
     handler: lambda_executor.lambda_handler
+    memorySize: 512
     timeout: 300 # 5 minutes
     environment:
+      OXYLAB_PROXY: ${ssm:/sitewatch/oxylab_proxy}
       email_sender: ${ssm:/url-checker/email-sender}
       email_password: ${ssm:/url-checker/email-password}
 
