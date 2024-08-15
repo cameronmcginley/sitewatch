@@ -20,7 +20,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { PersonIcon } from "@radix-ui/react-icons";
-import { USER_TYPE_TO_DISPLAY_TEXT } from "@/lib/constants";
+import {
+  USER_TYPE_TO_DISPLAY_TEXT,
+  USER_TYPE_TO_LIMITS,
+} from "@/lib/constants";
 
 const navigationMenuItems: {
   title: string;
@@ -120,6 +123,10 @@ const Navbar: React.FC = () => {
                     <span className="font-medium">{session.user?.email}</span>
                     <span className="text-sm text-muted-foreground">
                       {USER_TYPE_TO_DISPLAY_TEXT[session.user?.userType] ?? ""}
+                    </span>
+                    <span className="text-sm text-muted-foreground">
+                      Check Limit:{" "}
+                      {USER_TYPE_TO_LIMITS[session.user?.userType] ?? ""}
                     </span>
                   </div>
                 </DropdownMenuItem>

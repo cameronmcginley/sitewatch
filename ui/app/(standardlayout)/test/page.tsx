@@ -8,6 +8,8 @@ import { CheckItem } from "@/lib/types";
 import { CustomPagination } from "@/components/table/custom-pagination";
 import { createItemFormSchema } from "@/components/items/schema";
 import { z } from "zod";
+import { USER_TYPE_TO_LIMITS } from "@/lib/constants";
+import { fetchUser } from "@/lib/api/users";
 
 function Home() {
   const { data: session, status } = useSession();
@@ -40,16 +42,34 @@ function Home() {
   const handleCreateItemSubmit = async (
     values: z.infer<typeof createItemFormSchema>
   ) => {
-    try {
-      console.log("Adding item:", values);
-      setIsCreateItemLoading(true);
-      await addItem(values);
-      await fetchDataForUser(session.user.id);
+    console.log("Adding item:", values);
+    setIsCreateItemLoading(true);
+
+    // Check for user's limit first
+    const userLimit = USER_TYPE_TO_LIMITS[session.user?.userType];
+    const userData = await fetchUser(session.user.id);
+    const currentCount = userData?.[0]?.checkCount || 0;
+
+    console.log("Current count:", currentCount, "User limit:", userLimit);
+
+    if (currentCount >= userLimit) {
       setIsCreateItemLoading(false);
       setIsCreateItemModalOpen(false);
+      alert(
+        `You have reached your limit of ${userLimit} checks. Please delete some checks to add more.`
+      );
+      return;
+    }
+
+    try {
+      await addItem(values);
+      await fetchDataForUser(session.user.id);
     } catch (error) {
       setIsCreateItemLoading(false);
       console.error("Error adding item:", error);
+    } finally {
+      setIsCreateItemLoading(false);
+      setIsCreateItemModalOpen(false);
     }
   };
 

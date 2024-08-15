@@ -4,11 +4,17 @@ import { getHeaders, getDynamoTableName } from "../utils/db.mjs";
 const dynamoDb = new DynamoDBClient({ region: "us-east-2" });
 
 export const handler = async (event) => {
+  console.log("Received event:", JSON.stringify(event, null, 2));
+
   const headers = getHeaders();
   const item = JSON.parse(event.body || "{}");
-  const { userId, checkCountChange, ...attributes } = item;
+  const userid = event.queryStringParameters?.userid;
+  const { checkCountChange, ...attributes } = item;
+
+  console.log("Parsed item:", JSON.stringify(item, null, 2));
 
   const tableName = await getDynamoTableName();
+  console.log("DynamoDB table name:", tableName);
 
   let updateExpression = "SET ";
   const expressionAttributeNames = {};
@@ -20,6 +26,16 @@ export const handler = async (event) => {
     expressionAttributeNames[`#attr${idx}`] = key;
     expressionAttributeValues[`:val${idx}`] = { S: String(attributes[key]) };
   });
+
+  console.log("Update expression after regular attributes:", updateExpression);
+  console.log(
+    "ExpressionAttributeNames:",
+    JSON.stringify(expressionAttributeNames, null, 2)
+  );
+  console.log(
+    "ExpressionAttributeValues:",
+    JSON.stringify(expressionAttributeValues, null, 2)
+  );
 
   // Handle checkCount increment/decrement
   if (checkCountChange !== undefined) {
@@ -35,24 +51,29 @@ export const handler = async (event) => {
     updateExpression = updateExpression.slice(0, -2);
   }
 
+  console.log("Final update expression:", updateExpression);
+
   const params = {
     TableName: tableName,
-    Key: { pk: { S: `USER#${userId}` }, sk: { S: "PROFILE" } },
+    Key: { pk: { S: `USER#${userid}` }, sk: { S: "PROFILE" } },
     UpdateExpression: updateExpression,
     ExpressionAttributeNames: expressionAttributeNames,
     ExpressionAttributeValues: expressionAttributeValues,
     ReturnValues: "UPDATED_NEW",
   };
 
+  console.log("DynamoDB update params:", JSON.stringify(params, null, 2));
+
   try {
     const data = await dynamoDb.send(new UpdateItemCommand(params));
+    console.log("Update succeeded:", JSON.stringify(data, null, 2));
     return {
       statusCode: 200,
       body: JSON.stringify({ message: "User updated successfully", data }),
       headers,
     };
   } catch (error) {
-    console.error(error);
+    console.error("Update failed:", error);
     return {
       statusCode: 500,
       body: JSON.stringify({

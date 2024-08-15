@@ -41,6 +41,7 @@ export async function updateUserCheckCount(
   userId: string,
   change: number
 ): Promise<User> {
+  console.log("Updating user check count:", userId, change);
   return updateUser(userId, { checkCountChange: change });
 }
 

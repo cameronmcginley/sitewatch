@@ -39,5 +39,5 @@ export const USER_TYPE_TO_DISPLAY_TEXT: Record<string, string> = {
 
 export const USER_TYPE_TO_LIMITS: Record<string, number> = {
   default: 5,
-  admin: Infinity,
+  admin: 1000,
 };
