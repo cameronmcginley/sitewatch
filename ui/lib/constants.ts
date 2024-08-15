@@ -36,3 +36,8 @@ export const USER_TYPE_TO_DISPLAY_TEXT: Record<string, string> = {
   default: "Free Tier",
   admin: "Admin",
 };
+
+export const USER_TYPE_TO_LIMITS: Record<string, number> = {
+  default: 5,
+  admin: Infinity,
+};

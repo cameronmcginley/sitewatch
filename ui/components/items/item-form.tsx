@@ -256,7 +256,7 @@ const ItemForm = ({ handleCreateItemSubmit }) => {
               <FormControl>
                 <Switch
                   checked={
-                    session?.user?.userType !== "default" ? false : field.value
+                    session?.user?.userType === "default" ? false : field.value
                   }
                   onCheckedChange={field.onChange}
                 />
@@ -314,8 +314,15 @@ const ItemForm = ({ handleCreateItemSubmit }) => {
                     <SelectItem
                       key={option.value}
                       value={option.value.toString()}
+                      disabled={
+                        session?.user?.userType === "default" &&
+                        option.value < 14400000
+                      }
                     >
-                      {option.label}
+                      {option.label}{" "}
+                      {session?.user?.userType === "default" &&
+                        option.value < 14400000 &&
+                        "(Premium)"}
                     </SelectItem>
                   ))}
                 </SelectContent>

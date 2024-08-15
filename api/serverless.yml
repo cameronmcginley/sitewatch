@@ -19,77 +19,39 @@ provider:
             - dynamodb:UpdateItem
             - dynamodb:DeleteItem
           Resource:
-            - arn:aws:dynamodb:us-east-2:992382695229:table/${ssm:/sitewatch/${self:provider.stage}/dynamodb/tableName}
-            - arn:aws:dynamodb:us-east-2:992382695229:table/${ssm:/sitewatch/${self:provider.stage}/dynamodb/tableName}/index/userid-sk-index
+            - arn:aws:dynamodb:${self:provider.region}:${aws:accountId}:table/${ssm:/sitewatch/${self:provider.stage}/dynamodb/tableName}
+            - arn:aws:dynamodb:${self:provider.region}:${aws:accountId}:table/${ssm:/sitewatch/${self:provider.stage}/dynamodb/tableName}/index/userid-sk-index
         - Effect: Allow
           Action:
             - ssm:GetParameter
           Resource:
-            - arn:aws:ssm:us-east-2:992382695229:parameter/sitewatch/${self:provider.stage}/dynamodb/tableName
+            - arn:aws:ssm:${self:provider.region}:${aws:accountId}:parameter/sitewatch/${self:provider.stage}/dynamodb/tableName
+
+custom:
+  corsConfig:
+    origin: "*"
+    headers:
+      - Content-Type
+      - X-Amz-Date
+      - Authorization
+      - X-Api-Key
+      - X-Amz-Security-Token
+      - X-Amz-User-Agent
+  testEvents:
+    createCheck:
+      body: '{"alias": {"S": "TEST"}, "type": {"S": "TYPE"}}'
 
 functions:
   createUser:
     handler: functions/createUser.handler
-    environment:
-      STAGE: ${self:provider.stage}
     events:
       - http:
           path: users
           method: post
-          cors:
-            origin: "*"
-            headers:
-              - Content-Type
-              - X-Amz-Date
-              - Authorization
-              - X-Api-Key
-              - X-Amz-Security-Token
-              - X-Amz-User-Agent
-
-  createCheck:
-    handler: functions/createCheck.handler
-    environment:
-      STAGE: ${self:provider.stage}
-    events:
-      - http:
-          path: items
-          method: post
-          cors:
-            origin: "*"
-            headers:
-              - Content-Type
-              - X-Amz-Date
-              - Authorization
-              - X-Api-Key
-              - X-Amz-Security-Token
-              - X-Amz-User-Agent
-
-  getCheck:
-    handler: functions/getCheck.handler
-    environment:
-      STAGE: ${self:provider.stage}
-    events:
-      - http:
-          path: items
-          method: get
-          request:
-            parameters:
-              querystrings:
-                userid: false
-          cors:
-            origin: "*"
-            headers:
-              - Content-Type
-              - X-Amz-Date
-              - Authorization
-              - X-Api-Key
-              - X-Amz-Security-Token
-              - X-Amz-User-Agent
+          cors: ${self:custom.corsConfig}
 
   getUser:
     handler: functions/getUser.handler
-    environment:
-      STAGE: ${self:provider.stage}
     events:
       - http:
           path: users
@@ -98,93 +60,68 @@ functions:
             parameters:
               querystrings:
                 userid: false
-          cors:
-            origin: "*"
-            headers:
-              - Content-Type
-              - X-Amz-Date
-              - Authorization
-              - X-Api-Key
-              - X-Amz-Security-Token
-              - X-Amz-User-Agent
+          cors: ${self:custom.corsConfig}
 
-  updateCheck:
-    handler: functions/updateCheck.handler
-    environment:
-      STAGE: ${self:provider.stage}
+  updateUser:
+    handler: functions/updateUser.handler
     events:
       - http:
           path: items
           method: put
-          cors:
-            origin: "*"
-            headers:
-              - Content-Type
-              - X-Amz-Date
-              - Authorization
-              - X-Api-Key
-              - X-Amz-Security-Token
-              - X-Amz-User-Agent
+          request:
+            parameters:
+              querystrings:
+                userid: true
+          cors: ${self:custom.corsConfig}
+
+  createCheck:
+    handler: functions/createCheck.handler
+    events:
+      - http:
+          path: items
+          method: post
+          cors: ${self:custom.corsConfig}
+
+  getCheck:
+    handler: functions/getCheck.handler
+    events:
+      - http:
+          path: items
+          method: get
+          request:
+            parameters:
+              querystrings:
+                userid: false
+          cors: ${self:custom.corsConfig}
+
+  updateCheck:
+    handler: functions/updateCheck.handler
+    events:
+      - http:
+          path: items
+          method: put
+          cors: ${self:custom.corsConfig}
 
   deleteCheck:
     handler: functions/deleteCheck.handler
-    environment:
-      STAGE: ${self:provider.stage}
     events:
       - http:
           path: items
           method: delete
-          cors:
-            origin: "*"
-            headers:
-              - Content-Type
-              - X-Amz-Date
-              - Authorization
-              - X-Api-Key
-              - X-Amz-Security-Token
-              - X-Amz-User-Agent
+          cors: ${self:custom.corsConfig}
 
-  optionsHandlerItems:
+  optionsHandler:
     handler: functions/optionsHandler.handler
-    environment:
-      STAGE: ${self:provider.stage}
     events:
       - http:
           path: items
           method: options
-          cors:
-            origin: "*"
-            headers:
-              - Content-Type
-              - X-Amz-Date
-              - Authorization
-              - X-Api-Key
-              - X-Amz-Security-Token
-              - X-Amz-User-Agent
-
-  optionsHandlerUsers:
-    handler: functions/optionsHandler.handler
-    environment:
-      STAGE: ${self:provider.stage}
-    events:
+          cors: ${self:custom.corsConfig}
       - http:
           path: users
           method: options
-          cors:
-            origin: "*"
-            headers:
-              - Content-Type
-              - X-Amz-Date
-              - Authorization
-              - X-Api-Key
-              - X-Amz-Security-Token
-              - X-Amz-User-Agent
+          cors: ${self:custom.corsConfig}
 
 package:
   include:
     - functions/**
-
-custom:
-  testEvents:
-    createCheck:
-      body: '{"alias": {"S": "TEST"}, "type": {"S": "TYPE"}}'

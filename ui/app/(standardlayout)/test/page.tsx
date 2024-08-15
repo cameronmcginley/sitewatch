@@ -56,7 +56,7 @@ function Home() {
   const handleDelete = async (items: CheckItem[]) => {
     console.log("Deleting items:", items);
     try {
-      await Promise.all(items.map((item) => deleteItem(item.pk, item.sk)));
+      await Promise.all(items.map((item) => deleteItem(item)));
       fetchDataForUser(session.user.id);
     } catch (error) {
       console.error("Error deleting items:", error);
