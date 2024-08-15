@@ -1,5 +1,3 @@
-// apiUtils.ts
-
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
 
 export interface ApiResponse<T = any> {

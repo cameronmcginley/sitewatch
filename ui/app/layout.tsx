@@ -10,13 +10,11 @@ export default function RootLayout({
 }) {
   return (
     <ClientSessionProvider>
-      <html lang="en" className="dark">
+      <html lang="en">
         <body className={`h-screen`}>
           <main className="flex flex-col items-center w-full">
             <Navbar />
-            {/* <div className="flex flex-col justify-center items-center w-10/12"> */}
             {children}
-            {/* </div> */}
           </main>
         </body>
       </html>

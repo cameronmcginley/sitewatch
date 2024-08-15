@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
@@ -68,9 +68,8 @@ const Navbar: React.FC = () => {
     <div className="w-full justify-center items-center flex border-b py-2">
       <div className="max-w-7xl w-full flex justify-between items-center">
         <NavigationMenu>
-          <NavigationMenuList className="">
-            {/* Logo */}
-            <Link href="/" className={navigationMenuTriggerStyle() + " flex "}>
+          <NavigationMenuList>
+            <Link href="/" className={navigationMenuTriggerStyle() + " flex"}>
               <div className="text-xl font-bold hover:text-blue-500 transition ease-in-out delay-50">
                 Site<span className="text-blue-500">Watch</span>
               </div>
@@ -88,6 +87,7 @@ const Navbar: React.FC = () => {
                             key={link.title}
                             href={link.href}
                             title={link.title}
+                            className=""
                           >
                             {link.description}
                           </ListItem>
@@ -117,7 +117,7 @@ const Navbar: React.FC = () => {
                   <PersonIcon className="w-6 h-6 w-max h-max" />
                 </div>
               </DropdownMenuTrigger>
-              <DropdownMenuContent>
+              <DropdownMenuContent className="">
                 <DropdownMenuItem>
                   <div className="flex flex-col">
                     <span className="font-medium">{session.user?.email}</span>
@@ -125,7 +125,7 @@ const Navbar: React.FC = () => {
                       {USER_TYPE_TO_DISPLAY_TEXT[session.user?.userType] ?? ""}
                     </span>
                     <span className="text-sm text-muted-foreground">
-                      Check Limit:{" "}
+                      Check Limit:{""}
                       {USER_TYPE_TO_LIMITS[session.user?.userType] ?? ""}
                     </span>
                   </div>

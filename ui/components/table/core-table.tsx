@@ -106,7 +106,10 @@ const CoreTable = ({
         <div className="flex flex-row gap-2">
           {/* Delete button */}
           {selectedItems.length > 0 && (
-            <Button onClick={handleDeleteItems} variant="destructive">
+            <Button
+              onClick={handleDeleteItems}
+              className="bg-red-700 hover:bg-red-600"
+            >
               Delete {selectedItems.length} items
             </Button>
           )}
@@ -131,8 +134,8 @@ const CoreTable = ({
                   <MutatingDots
                     height="100"
                     width="100"
-                    color="#fff"
-                    secondaryColor="#fff"
+                    color="#000"
+                    secondaryColor="#000"
                     radius="12.5"
                     ariaLabel="mutating-dots-loading"
                     wrapperStyle={{}}
