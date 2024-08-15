@@ -34,6 +34,7 @@ import {
 import ItemForm from "@/components/items/item-form";
 import { MutatingDots } from "react-loader-spinner";
 import { CustomPagination } from "./custom-pagination";
+import DeleteOverlay from "./delete-overlay";
 
 const CoreTable = ({
   data,
@@ -220,22 +221,7 @@ const CoreTable = ({
           </div>
         )}
 
-        {/* Spinner Overlay */}
-        {isDeleteLoading && (
-          <div className="absolute inset-0 flex flex-col justify-center items-center bg-black bg-opacity-50">
-            <p className="text-2xl font-semibold">Deleting...</p>
-            <MutatingDots
-              height="100"
-              width="100"
-              color="#fff"
-              secondaryColor="#fff"
-              radius="12.5"
-              ariaLabel="mutating-dots-loading"
-              wrapperStyle={{}}
-              wrapperClass=""
-            />
-          </div>
-        )}
+        {isDeleteLoading && <DeleteOverlay />}
       </div>
     </div>
   );
