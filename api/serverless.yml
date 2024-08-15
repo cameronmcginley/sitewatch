@@ -37,9 +37,6 @@ custom:
       - X-Api-Key
       - X-Amz-Security-Token
       - X-Amz-User-Agent
-  testEvents:
-    createCheck:
-      body: '{"alias": {"S": "TEST"}, "type": {"S": "TYPE"}}'
 
 functions:
   createUser:
@@ -59,14 +56,14 @@ functions:
           request:
             parameters:
               querystrings:
-                userid: false
+                userid: true
           cors: ${self:custom.corsConfig}
 
   updateUser:
     handler: functions/updateUser.handler
     events:
       - http:
-          path: items
+          path: users
           method: put
           request:
             parameters:

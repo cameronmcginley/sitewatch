@@ -46,6 +46,7 @@ const CoreTable = ({
 }) => {
   const [selectedCheckType, setSelectedCheckType] = useState("ALL");
   const [selectedItems, setSelectedItems] = useState<CheckItem[]>([]);
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -72,13 +73,18 @@ const CoreTable = ({
     );
   };
 
-  const handleDeleteItems = () => {
-    handleDelete(selectedItems);
-    setSelectedItems([]);
+  const handleDeleteItems = async () => {
+    try {
+      setIsDeleteLoading(true);
+      await handleDelete(selectedItems);
+    } finally {
+      setIsDeleteLoading(false);
+      setSelectedItems([]);
+    }
   };
 
   return (
-    <>
+    <div className="relative">
       <div className="flex flex-row mb-4 justify-between">
         <div className="flex flex-row gap-2">
           {/* Select CheckType to show */}
@@ -140,77 +146,98 @@ const CoreTable = ({
         </div>
       </div>
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[50px]">
-              <Checkbox
-                checked={
-                  selectedItems.length === filteredData.length && !isLoading
-                }
-                onCheckedChange={(checked) =>
-                  setSelectedItems(checked ? filteredData : [])
-                }
-              />
-            </TableHead>
-            {columns.map((column, index: number) => (
-              <TableHead key={index}>{column.header}</TableHead>
-            ))}
-            <TableHead className="w-[100px]"></TableHead>
-          </TableRow>
-        </TableHeader>
-
-        <TableBody>
-          {isLoading
-            ? Array.from({ length: 5 }).map((_, index) => (
-                <TableRow key={index}>
-                  <TableCell>
-                    <Skeleton className="h-4 w-4" />
-                  </TableCell>
-                  {columns.map((_, colIndex) => (
-                    <TableCell key={colIndex}>
-                      <Skeleton className="h-4 w-full" />
-                    </TableCell>
-                  ))}
-                  <TableCell>
-                    <Skeleton className="h-4 w-[100px]" />
-                  </TableCell>
-                </TableRow>
-              ))
-            : paginatedData.map((item: CheckItem, index: number) => (
-                <TableRow key={item.pk ?? item.sk ?? index}>
-                  <TableCell>
-                    <Checkbox
-                      checked={selectedItems.includes(item)}
-                      onCheckedChange={() => handleSelectItem(item)}
-                    />
-                  </TableCell>
-
-                  {formatCells(item, columns)}
-
-                  <TableCell>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleShowDetails(item)}
-                    >
-                      Details
-                    </Button>
-                  </TableCell>
-                </TableRow>
+      <div
+        className={`relative ${isDeleteLoading ? "opacity-50" : "opacity-100"}`}
+      >
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[50px]">
+                <Checkbox
+                  checked={
+                    selectedItems.length === filteredData.length && !isLoading
+                  }
+                  onCheckedChange={(checked) =>
+                    setSelectedItems(checked ? filteredData : [])
+                  }
+                />
+              </TableHead>
+              {columns.map((column, index: number) => (
+                <TableHead key={index}>{column.header}</TableHead>
               ))}
-        </TableBody>
-      </Table>
-      {data.length > 0 && (
-        <div className="mt-4">
-          <CustomPagination
-            currentPage={currentPage}
-            totalPages={Math.ceil(filteredData.length / itemsPerPage)}
-            onPageChange={setCurrentPage}
-          />
-        </div>
-      )}
-    </>
+              <TableHead className="w-[100px]"></TableHead>
+            </TableRow>
+          </TableHeader>
+
+          <TableBody>
+            {isLoading
+              ? Array.from({ length: 5 }).map((_, index) => (
+                  <TableRow key={index}>
+                    <TableCell>
+                      <Skeleton className="h-4 w-4" />
+                    </TableCell>
+                    {columns.map((_, colIndex) => (
+                      <TableCell key={colIndex}>
+                        <Skeleton className="h-4 w-full" />
+                      </TableCell>
+                    ))}
+                    <TableCell>
+                      <Skeleton className="h-4 w-[100px]" />
+                    </TableCell>
+                  </TableRow>
+                ))
+              : paginatedData.map((item: CheckItem, index: number) => (
+                  <TableRow key={item.pk ?? item.sk ?? index}>
+                    <TableCell>
+                      <Checkbox
+                        checked={selectedItems.includes(item)}
+                        onCheckedChange={() => handleSelectItem(item)}
+                      />
+                    </TableCell>
+
+                    {formatCells(item, columns)}
+
+                    <TableCell>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleShowDetails(item)}
+                      >
+                        Details
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+          </TableBody>
+        </Table>
+        {data.length > 0 && (
+          <div className="mt-4">
+            <CustomPagination
+              currentPage={currentPage}
+              totalPages={Math.ceil(filteredData.length / itemsPerPage)}
+              onPageChange={setCurrentPage}
+            />
+          </div>
+        )}
+
+        {/* Spinner Overlay */}
+        {isDeleteLoading && (
+          <div className="absolute inset-0 flex flex-col justify-center items-center bg-black bg-opacity-50">
+            <p className="text-2xl font-semibold">Deleting...</p>
+            <MutatingDots
+              height="100"
+              width="100"
+              color="#fff"
+              secondaryColor="#fff"
+              radius="12.5"
+              ariaLabel="mutating-dots-loading"
+              wrapperStyle={{}}
+              wrapperClass=""
+            />
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 
