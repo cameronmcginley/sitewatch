@@ -1,14 +1,11 @@
 import React from "react";
 
-export const HeroWavy = ({
-  primaryColor = "#4d69ad",
-  secondaryColor = "#77B0AA",
-}) => (
+export const HeroWavy = ({ primaryColor = "#4d69ad" }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="100%"
-    height="auto"
-    viewBox="0 0 1600 400"
+    height="750px"
+    viewBox="0 0 1600 550"
     preserveAspectRatio="none"
   >
     <defs>
@@ -17,7 +14,7 @@ export const HeroWavy = ({
         x="0"
         y="0"
         width="600"
-        height="400"
+        height="750"
         patternUnits="userSpaceOnUse"
       >
         <path
