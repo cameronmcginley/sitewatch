@@ -31,9 +31,6 @@ const checks = [
   },
 ];
 
-const minW = "250px";
-const maxW = "5xl";
-
 function Root() {
   const [hoveredCheck, setHoveredCheck] = useState(null);
 
@@ -41,24 +38,22 @@ function Root() {
     <>
       <div className="relative w-full bg-[#4663ac]">
         <HeroWavy />
-        <div
-          className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center z-20 w-full max-w-${maxW} pb-24`}
-        >
-          <h1 className="font-semibold text-5xl text-white">
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center z-20 w-full max-w-5xl px-4 pb-24">
+          <h1 className="font-semibold text-3xl md:text-5xl text-white">
             Monitor Websites, Get Alerts
           </h1>
-          <p className="text-xl text-white mt-8">
+          <p className="text-lg md:text-xl text-white mt-4 md:mt-8">
             Never miss a beat. SiteWatch checks your chosen sites and sends you
             alerts when your conditions are met.
           </p>
-          <p className="text-xl text-white mt-24 mb-4">
+          <p className="text-lg md:text-xl text-white mt-12 md:mt-24 mb-4">
             Pick any URL, then pick one of our custom check functions
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="flex flex-col md:flex-row flex-wrap justify-center gap-4">
             {checks.map((check, index) => (
               <div
                 key={check.name}
-                className={`w-[calc(33.33%-1rem)] min-w-[${minW}] relative`}
+                className="w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.33%-1rem)] relative"
                 onMouseEnter={() => setHoveredCheck(index)}
                 onMouseLeave={() => setHoveredCheck(null)}
               >
@@ -101,39 +96,37 @@ function Root() {
         </div>
         {/* Demo section */}
         <div
-          className={`absolute top-full left-1/2 transform -translate-x-1/2 z-10 max-w-${maxW}`}
+          className="absolute top-full left-1/2 transform -translate-x-1/2 z-10 w-full max-w-5xl px-4"
           style={{ transform: "translate(-50%, -30%)" }}
         >
-          {/* Display image download.jpg from public*/}
-          <img
-            src="/download.png"
-            alt="download"
-            className="rounded-2xl border-2 border-black"
-          />
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-            <div className="flex flex-col gap-4 bg-opacity-20 bg-black p-4 rounded-2xl">
-              <Button className="p-6" variant="default">
-                Watch demo
-              </Button>
-              <Button className="p-6" variant="outline">
-                Read Documentation
-              </Button>
+          <div className="relative">
+            <img
+              src="/download.png"
+              alt="download"
+              className="rounded-2xl border-2 border-black w-full"
+            />
+            {/* Desktop buttons (hidden on mobile) */}
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 hidden md:block">
+              <div className="flex flex-col gap-4 bg-opacity-20 bg-black p-4 rounded-2xl">
+                <Button className="p-6" variant="default">
+                  Watch demo
+                </Button>
+                <Button className="p-6" variant="outline">
+                  Read Documentation
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
-        {/* <div
-          className={`absolute top-full left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 max-w-${maxW} h-72 relative`}
-        >
-          <img
-            src="/download.png"
-            alt="download"
-            className="rounded-2xl border-2 border-black"
-          />
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex gap-4">
-            <Button variant="default">Get Started</Button>
-            <Button variant="outline">Learn More</Button>
+          {/* Mobile buttons (hidden on desktop) */}
+          <div className="mt-4 flex flex-col gap-4 md:hidden">
+            <Button className="p-4" variant="default">
+              Watch demo
+            </Button>
+            <Button className="p-4" variant="outline">
+              Read Documentation
+            </Button>
           </div>
-        </div> */}
+        </div>
       </div>
     </>
   );
