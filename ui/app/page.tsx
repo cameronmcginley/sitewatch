@@ -140,9 +140,7 @@ function Root() {
         </div>
       </div>
       {/* Below hero section */}
-      <div className="w-full pt-24 mt-96 pb-16">
-        {" "}
-        {/* Added pt-64 for spacing */}
+      <div className="w-full pt-24 mt-48 lg:mt-96 pb-16">
         <div className="max-w-5xl mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
             <FeatureCard

@@ -108,7 +108,7 @@ const Navbar: React.FC = () => {
             ))}
 
             <a
-              href="https://github.com/your-github-username"
+              href="https://github.com/cameronmcginley/sitewatch"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-700 hover:text-gray-900 px-4"

@@ -15,6 +15,7 @@ interface CreateCheckButtonProps {
   setIsCreateItemModalOpen: (open: boolean) => void;
   isCreateItemLoading: boolean;
   handleCreateItemSubmit: () => void;
+  isMobile: boolean;
 }
 
 export const CreateCheckButton: React.FC<CreateCheckButtonProps> = ({
@@ -22,6 +23,7 @@ export const CreateCheckButton: React.FC<CreateCheckButtonProps> = ({
   setIsCreateItemModalOpen,
   isCreateItemLoading,
   handleCreateItemSubmit,
+  isMobile,
 }) => {
   return (
     <Dialog
@@ -29,7 +31,7 @@ export const CreateCheckButton: React.FC<CreateCheckButtonProps> = ({
       onOpenChange={setIsCreateItemModalOpen}
     >
       <DialogTrigger asChild>
-        <Button className="mb-4">Create Check</Button>
+        <Button className={`${isMobile ? "w-full" : ""}`}>Create Check</Button>
       </DialogTrigger>
       <DialogContent className="max-h-[80vh] overflow-y-auto">
         <DialogHeader>

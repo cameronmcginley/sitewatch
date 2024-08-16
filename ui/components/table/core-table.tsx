@@ -35,7 +35,8 @@ import ItemForm from "@/components/items/item-form";
 import { MutatingDots } from "react-loader-spinner";
 import { CustomPagination } from "./custom-pagination";
 import DeleteOverlay from "./delete-overlay";
-import { CreateCheckButton, CreateCheckDialog } from "./create-check-button";
+import { CreateCheckButton } from "./create-check-button";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 const CoreTable = ({
   data,
@@ -85,14 +86,26 @@ const CoreTable = ({
     }
   };
 
+  const isMobile = useMediaQuery("(max-width: 640px)");
+
   return (
     <div className="relative">
-      <div className="flex flex-row mb-4 justify-between">
-        <div className="flex flex-row gap-2 items-center">
-          {/* Select CheckType to show */}
-          <p className="font-medium">Filter by Check Type - </p>
+      <div
+        className={`flex gap-4 mb-4 ${
+          isMobile ? "flex-col sm:justify-between" : "flex-row justify-between"
+        }`}
+      >
+        {/* Left side */}
+        <div
+          className={`flex flex-col gap-2 ${
+            isMobile ? "w-full" : "items-center"
+          }`}
+        >
+          <p className="font-medium text-sm sm:text-base">
+            Filter by Check Type
+          </p>
           <Select onValueChange={setSelectedCheckType} defaultValue="ALL">
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className={`${isMobile ? "w-full" : "w-[180px]"}`}>
               <SelectValue placeholder="Filter by Check Type" />
             </SelectTrigger>
             <SelectContent>
@@ -105,22 +118,26 @@ const CoreTable = ({
           </Select>
         </div>
 
-        <div className="flex flex-row gap-2">
-          {/* Delete button */}
+        {/* Right side */}
+        <div
+          className={`flex gap-2 items-end ${
+            isMobile ? "flex-col w-full" : "flex-row"
+          }`}
+        >
           {selectedItems.length > 0 && (
             <Button
               onClick={handleDeleteItems}
-              className="bg-red-700 hover:bg-red-600"
+              className="bg-red-700 hover:bg-red-600 w-full sm:w-auto"
             >
               Delete {selectedItems.length} items
             </Button>
           )}
-          {/* Create button */}
           <CreateCheckButton
             isCreateItemModalOpen={isCreateItemModalOpen}
             setIsCreateItemModalOpen={setIsCreateItemModalOpen}
             isCreateItemLoading={isCreateItemLoading}
             handleCreateItemSubmit={handleCreateItemSubmit}
+            isMobile={isMobile}
           />
         </div>
       </div>
