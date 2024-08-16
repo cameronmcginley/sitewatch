@@ -7,7 +7,10 @@ export default function Footer() {
       <div className="container mx-auto flex justify-between items-center px-4">
         <div className="text-gray-700">
           <p>See more about me and my projects here!</p>
-          <a href="https://cameronmcginley.com" className="text-blue-500">
+          <a
+            href="https://cameronmcginley.com"
+            className="text-blue-500 hover:text-blue-700"
+          >
             cameronmcginley.com
           </a>
         </div>

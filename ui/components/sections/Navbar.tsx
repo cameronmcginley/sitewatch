@@ -71,8 +71,8 @@ const Navbar: React.FC = () => {
         <NavigationMenu>
           <NavigationMenuList>
             <Link href="/" className={navigationMenuTriggerStyle() + " flex"}>
-              <div className="text-xl font-bold hover:text-blue-500 transition ease-in-out delay-50">
-                Site<span className="text-blue-500">Watch</span>
+              <div className="text-xl font-bold hover:text-[#4663ac] transition ease-in-out delay-50">
+                Site<span className="text-[#4663ac]">Watch</span>
               </div>
             </Link>
 
@@ -153,7 +153,7 @@ const Navbar: React.FC = () => {
             !session &&
             !window.location.pathname.includes("/sign-in") && (
               <button
-                className="px-4 py-2 bg-blue-500 text-white rounded-md"
+                className="px-4 py-2 bg-[#4663ac] text-white rounded-md"
                 onClick={() => signIn()}
               >
                 Sign in

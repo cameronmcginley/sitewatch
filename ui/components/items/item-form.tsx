@@ -196,11 +196,18 @@ const ItemForm = ({ handleCreateItemSubmit }) => {
               <FormItem>
                 <FormLabel>Price Threshold</FormLabel>
                 <FormControl>
-                  <Input placeholder="Price" {...field} />
+                  <Input
+                    type="number"
+                    placeholder="Price"
+                    {...field}
+                    onChange={(e) =>
+                      field.onChange(parseFloat(e.target.value) || "")
+                    }
+                  />
                 </FormControl>
                 <FormDescription>
-                  Alerts when a price is found lower than this. Checks "Buy It
-                  Now" prices on a given Ebay URL.
+                  Alerts when a price is found lower than this. Checks &quot;Buy
+                  It Now&quot; prices on a given Ebay URL.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -215,7 +222,14 @@ const ItemForm = ({ handleCreateItemSubmit }) => {
               <FormItem>
                 <FormLabel>Percent Difference</FormLabel>
                 <FormControl>
-                  <Input placeholder="Percent Difference" {...field} />
+                  <Input
+                    type="number"
+                    placeholder="Percent Difference"
+                    {...field}
+                    onChange={(e) =>
+                      field.onChange(parseFloat(e.target.value) || "")
+                    }
+                  />
                 </FormControl>
                 <FormDescription>
                   Checks percent difference between current website and its

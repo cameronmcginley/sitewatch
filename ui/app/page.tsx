@@ -112,12 +112,15 @@ function Root() {
         >
           <div className="relative">
             <img
-              src="/download.png"
+              src="/download2.png"
               alt="download"
               className="rounded-2xl border-2 border-black w-full"
             />
             {/* Desktop buttons (hidden on mobile) */}
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 hidden md:block">
+            <div
+              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 hidden md:block"
+              style={{ transform: "translate(-50%, -130%)" }}
+            >
               <div className="flex flex-col gap-4 bg-opacity-20 bg-black p-4 rounded-2xl">
                 <Button className="p-6" variant="default">
                   Watch demo

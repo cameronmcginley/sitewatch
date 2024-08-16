@@ -21,7 +21,7 @@ function Home() {
 
   useEffect(() => {
     if (status === "authenticated" && session?.user?.id) {
-      fetchDataForUser(session.user.id);
+      fetchDataForUser(session.user?.id);
     }
   }, [status, session]);
 
