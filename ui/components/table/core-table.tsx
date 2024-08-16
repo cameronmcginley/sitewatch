@@ -35,6 +35,7 @@ import ItemForm from "@/components/items/item-form";
 import { MutatingDots } from "react-loader-spinner";
 import { CustomPagination } from "./custom-pagination";
 import DeleteOverlay from "./delete-overlay";
+import { CreateCheckButton, CreateCheckDialog } from "./create-check-button";
 
 const CoreTable = ({
   data,
@@ -115,39 +116,12 @@ const CoreTable = ({
             </Button>
           )}
           {/* Create button */}
-          <Dialog
-            open={isCreateItemModalOpen || isCreateItemLoading}
-            onOpenChange={setIsCreateItemModalOpen}
-          >
-            <DialogTrigger asChild>
-              <Button className="mb-4">Create Check</Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>
-                  {isCreateItemLoading
-                    ? "Creating Item..."
-                    : "Create New Check"}
-                </DialogTitle>
-              </DialogHeader>
-              {isCreateItemLoading ? (
-                <div className="flex flex-col justify-center items-center">
-                  <MutatingDots
-                    height="100"
-                    width="100"
-                    color="#000"
-                    secondaryColor="#000"
-                    radius="12.5"
-                    ariaLabel="mutating-dots-loading"
-                    wrapperStyle={{}}
-                    wrapperClass=""
-                  />
-                </div>
-              ) : (
-                <ItemForm handleCreateItemSubmit={handleCreateItemSubmit} />
-              )}
-            </DialogContent>
-          </Dialog>
+          <CreateCheckButton
+            isCreateItemModalOpen={isCreateItemModalOpen}
+            setIsCreateItemModalOpen={setIsCreateItemModalOpen}
+            isCreateItemLoading={isCreateItemLoading}
+            handleCreateItemSubmit={handleCreateItemSubmit}
+          />
         </div>
       </div>
 
