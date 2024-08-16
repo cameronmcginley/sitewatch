@@ -1,17 +1,18 @@
-/** @type {import('next').NextConfig} */
-const webpack = require("webpack");
+// next.config.mjs
+import webpack from 'webpack';
 
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
   webpack: (config) => {
     config.resolve.fallback = {
-      crypto: require.resolve("crypto-browserify"),
+      crypto: await import('crypto-browserify').then(module => module.default),
     };
     config.plugins.push(
       new webpack.ProvidePlugin({
-        process: "process/browser",
+        process: 'process/browser',
       })
     );
     return config;
