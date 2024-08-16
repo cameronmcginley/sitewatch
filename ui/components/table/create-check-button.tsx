@@ -31,7 +31,7 @@ export const CreateCheckButton: React.FC<CreateCheckButtonProps> = ({
       <DialogTrigger asChild>
         <Button className="mb-4">Create Check</Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             {isCreateItemLoading ? "Creating Item..." : "Create New Check"}
