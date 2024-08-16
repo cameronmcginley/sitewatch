@@ -24,15 +24,6 @@ import {
 } from "./cell-formatters";
 import { handleShowDetails } from "./utils";
 import { CheckItem } from "@/lib/types";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import ItemForm from "@/components/items/item-form";
-import { MutatingDots } from "react-loader-spinner";
 import { CustomPagination } from "./custom-pagination";
 import DeleteOverlay from "./delete-overlay";
 import { CreateCheckButton } from "./create-check-button";
