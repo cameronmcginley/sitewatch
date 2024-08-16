@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { HeroWavy } from "@/components/ui/hero-wavy";
 import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useSession } from "next-auth/react";
 
 const checks = [
   {
@@ -31,8 +32,18 @@ const checks = [
   },
 ];
 
+const signInClick = (session, status) => {
+  // If already signed in, redirect to dashboard
+  if (status === "authenticated" && session?.user?.id) {
+    window.location.href = "/test";
+  } else {
+    window.location.href = "/sign-in";
+  }
+};
+
 function Root() {
   const [hoveredCheck, setHoveredCheck] = useState(null);
+  const { data: session, status } = useSession();
 
   return (
     <>
@@ -129,23 +140,20 @@ function Root() {
         </div>
       </div>
       {/* Below hero section */}
-      <div className="w-full pt-32 mt-96 pb-16">
+      <div className="w-full pt-24 mt-96 pb-16">
         {" "}
         {/* Added pt-64 for spacing */}
         <div className="max-w-5xl mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
             <FeatureCard
-              icon="🚀"
               title="Run Checks Every 5 Minutes"
               description="Customize the frequency of your web checks, with options as frequent as every 5 minutes."
             />
             <FeatureCard
-              icon="🔔"
               title="Instant Alerts"
               description="Get instant email notifications the moment your conditions are met."
             />
             <FeatureCard
-              icon="🛠️"
               title="Built for Performance"
               description="A resilient system that scales with its workload, using proxies to overcome blocks."
             />
@@ -155,7 +163,11 @@ function Root() {
             <h3 className="text-2xl font-semibold pt-8 mb-8">
               Ready to get started?
             </h3>
-            <Button className="px-8 py-6 text-lg" variant="default">
+            <Button
+              className="px-8 py-6 text-lg"
+              variant="default"
+              onClick={() => signInClick(session, status)}
+            >
               Sign In
             </Button>
           </div>
@@ -165,10 +177,9 @@ function Root() {
   );
 }
 
-function FeatureCard({ icon, title, description }) {
+function FeatureCard({ title, description }) {
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
-      <div className="text-4xl mb-4">{icon}</div>
       <h3 className="text-xl font-semibold mb-2">{title}</h3>
       <p className="text-gray-600">{description}</p>
     </div>

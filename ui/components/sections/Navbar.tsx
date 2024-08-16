@@ -24,6 +24,7 @@ import {
   USER_TYPE_TO_DISPLAY_TEXT,
   USER_TYPE_TO_LIMITS,
 } from "@/lib/constants";
+import { FaGithub } from "react-icons/fa";
 
 const navigationMenuItems: {
   title: string;
@@ -31,7 +32,6 @@ const navigationMenuItems: {
   links?: { title: string; href: string; description: string }[];
 }[] = [
   { title: "Application", href: "/test" },
-  { title: "Pricing", href: "/pricing" },
   { title: "Docs", href: "/docs" },
 ];
 
@@ -67,6 +67,7 @@ const Navbar: React.FC = () => {
   return (
     <div className="w-full justify-center items-center flex border-b py-2">
       <div className="max-w-7xl w-full flex justify-between items-center">
+        {/* Left side */}
         <NavigationMenu>
           <NavigationMenuList>
             <Link href="/" className={navigationMenuTriggerStyle() + " flex"}>
@@ -105,8 +106,18 @@ const Navbar: React.FC = () => {
                 )}
               </NavigationMenuItem>
             ))}
+
+            <a
+              href="https://github.com/your-github-username"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-700 hover:text-gray-900 px-4"
+            >
+              <FaGithub size={24} />
+            </a>
           </NavigationMenuList>
         </NavigationMenu>
+        {/* Right side */}
         <div>
           {status === "loading" ? (
             <></>

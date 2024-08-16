@@ -87,8 +87,9 @@ const CoreTable = ({
   return (
     <div className="relative">
       <div className="flex flex-row mb-4 justify-between">
-        <div className="flex flex-row gap-2">
+        <div className="flex flex-row gap-2 items-center">
           {/* Select CheckType to show */}
+          <p className="font-medium">Filter by Check Type - </p>
           <Select onValueChange={setSelectedCheckType} defaultValue="ALL">
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Filter by Check Type" />
@@ -96,7 +97,7 @@ const CoreTable = ({
             <SelectContent>
               {checkTypes.map((type) => (
                 <SelectItem key={type} value={type}>
-                  {type}
+                  <p className="font-medium">{type}</p>
                 </SelectItem>
               ))}
             </SelectContent>
