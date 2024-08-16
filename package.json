@@ -100,5 +100,8 @@
     "ts-node": "^10.9.2",
     "tsx": "^4.15.2",
     "typescript": "^5.5.3"
+  },
+  "browser": {
+    "crypto": false
   }
 }
