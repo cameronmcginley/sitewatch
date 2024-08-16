@@ -4,6 +4,8 @@ import { fetchUser, createUser } from "@/lib/api/users";
 import { SIGN_IN_URL } from "@/lib/constants";
 import { prettyLog } from "@/utils/logger";
 
+export const runtime = "edge";
+
 const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
