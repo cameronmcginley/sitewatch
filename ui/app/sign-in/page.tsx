@@ -3,6 +3,7 @@
 import { getProviders, signIn } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 export default function SignIn() {
   const searchParams = useSearchParams();
@@ -47,18 +48,20 @@ export default function SignIn() {
   }
 
   return (
-    <div>
-      {providers ? (
-        Object.values(providers).map((provider) => (
-          <div key={(provider as any).name}>
-            <button onClick={() => handleSignIn((provider as any).id)}>
-              Sign in with {(provider as any).name}
-            </button>
-          </div>
-        ))
-      ) : (
-        <div>No providers found</div>
-      )}
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <div>
+        {providers ? (
+          Object.values(providers).map((provider) => (
+            <div key={(provider as any).name}>
+              <button onClick={() => handleSignIn((provider as any).id)}>
+                Sign in with {(provider as any).name}
+              </button>
+            </div>
+          ))
+        ) : (
+          <div>No providers found</div>
+        )}
+      </div>
+    </Suspense>
   );
 }
