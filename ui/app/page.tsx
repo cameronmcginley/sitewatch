@@ -36,7 +36,7 @@ function Root() {
 
   return (
     <>
-      <div className="relative w-full bg-[#4663ac]">
+      <div className="relative w-full">
         <HeroWavy />
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center z-20 w-full max-w-5xl px-4 pb-24">
           <h1 className="font-semibold text-3xl md:text-5xl text-white">
@@ -128,7 +128,50 @@ function Root() {
           </div>
         </div>
       </div>
+      {/* Below hero section */}
+      <div className="w-full pt-32 mt-96 pb-16">
+        {" "}
+        {/* Added pt-64 for spacing */}
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+            <FeatureCard
+              icon="🚀"
+              title="Run Checks Every 5 Minutes"
+              description="Customize the frequency of your web checks, with options as frequent as every 5 minutes."
+            />
+            <FeatureCard
+              icon="🔔"
+              title="Instant Alerts"
+              description="Get instant email notifications the moment your conditions are met."
+            />
+            <FeatureCard
+              icon="🛠️"
+              title="Built for Performance"
+              description="A resilient system that scales with its workload, using proxies to overcome blocks."
+            />
+          </div>
+
+          <div className="text-center">
+            <h3 className="text-2xl font-semibold pt-8 mb-8">
+              Ready to get started?
+            </h3>
+            <Button className="px-8 py-6 text-lg" variant="default">
+              Sign In
+            </Button>
+          </div>
+        </div>
+      </div>
     </>
+  );
+}
+
+function FeatureCard({ icon, title, description }) {
+  return (
+    <div className="bg-white p-6 rounded-lg shadow-md">
+      <div className="text-4xl mb-4">{icon}</div>
+      <h3 className="text-xl font-semibold mb-2">{title}</h3>
+      <p className="text-gray-600">{description}</p>
+    </div>
   );
 }
 

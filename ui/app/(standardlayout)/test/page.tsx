@@ -10,6 +10,7 @@ import { createItemFormSchema } from "@/components/items/schema";
 import { z } from "zod";
 import { USER_TYPE_TO_LIMITS } from "@/lib/constants";
 import { fetchUser } from "@/lib/api/users";
+import { HeroWavy } from "@/components/ui/hero-wavy";
 
 function Home() {
   const { data: session, status } = useSession();
@@ -84,21 +85,23 @@ function Home() {
   };
 
   return (
-    <div className="container mx-auto px-4">
-      <h1 className="text-2xl font-bold mb-4">Check Management</h1>
+    <>
+      <div className="container mx-auto px-4">
+        <h1 className="text-2xl font-bold mb-4">Check Management</h1>
 
-      <div>
-        <CoreTable
-          data={data}
-          handleDelete={handleDelete}
-          isLoading={isDataLoading}
-          handleCreateItemSubmit={handleCreateItemSubmit}
-          isCreateItemLoading={isCreateItemLoading}
-          isCreateItemModalOpen={isCreateItemModalOpen}
-          setIsCreateItemModalOpen={setIsCreateItemModalOpen}
-        />
+        <div>
+          <CoreTable
+            data={data}
+            handleDelete={handleDelete}
+            isLoading={isDataLoading}
+            handleCreateItemSubmit={handleCreateItemSubmit}
+            isCreateItemLoading={isCreateItemLoading}
+            isCreateItemModalOpen={isCreateItemModalOpen}
+            setIsCreateItemModalOpen={setIsCreateItemModalOpen}
+          />
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
