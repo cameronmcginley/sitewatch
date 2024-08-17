@@ -3,6 +3,7 @@ import GoogleProvider from "next-auth/providers/google";
 import { fetchUser, createUser } from "@/lib/api/users";
 import { SIGN_IN_URL } from "@/lib/constants";
 import { prettyLog } from "@/utils/logger";
+import "crypto-browserify";
 
 export const runtime = "edge";
 
