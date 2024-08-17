@@ -5,8 +5,8 @@ import { SIGN_IN_URL } from "@/lib/constants";
 import { prettyLog } from "@/utils/logger";
 // import "crypto-browserify";
 
-// export const runtime = "edge";
-export const runtime = "nodejs";
+export const runtime = "edge";
+// export const runtime = "nodejs";
 
 const authOptions: NextAuthOptions = {
   providers: [
