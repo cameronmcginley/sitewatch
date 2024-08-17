@@ -1,28 +1,29 @@
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 
-import crypto from "crypto-browserify";
-import process from "process/browser.js"; // Ensure the correct path and file extension
-
 const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
   webpack: (config, { isServer, webpack }) => {
     if (!isServer) {
+      // Providing a specific fallback for crypto
       config.resolve.fallback = {
         ...config.resolve.fallback,
         crypto: require.resolve("crypto-browserify"),
-        process: require.resolve("process/browser.js"),
+        process: require.resolve("process/browser"),
       };
 
-      // Add ProvidePlugin to inject process where needed
+      // Ensuring that the ProvidePlugin correctly injects the required modules
       config.plugins.push(
         new webpack.ProvidePlugin({
-          process: "process/browser.js",
+          process: "process/browser",
+          Buffer: ["buffer", "Buffer"], // Adding Buffer if it's also needed
+          crypto: "crypto-browserify",
         })
       );
     }
+
     return config;
   },
 };
