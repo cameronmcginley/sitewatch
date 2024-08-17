@@ -1,24 +1,28 @@
-/** @type {import('next').NextConfig} */ const nextConfig = {
+// Using dynamic import() which returns a promiseconst crypto = import('crypto-browserify');
+const process = import("process/browser");
+
+const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
   webpack: (config, { isServer, webpack }) => {
     if (!isServer) {
-      // Provide a fallback for Node.js built-ins like crypto, if needed
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        crypto: require.resolve("crypto-browserify"),
-        process: require.resolve("process/browser"),
-      };
+      crypto.then((module) => {
+        config.resolve.fallback = {
+          ...config.resolve.fallback,
+          crypto: module.default,
+        };
+      });
 
-      // Add ProvidePlugin to inject process where needed
-      config.plugins.push(
-        new webpack.ProvidePlugin({
-          process: "process/browser",
-        })
-      );
+      process.then((module) => {
+        // Add ProvidePlugin to inject process where needed
+        config.plugins.push(
+          new webpack.ProvidePlugin({
+            process: module.default,
+          })
+        );
+      });
     }
-
     return config;
   },
 };
