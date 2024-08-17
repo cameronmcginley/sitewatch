@@ -1,10 +1,9 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import { HeroWavy } from "@/components/ui/hero-wavy";
 import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
+// import { auth } from "@/auth";
 
 const checks = [
   {
@@ -41,9 +40,10 @@ const signInClick = (session, status) => {
   }
 };
 
-function Root() {
+async function Root() {
   const [hoveredCheck, setHoveredCheck] = useState(null);
   const { data: session, status } = useSession();
+  // const session = await auth();
 
   return (
     <>
