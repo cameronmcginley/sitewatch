@@ -1,5 +1,8 @@
-// Using dynamic import() which returns a promiseconst crypto = import('crypto-browserify');
-const process = import("process/browser");
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+
+import crypto from "crypto-browserify";
+import process from "process/browser.js"; // Ensure the correct path and file extension
 
 const nextConfig = {
   typescript: {
@@ -7,21 +10,18 @@ const nextConfig = {
   },
   webpack: (config, { isServer, webpack }) => {
     if (!isServer) {
-      crypto.then((module) => {
-        config.resolve.fallback = {
-          ...config.resolve.fallback,
-          crypto: module.default,
-        };
-      });
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        crypto: require.resolve("crypto-browserify"),
+        process: require.resolve("process/browser.js"),
+      };
 
-      process.then((module) => {
-        // Add ProvidePlugin to inject process where needed
-        config.plugins.push(
-          new webpack.ProvidePlugin({
-            process: module.default,
-          })
-        );
-      });
+      // Add ProvidePlugin to inject process where needed
+      config.plugins.push(
+        new webpack.ProvidePlugin({
+          process: "process/browser.js",
+        })
+      );
     }
     return config;
   },
