@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
-const webpack = require("webpack");
+// const webpack = require("webpack");
+import webpack from "webpack";
 
 const nextConfig = {
   typescript: {
