@@ -1,7 +1,7 @@
 import { createApiClient } from "./utils";
 import { updateUserCheckCount } from "./users";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL_DEV + "/items";
+const API_URL = process.env.NEXT_PUBLIC_API_URL + "/items";
 const apiClient = createApiClient(API_URL);
 
 interface Item {

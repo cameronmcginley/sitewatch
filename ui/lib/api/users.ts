@@ -1,8 +1,6 @@
-// usersApi.ts
-
 import { createApiClient } from "./utils";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL_DEV + "/users";
+const API_URL = process.env.NEXT_PUBLIC_API_URL + "/users";
 const apiClient = createApiClient(API_URL);
 
 export interface User {
