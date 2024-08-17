@@ -2,7 +2,6 @@
   "name": "sitewatch",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
   "scripts": {
     "ui:dev": "cd ui && next dev",
     "ui:build": "cd ui && next build",
