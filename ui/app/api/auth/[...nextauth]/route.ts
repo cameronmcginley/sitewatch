@@ -5,7 +5,7 @@ import { SIGN_IN_URL } from "@/lib/constants";
 import { prettyLog } from "@/utils/logger";
 // import "crypto-browserify";
 
-export const runtime = "edge";
+// export const runtime = "edge";
 // export const runtime = "nodejs";
 
 const authOptions: NextAuthOptions = {
@@ -15,6 +15,26 @@ const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
+  // session: {
+  //   strategy: "jwt",
+  // },
+  // jwt: {
+  //   // Use the `jose` library for JWT handling
+  //   // if you encounter issues with NextAuth's default handling
+  //   encode: async ({ secret, token }) => {
+  //     const encodedToken = await new SignJWT({ ...token })
+  //       .setProtectedHeader({ alg: "HS256" })
+  //       .sign(new TextEncoder().encode(secret));
+  //     return encodedToken;
+  //   },
+  //   decode: async ({ secret, token }) => {
+  //     const { payload } = await jwtVerify(
+  //       token!,
+  //       new TextEncoder().encode(secret)
+  //     );
+  //     return payload;
+  //   },
+  // },
   callbacks: {
     async jwt({ token, user, account }) {
       prettyLog("JWT callback - Token", token);
