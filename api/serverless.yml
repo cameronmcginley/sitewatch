@@ -19,13 +19,13 @@ provider:
             - dynamodb:UpdateItem
             - dynamodb:DeleteItem
           Resource:
-            - arn:aws:dynamodb:${self:provider.region}:${aws:accountId}:table/${ssm:/sitewatch/${self:provider.stage}/dynamodb/tableName}
-            - arn:aws:dynamodb:${self:provider.region}:${aws:accountId}:table/${ssm:/sitewatch/${self:provider.stage}/dynamodb/tableName}/index/userid-sk-index
+            - arn:aws:dynamodb:${self:provider.region}:${aws:accountId}:table/${ssm:/sitewatch/${self:provider.stage}/dynamodb/table_name}
+            - arn:aws:dynamodb:${self:provider.region}:${aws:accountId}:table/${ssm:/sitewatch/${self:provider.stage}/dynamodb/table_name}/index/userid-sk-index
         - Effect: Allow
           Action:
             - ssm:GetParameter
           Resource:
-            - arn:aws:ssm:${self:provider.region}:${aws:accountId}:parameter/sitewatch/${self:provider.stage}/dynamodb/tableName
+            - arn:aws:ssm:${self:provider.region}:${aws:accountId}:parameter/sitewatch/${self:provider.stage}/dynamodb/table_name
 
 custom:
   corsConfig:

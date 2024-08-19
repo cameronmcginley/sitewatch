@@ -41,7 +41,7 @@ export const getParameterValue = async (name) => {
  */
 export const getDynamoTableName = async () => {
   const stage = process.env.STAGE || "dev";
-  const parameterName = `/sitewatch/${stage}/dynamodb/tableName`;
+  const parameterName = `/sitewatch/${stage}/dynamodb/table_name`;
   return await getParameterValue(parameterName);
 };
 

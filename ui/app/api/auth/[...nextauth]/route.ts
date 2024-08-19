@@ -51,6 +51,7 @@ const authOptions: NextAuthOptions = {
             createdAt: new Date().toISOString(),
             userType: "default",
             provider: account?.provider,
+            checkCount: 0,
           };
           prettyLog("Creating new user", dbUser);
           await createUser(dbUser);

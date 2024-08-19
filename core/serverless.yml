@@ -50,15 +50,22 @@ functions:
       EXECUTOR_LAMBDA_NAME: ${self:provider.environment.EXECUTOR_LAMBDA_NAME}
       email_sender: ${ssm:/url-checker/email-sender}
       email_password: ${ssm:/url-checker/email-password}
+    vpc:
+      securityGroupIds:
+        - ${ssm:/sitewatch/security_group_id}
+      subnetIds:
+        - ${ssm:/sitewatch/subnet_id_1}
+        - ${ssm:/sitewatch/subnet_id_2}
 
   executor:
     handler: lambda_executor.lambda_handler
     memorySize: 512
     timeout: 300 # 5 minutes
     environment:
-      OXYLAB_PROXY: ${ssm:/sitewatch/oxylab_proxy}
+      oxylab_proxy: ${ssm:/sitewatch/oxylab_proxy}
       email_sender: ${ssm:/url-checker/email-sender}
       email_password: ${ssm:/url-checker/email-password}
+      proxy_enabled: ${ssm:/sitewatch/${self:provider.stage}/proxy_enabled}
 
 resources:
   Resources:
@@ -78,6 +85,13 @@ resources:
           - AttributeName: sk
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
+
+    TableNameParameter:
+      Type: AWS::SSM::Parameter
+      Properties:
+        Name: /sitewatch/${self:provider.stage}/dynamodb/table_name
+        Type: String
+        Value: ${self:provider.environment.DYNAMODB_TABLE_NAME}
 
 plugins:
   - serverless-python-requirements

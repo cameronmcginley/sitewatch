@@ -14,7 +14,7 @@ USER_AGENTS: List[str] = [
 ]
 
 
-PROXIES: List[str] = [os.environ.get("OXYLAB_PROXY", "")]
+PROXIES: List[str] = [os.environ.get("oxylab_proxy", "")]
 
 # Semaphore for rate limiting
 # Lambda region limit is 1000
@@ -52,6 +52,12 @@ async def fetch_url(
     """
     url = yarl.URL(url, encoded=True)
     timeout = ClientTimeout(total=timeout_total, connect=timeout_connect)
+
+    if useProxy:
+        PROXY_ENABLED = os.environ.get("PROXY_ENABLED", "false").lower() == "true"
+        if not PROXY_ENABLED:
+            logger.info("PROXY_ENABLED is not set to true. Not using proxy.")
+            useProxy = False
 
     for attempt in range(max_retries):
         try:
