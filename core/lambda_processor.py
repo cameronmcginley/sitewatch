@@ -3,6 +3,7 @@ import json
 import asyncio
 import boto3
 import logging
+import redis
 from boto3.dynamodb.conditions import Attr
 from constants import BATCH_SIZE
 from utils import is_task_ready_to_run
@@ -16,16 +17,18 @@ dynamodb = boto3.resource("dynamodb")
 table = dynamodb.Table(os.environ["DYNAMODB_TABLE_NAME"])
 lambda_client = boto3.client("lambda")
 
+# Initialize Redis client
+redis_client = redis.Redis(
+    host=os.environ.get("REDIS_HOST"),
+    port=int(os.environ.get("REDIS_PORT")),
+    password=os.environ.get("REDIS_PASSWORD"),
+    decode_responses=True,
+)
+
 
 def transform_item(item):
     """
     Transform a DynamoDB item into the format expected by the processing Lambda.
-
-    Args:
-        item (dict): The DynamoDB item to transform.
-
-    Returns:
-        dict: The transformed item.
     """
     logger.info(f"Transforming item: {item['pk']}")
     transformed = {
@@ -52,29 +55,91 @@ def transform_item(item):
     return transformed
 
 
+# async def read_from_redis():
+#     """
+#     Asynchronously read the entire Redis cache.
+
+#     Returns:
+#         list: A list of items from the Redis cache.
+#     """
+#     logger.info("Attempting to read from Redis cache")
+#     try:
+#         cache = await asyncio.to_thread(redis_client.hgetall, "cache")
+#         items = list(cache.values())
+#         # Convert attributes field back to a dictionary
+#         items = [json.loads(item) for item in items]
+#         logger.info(f"Successfully read {len(items)} items from Redis cache")
+#         logger.info(f"First item: {items[0]}")
+#         return items
+#     except Exception as e:
+#         logger.error(f"Failed to read from Redis cache: {str(e)}")
+#         raise
+
+
+async def read_from_redis():
+    """
+    Asynchronously read the entire Redis cache.
+
+    Returns:
+        list: A list of items from the Redis cache, where each item is a dictionary of fields.
+    """
+    logger.info("Attempting to read from Redis cache")
+    try:
+        # Assume "cache" is a list of keys, you would iterate over these keys to get full items
+        keys = await asyncio.to_thread(redis_client.keys, "*")
+        items = []
+
+        for key in keys:
+            item = await asyncio.to_thread(redis_client.hgetall, key)
+            # Deserialize any JSON-encoded fields
+            for field, value in item.items():
+                try:
+                    item[field] = json.loads(value)
+                except (json.JSONDecodeError, TypeError):
+                    # If it's not a JSON string, keep the original value
+                    pass
+            items.append(item)
+
+        logger.info(f"Successfully read {len(items)} items from Redis cache")
+        if items:
+            logger.info(f"First item: {items[0]}")
+        return items
+    except Exception as e:
+        logger.error(f"Failed to read from Redis cache: {str(e)}")
+        raise
+
+
 async def scan_table():
     """
-    Asynchronously scan the DynamoDB table for active items.
+    Asynchronously scan the DynamoDB table for active items, falling back to DynamoDB if Redis fails.
 
     Returns:
         list: A list of active items from the DynamoDB table.
     """
-    logger.info("Starting DynamoDB table scan")
-    items = []
-    scan_kwargs = {"FilterExpression": Attr("status").eq("ACTIVE")}
+    try:
+        # If env var is false, dont read from redis
+        if os.environ.get("USE_REDIS", "false").lower() == "false":
+            raise Exception("USE_REDIS is set to false")
+        items = await read_from_redis()
+    except Exception:
+        logger.info("Falling back to DynamoDB scan")
+        items = []
+        scan_kwargs = {"FilterExpression": Attr("status").eq("ACTIVE")}
 
-    while True:
-        response = await asyncio.to_thread(table.scan, **scan_kwargs)
-        items.extend(response["Items"])
-        logger.info(
-            f"Scanned {len(response['Items'])} items, total items: {len(items)}"
-        )
+        while True:
+            response = await asyncio.to_thread(table.scan, **scan_kwargs)
+            items.extend(response["Items"])
+            logger.info(
+                f"Scanned {len(response['Items'])} items, total items: {len(items)}"
+            )
+            logger.info(f"First item: {items[0]}")
 
-        if "LastEvaluatedKey" not in response:
-            break
-        scan_kwargs["ExclusiveStartKey"] = response["LastEvaluatedKey"]
+            if "LastEvaluatedKey" not in response:
+                break
+            scan_kwargs["ExclusiveStartKey"] = response["LastEvaluatedKey"]
 
-    logger.info(f"Completed table scan, found {len(items)} active items")
+        logger.info(f"Completed table scan, found {len(items)} active items")
+
     return items
 
 
@@ -108,9 +173,9 @@ async def main_handler(event, context):
     """
     logger.info("Starting Processor Lambda execution")
 
+    # Get items from Redis cache, if it fails then use DynamoDB
     items = await scan_table()
-    logger.info(f"Retrieved {len(items)} items from DynamoDB")
-    logger.info(f"Items: type: {type(items)}, item #1: {items[0]}")
+    logger.info(f"Retrieved {len(items)} items")
 
     items_to_run = [item for item in items if is_task_ready_to_run(item["cron"])]
     logger.info(

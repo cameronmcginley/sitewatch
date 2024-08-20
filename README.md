@@ -221,3 +221,35 @@ Located in `/core/fetch_url.py`, the `fetch_url` function incorporates:
 - Exponential backoff retry algorithm
   - Currently retries disabled
 - Exception handling for various errors
+
+### Redis
+
+Redis database hosted by [Redis](https://redis.io/).
+
+Currently using the free tier with 30 MB of storage.
+
+#### Local Access
+
+1. Sign-in via [website](https://app.redislabs.com/#/).
+2. Launch `Redis Insight`
+   1. Choose database
+   2. Click `Browse data with Redis Insight` in top right
+
+#### Syncing
+
+DynamoDB to Redis syncing happens:
+
+1. When an update is made to the DynamoDB table
+   1. e.g. an insert, update, or delete
+   2. New and Old item passed to Lambda via DynamoDB stream
+2. Daily syncs at midnight UTC to ensure consistency
+
+Syncs are implemented via Lambdas.
+
+#### Use Case
+
+The Redis DB stores a subset of fields for all active items in the database. These fields are the fields which get directly using by the processor and executor lambdas, meaning we only need to read from Redis instead of DynamoDB.
+
+This is useful because as it stands, the only way to know which items are ready to run is to fetch all items in the database and manually check their crons, since this cannot be done via filtering on the DB read.
+
+With the processor lambda executing every 5 minutes, but most URL checks not happening every 5 minutes, a lot of data is read and immediately discarded. Implementing a cache database avoids the cost burden of DynamoDB and returning large, unnecessary payloads every 5 minutes.
