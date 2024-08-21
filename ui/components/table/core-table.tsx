@@ -22,7 +22,6 @@ import {
   getGenericColumns,
   getTypeSpecificColumns,
 } from "./cell-formatters";
-import { handleShowDetails } from "./utils";
 import { CheckItem } from "@/lib/types";
 import {
   Dialog,
@@ -37,6 +36,7 @@ import { CustomPagination } from "./custom-pagination";
 import DeleteOverlay from "./delete-overlay";
 import { CreateCheckButton } from "./create-check-button";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { SidebarFlyout } from "@/components/SidebarFlyout";
 
 const CoreTable = ({
   data,
@@ -51,6 +51,8 @@ const CoreTable = ({
   const [selectedItems, setSelectedItems] = useState<CheckItem[]>([]);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isSidebarFlyoutOpen, setIsSidebarFlyoutOpen] = useState(false);
+  const [flyoutItem, setFlyoutItem] = useState<CheckItem | null>(null);
   const itemsPerPage = 10;
 
   const checkTypes = ["ALL", ...new Set(data.map((item) => item.check_type))];
@@ -69,6 +71,16 @@ const CoreTable = ({
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+  const handleOpenSidebarFlyout = (item: any) => {
+    setIsSidebarFlyoutOpen(true);
+    setFlyoutItem(item);
+  };
+
+  const handleCloseSidebarFlyout = () => {
+    setIsSidebarFlyoutOpen(false);
+    setFlyoutItem(null);
+  };
 
   const handleSelectItem = (item: CheckItem) => {
     setSelectedItems((prev) =>
@@ -197,7 +209,7 @@ const CoreTable = ({
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleShowDetails(item)}
+                        onClick={() => handleOpenSidebarFlyout(item)}
                       >
                         Details
                       </Button>
@@ -218,6 +230,12 @@ const CoreTable = ({
 
         {isDeleteLoading && <DeleteOverlay />}
       </div>
+
+      <SidebarFlyout
+        isOpen={isSidebarFlyoutOpen}
+        onClose={handleCloseSidebarFlyout}
+        checkData={flyoutItem}
+      />
     </div>
   );
 };

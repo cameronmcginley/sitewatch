@@ -120,7 +120,6 @@ package:
     - "!lambda_test.py"
     - "constants.py"
     - "utils.py"
-    - "url_check_functions/**"
   exclude:
     - package.json
     - package-lock.json

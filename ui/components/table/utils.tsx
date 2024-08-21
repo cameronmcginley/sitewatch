@@ -29,40 +29,6 @@ export const toSentenceCase = (str: string) => {
   return str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : "";
 };
 
-export const handleShowDetails = (item: any) => {
-  let details = `
-    PK: ${item.pk ?? "-"}
-    SK: ${item.sk ?? "-"}
-    User ID: ${item.userid ?? "-"}
-    URL: ${item.url ?? "-"}
-    Check Type: ${item.check_type ?? "-"}
-    Delay (ms): ${item.delayMs ?? "-"}
-    Status: ${item.status ?? "-"}
-    Created At: ${item.createdAt ?? "-"}
-    Updated At: ${item.updatedAt ?? "-"}
-    Last Executed At: ${item.lastExecutedAt ?? "-"}
-    Last Result: ${item.lastResult ? JSON.stringify(item.lastResult) : "-"}
-  `;
-
-  // Add type-specific details
-  switch (item.check_type) {
-    case "KEYWORD CHECK":
-      details += `\nKeyword: ${item.keyword ?? "-"}`;
-      break;
-    case "EBAY PRICE THRESHOLD":
-      details += `
-        Target Price: $${item.targetPrice ?? "-"}
-        Current Price: $${item.currentPrice ?? "-"}
-      `;
-      break;
-    case "PAGE DIFFERENCE":
-      details += `\nDiff Percentage: ${item.diffPercentage ?? "-"}%`;
-      break;
-  }
-
-  alert(details);
-};
-
 export const getNextRunDate = (startHour: string, delayMs: number): Date => {
   const now = new Date();
   let nextRunDate = new Date(now);
