@@ -61,12 +61,6 @@ functions:
       EXECUTOR_LAMBDA_NAME: ${self:provider.environment.EXECUTOR_LAMBDA_NAME}
       email_sender: ${ssm:/url-checker/email-sender}
       email_password: ${ssm:/url-checker/email-password}
-    # vpc:
-    #   securityGroupIds:
-    #     - ${ssm:/sitewatch/security_group_id}
-    #   subnetIds:
-    #     - ${ssm:/sitewatch/subnet_id_1}
-    #     - ${ssm:/sitewatch/subnet_id_2}
 
   executor:
     handler: lambda_executor.lambda_handler
@@ -82,25 +76,19 @@ functions:
     handler: redis/lambda_stream_processor.lambda_handler
     memorySize: 512
     timeout: 60 # 1 minute
-    events:
-      - stream:
-          type: dynamodb
-          arn:
-            Fn::GetAtt:
-              - UrlCheckerTable
-              - StreamArn
-          batchSize: 100
-          startingPosition: LATEST
+    # events:
+    #   - stream:
+    #       type: dynamodb
+    #       arn:
+    #         Fn::GetAtt:
+    #           - UrlCheckerTable
+    #           - StreamArn
+    #       batchSize: 100
+    #       startingPosition: LATEST
     environment:
       REDIS_HOST: ${self:provider.environment.REDIS_HOST}
       REDIS_PORT: ${self:provider.environment.REDIS_PORT}
       REDIS_PASSWORD: ${self:provider.environment.REDIS_PASSWORD}
-    # vpc:
-    #   securityGroupIds:
-    #     - ${ssm:/sitewatch/security_group_id}
-    #   subnetIds:
-    #     - ${ssm:/sitewatch/subnet_id_1}
-    #     - ${ssm:/sitewatch/subnet_id_2}
 
   dailySync:
     handler: redis/lambda_daily_sync.lambda_handler
@@ -114,12 +102,6 @@ functions:
       REDIS_HOST: ${self:provider.environment.REDIS_HOST}
       REDIS_PORT: ${self:provider.environment.REDIS_PORT}
       REDIS_PASSWORD: ${self:provider.environment.REDIS_PASSWORD}
-    # vpc:
-    #   securityGroupIds:
-    #     - ${ssm:/sitewatch/security_group_id}
-    #   subnetIds:
-    #     - ${ssm:/sitewatch/subnet_id_1}
-    #     - ${ssm:/sitewatch/subnet_id_2}
 
 resources:
   Resources:
@@ -139,8 +121,8 @@ resources:
           - AttributeName: sk
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
-        StreamSpecification:
-          StreamViewType: NEW_AND_OLD_IMAGES
+        # StreamSpecification:
+        #   StreamViewType: NEW_AND_OLD_IMAGES
 
     TableNameParameter:
       Type: AWS::SSM::Parameter

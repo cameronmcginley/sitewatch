@@ -11,10 +11,10 @@ export const createItemFormSchema = z
     email: z.string().email().min(1).max(255),
     delayMs: z.number(),
     attributes: z.object({
-      percent_diff: z.number().optional(),
+      percent_diff: z.number().min(0).max(100).optional(),
       keyword: z.string().max(255).optional(),
       opposite: z.boolean().optional(),
-      threshold: z.number().optional(),
+      threshold: z.number().min(0).max(1000000000).optional(),
     }),
     offset: z.number().optional(),
     dayOfWeek: z.string().optional(),
@@ -30,6 +30,9 @@ export const createItemFormSchema = z
         ctx.addIssue({
           path: ["offset"],
           message: "Offset is required.",
+          code: "invalid_literal",
+          expected: undefined,
+          received: undefined,
         });
       }
     }
@@ -39,6 +42,9 @@ export const createItemFormSchema = z
         ctx.addIssue({
           path: ["attributes", "keyword"],
           message: "Keyword is required.",
+          code: "invalid_literal",
+          expected: undefined,
+          received: undefined,
         });
       }
     }
@@ -48,6 +54,9 @@ export const createItemFormSchema = z
         ctx.addIssue({
           path: ["attributes", "percent_diff"],
           message: "Percent_diff is required.",
+          code: "invalid_literal",
+          expected: undefined,
+          received: undefined,
         });
       }
     }
@@ -57,6 +66,9 @@ export const createItemFormSchema = z
         ctx.addIssue({
           path: ["attributes", "threshold"],
           message: "Threshold is required.",
+          code: "invalid_literal",
+          expected: undefined,
+          received: undefined,
         });
       }
     }

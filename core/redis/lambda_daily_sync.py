@@ -25,6 +25,7 @@ def lambda_handler(event, context):
     Lambda function to sync DynamoDB data to Redis cache daily.
     """
     logger.info("Starting daily sync from DynamoDB to Redis")
+    logger.info("Received event: " + json.dumps(event, indent=2))
 
     scan_kwargs = {"FilterExpression": Attr("status").eq("ACTIVE")}
     items = []
