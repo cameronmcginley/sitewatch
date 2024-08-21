@@ -6,13 +6,9 @@ provider:
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'us-east-2'}
   environment:
-    DYNAMODB_TABLE_NAME: ${self:service}-${self:provider.stage}-main-table
+    DYNAMODB_TABLE_NAME: ${ssm:/sitewatch/${self:provider.stage}/dynamodb/table_name}
     PROCESSOR_LAMBDA_NAME: ${self:service}-${self:provider.stage}-processor
     EXECUTOR_LAMBDA_NAME: ${self:service}-${self:provider.stage}-executor
-    REDIS_HOST: ${ssm:/sitewatch/${self:provider.stage}/redis/host}
-    REDIS_PORT: ${ssm:/sitewatch/${self:provider.stage}/redis/port}
-    REDIS_PASSWORD: ${ssm:/sitewatch/${self:provider.stage}/redis/password}
-    USE_REDIS: ${ssm:/sitewatch/${self:provider.stage}/use_redis}
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -23,13 +19,6 @@ provider:
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
       Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE_NAME}"
-    - Effect: Allow
-      Action:
-        - dynamodb:DescribeStream
-        - dynamodb:GetRecords
-        - dynamodb:GetShardIterator
-        - dynamodb:ListStreams
-      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE_NAME}/stream/*"
     - Effect: Allow
       Action:
         - lambda:InvokeFunction
@@ -71,65 +60,6 @@ functions:
       email_sender: ${ssm:/url-checker/email-sender}
       email_password: ${ssm:/url-checker/email-password}
       proxy_enabled: ${ssm:/sitewatch/${self:provider.stage}/proxy_enabled}
-
-  streamProcessor:
-    handler: redis/lambda_stream_processor.lambda_handler
-    memorySize: 512
-    timeout: 60 # 1 minute
-    # events:
-    #   - stream:
-    #       type: dynamodb
-    #       arn:
-    #         Fn::GetAtt:
-    #           - UrlCheckerTable
-    #           - StreamArn
-    #       batchSize: 100
-    #       startingPosition: LATEST
-    environment:
-      REDIS_HOST: ${self:provider.environment.REDIS_HOST}
-      REDIS_PORT: ${self:provider.environment.REDIS_PORT}
-      REDIS_PASSWORD: ${self:provider.environment.REDIS_PASSWORD}
-
-  dailySync:
-    handler: redis/lambda_daily_sync.lambda_handler
-    memorySize: 512
-    timeout: 300 # 5 minutes
-    events:
-      - schedule:
-          rate: cron(0 0 * * ? *) # Runs daily at midnight UTC
-    environment:
-      DYNAMODB_TABLE_NAME: ${self:provider.environment.DYNAMODB_TABLE_NAME}
-      REDIS_HOST: ${self:provider.environment.REDIS_HOST}
-      REDIS_PORT: ${self:provider.environment.REDIS_PORT}
-      REDIS_PASSWORD: ${self:provider.environment.REDIS_PASSWORD}
-
-resources:
-  Resources:
-    UrlCheckerTable:
-      Type: AWS::DynamoDB::Table
-      DeletionPolicy: Retain
-      Properties:
-        TableName: ${self:provider.environment.DYNAMODB_TABLE_NAME}
-        AttributeDefinitions:
-          - AttributeName: pk
-            AttributeType: S
-          - AttributeName: sk
-            AttributeType: S
-        KeySchema:
-          - AttributeName: pk
-            KeyType: HASH
-          - AttributeName: sk
-            KeyType: RANGE
-        BillingMode: PAY_PER_REQUEST
-        # StreamSpecification:
-        #   StreamViewType: NEW_AND_OLD_IMAGES
-
-    TableNameParameter:
-      Type: AWS::SSM::Parameter
-      Properties:
-        Name: /sitewatch/${self:provider.stage}/dynamodb/table_name
-        Type: String
-        Value: ${self:provider.environment.DYNAMODB_TABLE_NAME}
 
 plugins:
   - serverless-python-requirements

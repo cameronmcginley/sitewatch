@@ -2,7 +2,7 @@ import os
 import json
 import redis
 import logging
-from redis_utils import write_all_items_to_redis
+from utils import write_all_items_to_redis
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)

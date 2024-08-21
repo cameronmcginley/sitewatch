@@ -36,10 +36,6 @@ if (stage === "prod") {
 }
 
 function deploy(stage, region) {
-  // console.log(chalk.green("Installing dependencies..."));
-  // console.log(chalk.green("Executing command: ", "npm i"), "\n");
-  // spawn("npm", ["i"], { cwd: "api", stdio: "inherit", shell: true });
-
   const command = "npx";
   const args = [
     "serverless",
@@ -50,9 +46,9 @@ function deploy(stage, region) {
     region,
     "--verbose",
   ];
-  const options = { cwd: "api", stdio: "inherit", shell: true }; // Set the working directory to 'api'
+  const options = { cwd: "db", stdio: "inherit", shell: true };
 
-  console.log(chalk.green("Deploying API..."));
+  console.log(chalk.green("Deploying db..."));
   console.log(chalk.green("Deployment stage: ", stage));
   console.log(
     chalk.green("Executing command: ", command, args.join(" ")),

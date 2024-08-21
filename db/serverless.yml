@@ -1,0 +1,128 @@
+service: sitewatch-db
+
+provider:
+  name: aws
+  runtime: python3.9
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-2'}
+  environment:
+    DYNAMODB_TABLE_NAME: ${self:service}-${self:provider.stage}-main-table
+    REDIS_HOST: ${ssm:/sitewatch/${self:provider.stage}/redis/host}
+    REDIS_PORT: ${ssm:/sitewatch/${self:provider.stage}/redis/port}
+    REDIS_PASSWORD: ${ssm:/sitewatch/${self:provider.stage}/redis/password}
+    USE_REDIS: ${ssm:/sitewatch/${self:provider.stage}/use_redis}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Scan
+        - dynamodb:Query
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE_NAME}"
+    - Effect: Allow
+      Action:
+        - dynamodb:DescribeStream
+        - dynamodb:GetRecords
+        - dynamodb:GetShardIterator
+        - dynamodb:ListStreams
+      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE_NAME}/stream/*"
+    - Effect: Allow
+      Action:
+        - ssm:GetParameter
+      Resource:
+        - "arn:aws:ssm:${self:provider.region}:*:parameter/url-checker/*"
+        - "arn:aws:ssm:${self:provider.region}:*:parameter/sitewatch/*"
+    - Effect: Allow
+      Action:
+        - logs:CreateLogGroup
+        - logs:CreateLogStream
+        - logs:PutLogEvents
+      Resource:
+        - "arn:aws:logs:${self:provider.region}:*:log-group:/aws/lambda/*:*"
+
+functions:
+  streamProcessor:
+    handler: lambda_stream_processor.lambda_handler
+    memorySize: 512
+    timeout: 60 # 1 minute
+    # events:
+    #   - stream:
+    #       type: dynamodb
+    #       arn:
+    #         Fn::GetAtt:
+    #           - UrlCheckerTable
+    #           - StreamArn
+    #       batchSize: 100
+    #       startingPosition: LATEST
+    environment:
+      REDIS_HOST: ${self:provider.environment.REDIS_HOST}
+      REDIS_PORT: ${self:provider.environment.REDIS_PORT}
+      REDIS_PASSWORD: ${self:provider.environment.REDIS_PASSWORD}
+
+  redisSync:
+    handler: lambda_redis_sync.lambda_handler
+    memorySize: 512
+    timeout: 300 # 5 minutes
+    events:
+      - schedule:
+          rate: cron(0 0 * * ? *) # Runs daily at midnight UTC
+    environment:
+      DYNAMODB_TABLE_NAME: ${self:provider.environment.DYNAMODB_TABLE_NAME}
+      REDIS_HOST: ${self:provider.environment.REDIS_HOST}
+      REDIS_PORT: ${self:provider.environment.REDIS_PORT}
+      REDIS_PASSWORD: ${self:provider.environment.REDIS_PASSWORD}
+
+resources:
+  Resources:
+    UrlCheckerTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_TABLE_NAME}
+        AttributeDefinitions:
+          - AttributeName: pk
+            AttributeType: S
+          - AttributeName: sk
+            AttributeType: S
+        KeySchema:
+          - AttributeName: pk
+            KeyType: HASH
+          - AttributeName: sk
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+        # StreamSpecification:
+        #   StreamViewType: NEW_AND_OLD_IMAGES
+
+    TableNameParameter:
+      Type: AWS::SSM::Parameter
+      Properties:
+        Name: /sitewatch/${self:provider.stage}/dynamodb/table_name
+        Type: String
+        Value: ${self:provider.environment.DYNAMODB_TABLE_NAME}
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: true
+    slim: true
+    strip: false
+    runtime: python3.9
+
+package:
+  individually: true
+  patterns:
+    - "!node_modules/**"
+    - "!venv/**"
+    - "!lambda_test.py"
+    - "constants.py"
+    - "utils.py"
+    - "url_check_functions/**"
+  exclude:
+    - package.json
+    - package-lock.json
+    - .gitignore
+    - README.md

@@ -4,7 +4,7 @@ import redis
 import logging
 import boto3
 from boto3.dynamodb.conditions import Attr
-from redis_utils import write_all_items_to_redis
+from utils import write_all_items_to_redis
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
