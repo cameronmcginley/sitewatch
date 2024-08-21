@@ -2,7 +2,7 @@ import os
 import json
 import redis
 import logging
-from redis_utils import write_all_items_to_redis, extract_dynamodb_value
+from redis_utils import write_all_items_to_redis
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -24,6 +24,11 @@ def lambda_handler(event, context):
 
     for record in event["Records"]:
         event_name = record["eventName"]
+
+        if record["dynamodb"]["Keys"]["sk"]["S"] != "CHECK":
+            logger.info("SK is not CHECK, skipping record")
+            continue
+
         if event_name == "INSERT" or event_name == "MODIFY":
             new_image = record["dynamodb"]["NewImage"]
 

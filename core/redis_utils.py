@@ -50,35 +50,42 @@ def extract_dynamodb_value(attribute):
         return attribute
 
 
-def write_to_redis(redis_client, key, field, value):
+def write_to_redis_pipeline(pipe, key, field_value_map):
     """
-    Writes a key-value pair to Redis.
+    Adds multiple field-value pairs to the Redis pipeline for batch writing.
     """
-    existing_type = redis_client.type(key)
-    if existing_type != "none" and existing_type != "hash":
-        redis_client.delete(key)
+    existing_type = pipe.type(key)
+    if existing_type != b"none" and existing_type != b"hash":
+        pipe.delete(key)
 
-    value = prepare_value_for_redis(value)
-    redis_client.hset(key, field, value)
+    # Using hmset to write multiple fields at once
+    pipe.hmset(key, field_value_map)
 
 
 def write_all_items_to_redis(redis_client, items, logger):
     """
-    Writes all items to Redis.
+    Writes all items to Redis using pipeline for batch writing.
     """
     logger.info(f"Writing {len(items)} items to Redis")
 
-    for item in items:
-        logger.debug(f"Processing item: {item}")
-        pk = extract_dynamodb_value(item["pk"])
-        sk = extract_dynamodb_value(item["sk"])
-        key = f"{pk}:{sk}"
+    with redis_client.pipeline() as pipe:
+        for item in items:
+            logger.debug(f"Processing item: {item}")
+            pk = extract_dynamodb_value(item["pk"])
+            sk = extract_dynamodb_value(item["sk"])
+            key = f"{pk}:{sk}"
 
-        for field in REDIS_ITEM_FIELDS:
-            value = item.get(field)
-            if value is not None:
-                value = extract_dynamodb_value(value)
-                write_to_redis(redis_client, key, field, value)
-                logger.info(f"Updated Redis key {key} with {field}: {value}")
+            field_value_map = {}
+            for field in REDIS_ITEM_FIELDS:
+                value = item.get(field)
+                if value is not None:
+                    value = extract_dynamodb_value(value)
+                    field_value_map[field] = prepare_value_for_redis(value)
+                    # logger.info(f"Queued Redis key {key} with {field}: {value}")
 
-        logger.info(f"Updated Redis key {key} with fields: {REDIS_ITEM_FIELDS}")
+            if field_value_map:
+                write_to_redis_pipeline(pipe, key, field_value_map)
+
+        # Execute the pipeline to write all the commands in batch
+        pipe.execute()
+        logger.info(f"Updated Redis keys with fields: {REDIS_ITEM_FIELDS}")

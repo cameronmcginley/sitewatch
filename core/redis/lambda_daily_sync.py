@@ -27,7 +27,9 @@ def lambda_handler(event, context):
     logger.info("Starting daily sync from DynamoDB to Redis")
     logger.info("Received event: " + json.dumps(event, indent=2))
 
-    scan_kwargs = {"FilterExpression": Attr("status").eq("ACTIVE")}
+    scan_kwargs = {
+        "FilterExpression": Attr("status").eq("ACTIVE") & Attr("sk").eq("CHECK")
+    }
     items = []
     response = table.scan(**scan_kwargs)
 
@@ -41,7 +43,20 @@ def lambda_handler(event, context):
 
     logger.info(f"Found {len(items)} items in DynamoDB")
 
+    redis_keys = set(redis_client.keys("*"))
+
+    for item in items:
+        redis_key = f"{item['pk']}:{item['sk']}"
+        # Remove key from redis_keys to avoid deletion later
+        redis_keys.discard(redis_key)
+
     write_all_items_to_redis(redis_client, items, logger)
+
+    # Delete items in Redis that are no longer in DynamoDB
+    logger.info(f"Deleting {len(redis_keys)} items from Redis")
+    logger.debug(f"Keys to delete: {redis_keys}")
+    for redis_key in redis_keys:
+        redis_client.delete(redis_key)
 
     logger.info("Completed daily sync from DynamoDB to Redis")
 
