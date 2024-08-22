@@ -25,6 +25,7 @@ import { cn } from "@/lib/utils";
 import { BADGE_COLOR_CLASS } from "@/lib/constants";
 import { time } from "console";
 import { CheckItem, CheckType } from "@/lib/types";
+import { StatusBadge } from "../status-badge";
 
 export const formatCells = (item: CheckItem, columns) =>
   columns.map((column) => column.formatter(item));
@@ -154,21 +155,9 @@ const formatCheckTypeCell = (item: CheckItem) => (
 const formatStatusCell = (item: CheckItem) => {
   const status = item.status;
 
-  const statusToBadgeColor: Record<string, string> = {
-    ACTIVE: "GREEN",
-    PAUSED: "YELLOW",
-  };
-
   return (
     <TableCell className={columnWidths.status}>
-      <Badge
-        className={cn(
-          BADGE_COLOR_CLASS[statusToBadgeColor[status]],
-          "truncate"
-        )}
-      >
-        {toSentenceCase(item.status) ?? emptyDash}
-      </Badge>
+      <StatusBadge status={status} />
     </TableCell>
   );
 };

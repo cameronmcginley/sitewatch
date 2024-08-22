@@ -21,6 +21,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { StatusBadge } from "./status-badge";
+import { CHECK_STATUS_VALUES } from "@/lib/types";
+import { convertMsToTime, cronToPlainText } from "./table/utils";
 
 interface SidebarFlyoutProps {
   isOpen: boolean;
@@ -122,18 +125,15 @@ export const SidebarFlyout = ({
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="ACTIVE">ACTIVE</SelectItem>
-                    <SelectItem value="INACTIVE">INACTIVE</SelectItem>
+                    {CHECK_STATUS_VALUES.map((status) => (
+                      <SelectItem key={status} value={status}>
+                        {status}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               ) : (
-                <Badge
-                  variant={
-                    checkData.status === "ACTIVE" ? "success" : "destructive"
-                  }
-                >
-                  {checkData.status}
-                </Badge>
+                <StatusBadge status={checkData.status} />
               )}
             </div>
             <div>
@@ -167,7 +167,17 @@ export const SidebarFlyout = ({
               <h3 className="text-sm font-medium text-muted-foreground">
                 Schedule
               </h3>
-              <p>{checkData.cron}</p>
+              <p className="pb-1">
+                Interval: {convertMsToTime(checkData.delayMs)}
+              </p>
+              <p>
+                Runs{" "}
+                {checkData.delayMs > 60 * 60 * 1000 &&
+                  checkData.delayMs < 7 * 24 * 60 * 60 * 1000 &&
+                  "Daily in UTC"}{" "}
+                {cronToPlainText(checkData.cron)}
+              </p>
+              <p className="text-gray-400 text-sm">Cron: {checkData.cron}</p>
             </div>
             <div>
               <h3 className="text-sm font-medium text-muted-foreground">

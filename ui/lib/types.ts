@@ -3,6 +3,10 @@ export type CheckType =
   | "EBAY PRICE THRESHOLD"
   | "PAGE DIFFERENCE";
 
+export type CheckStatus = "ACTIVE" | "PAUSED";
+export const CHECK_STATUS_VALUES: CheckStatus[] = ["ACTIVE", "PAUSED"];
+export type LastResultStatus = "ALERTED" | "NO ALERT" | "FAILED";
+
 export interface CheckItem {
   alias: string;
   check_type: CheckType;
@@ -14,11 +18,11 @@ export interface CheckItem {
   createdAt: string;
   updatedAt: string;
   lastResult: {
-    status: "ALERTED" | "NO ALERT" | "FAILED";
+    status: LastResultStatus;
     message: string;
     timestamp: string;
   };
-  status: "ACTIVE" | "PAUSED";
+  status: CheckStatus;
   delayMs: number;
   email: string;
   mostRecentAlert?: string;
@@ -41,6 +45,3 @@ export interface CheckItemAttributes {
 
 // export type AttributesForCheckType<T extends CheckType> =
 //   CheckItemAttributes[T];
-
-export type CheckStatus = "ACTIVE" | "PAUSED";
-export type LastResultStatus = "ALERTED" | "NO ALERT" | "FAILED";
