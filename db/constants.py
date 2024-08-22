@@ -8,4 +8,5 @@ REDIS_ITEM_FIELDS = [
     "cron",
     "useProxy",
     "attributes",
+    "runNowOverride",
 ]

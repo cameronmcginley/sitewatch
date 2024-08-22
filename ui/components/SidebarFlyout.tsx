@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -23,6 +23,10 @@ import { Input } from "@/components/ui/input";
 import { StatusBadge } from "./status-badge";
 import { CHECK_STATUS_VALUES } from "@/lib/types";
 import { convertMsToTime, cronToPlainText } from "./table/utils";
+import { updateItem } from "@/lib/api/items";
+import { RunCheckButton } from "./run-check-button";
+import { useSession } from "next-auth/react";
+import { set } from "date-fns";
 
 interface SidebarFlyoutProps {
   isOpen: boolean;
@@ -37,6 +41,15 @@ export const SidebarFlyout = ({
 }: SidebarFlyoutProps) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [editedData, setEditedData] = useState(checkData);
+  const [isUserAllowedToRunNow, setIsUserAllowedToRunNow] = useState(false);
+  // session
+  const { data: session, status } = useSession();
+
+  useEffect(() => {
+    if (status === "authenticated" && session?.user?.id) {
+      setIsUserAllowedToRunNow(session?.user?.userType !== "default");
+    }
+  }, [status, session]);
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleString();
@@ -78,6 +91,10 @@ export const SidebarFlyout = ({
 
   const handleInputChange = (field, value) => {
     setEditedData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleRunNow = (pk, sk, userid) => {
+    updateItem({ pk, sk, userid }, { runNowOverride: true });
   };
 
   if (!isOpen) return null;
@@ -237,9 +254,11 @@ export const SidebarFlyout = ({
             <SaveIcon className="mr-2 h-4 w-4" /> Save Changes
           </Button>
         ) : (
-          <Button className="w-full" variant="default">
-            <PlayIcon className="mr-2 h-4 w-4" /> Run Check Now
-          </Button>
+          <RunCheckButton
+            checkData={checkData}
+            handleRunNow={handleRunNow}
+            isUserAllowed={isUserAllowedToRunNow}
+          />
         )}
         <div className="flex space-x-2">
           {isEditMode ? (

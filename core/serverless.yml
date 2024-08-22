@@ -9,6 +9,10 @@ provider:
     DYNAMODB_TABLE_NAME: ${ssm:/sitewatch/${self:provider.stage}/dynamodb/table_name}
     PROCESSOR_LAMBDA_NAME: ${self:service}-${self:provider.stage}-processor
     EXECUTOR_LAMBDA_NAME: ${self:service}-${self:provider.stage}-executor
+    REDIS_HOST: ${ssm:/sitewatch/${self:provider.stage}/redis/host}
+    REDIS_PORT: ${ssm:/sitewatch/${self:provider.stage}/redis/port}
+    REDIS_PASSWORD: ${ssm:/sitewatch/${self:provider.stage}/redis/password}
+    USE_REDIS: ${ssm:/sitewatch/${self:provider.stage}/use_redis}
   iamRoleStatements:
     - Effect: Allow
       Action:

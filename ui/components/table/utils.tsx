@@ -343,3 +343,14 @@ export const convertMsToTime = (ms: number): string => {
     return `${ms} millisecond${ms > 1 ? "s" : ""}`;
   }
 };
+
+export const getTimeUntilNext5Minutes = () => {
+  const now = new Date();
+  const minutes = now.getMinutes();
+  const seconds = now.getSeconds();
+
+  const minutesToNextInterval = 4 - (minutes % 5);
+  const secondsToNextInterval = 60 - seconds;
+
+  return { minutesToNextInterval, secondsToNextInterval };
+};

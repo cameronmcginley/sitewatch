@@ -40,6 +40,7 @@ def transform_item(item):
         "sk": item.get("sk"),
         "cron": item.get("cron"),
         "useProxy": item.get("useProxy", False),
+        "runNowOverride": item.get("runNowOverride", False),
     }
 
     if item["check_type"] == "EBAY PRICE THRESHOLD":
@@ -53,27 +54,6 @@ def transform_item(item):
         logger.debug(f"Added keyword '{transformed['keyword']}' for KEYWORD CHECK item")
 
     return transformed
-
-
-# async def read_from_redis():
-#     """
-#     Asynchronously read the entire Redis cache.
-
-#     Returns:
-#         list: A list of items from the Redis cache.
-#     """
-#     logger.info("Attempting to read from Redis cache")
-#     try:
-#         cache = await asyncio.to_thread(redis_client.hgetall, "cache")
-#         items = list(cache.values())
-#         # Convert attributes field back to a dictionary
-#         items = [json.loads(item) for item in items]
-#         logger.info(f"Successfully read {len(items)} items from Redis cache")
-#         logger.info(f"First item: {items[0]}")
-#         return items
-#     except Exception as e:
-#         logger.error(f"Failed to read from Redis cache: {str(e)}")
-#         raise
 
 
 async def read_from_redis():
@@ -181,6 +161,11 @@ async def main_handler(event, context):
     logger.info(
         f"{len(items_to_run)} items are ready to run based on their cron schedule"
     )
+    items_to_run_override = [
+        item for item in items if item.get("runNowOverride", False)
+    ]
+    logger.info(f"{len(items_to_run_override)} items are set to run with override")
+    items_to_run.extend(items_to_run_override)
 
     transformed_items = [transform_item(item) for item in items_to_run]
     logger.info(f"Transformed {len(transformed_items)} items for processing")

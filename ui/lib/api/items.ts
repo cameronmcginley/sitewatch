@@ -28,3 +28,10 @@ export async function deleteItem(
   await apiClient.delete("", { data: { pk, sk } });
   await updateUserCheckCount(userid, -1);
 }
+
+export async function updateItem(
+  item: Pick<Item, "pk" | "sk" | "userid">,
+  fields: Partial<Omit<Item, "pk" | "sk" | "userid">>
+): Promise<void> {
+  await apiClient.put("", { ...item, ...fields });
+}

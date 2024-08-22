@@ -34,19 +34,17 @@ async def update_dynamodb_item(pk, sk, last_result):
         last_result (dict): The last result to be stored in DynamoDB.
     """
     try:
-        update_time = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
         response = await asyncio.to_thread(
             table.update_item,
             Key={"pk": pk, "sk": sk},
-            UpdateExpression="SET lastResult = :lr, updatedAt = :ua",
+            UpdateExpression="SET lastResult = :lr, runNowOverride = :rno",
             ExpressionAttributeValues={
                 ":lr": last_result,
-                ":ua": update_time,
+                ":rno": False,
             },
         )
         logger.info(f"Updated DynamoDB item: PK={pk}, SK={sk}")
         logger.debug(f"Last Result: {last_result}")
-        logger.debug(f"Updated At: {update_time}")
     except ClientError as e:
         logger.error(f"Error updating item {pk} in DynamoDB: {e}")
 
