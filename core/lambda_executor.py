@@ -79,21 +79,23 @@ async def process_link(session, link):
 
             result = await CHECKTYPE_TO_FUNCTION_MAP[link["type"]](link, content_str)
 
+            link.update(result)
+
             last_result = {
-                "status": "ALERTED" if result["send_alert"] else "NO ALERT",
-                "message": result["message"],
+                "status": "ALERTED" if link["send_alert"] else "NO ALERT",
+                "message": link["message"],
                 "timestamp": datetime.now(timezone.utc).strftime(
                     "%Y-%m-%dT%H:%M:%S.%fZ"
                 ),
             }
 
             # Attach unique fields for different check types
-            if "found_price" in result:
-                last_result["found_price"] = {"N": str(result["found_price"])}
+            if "found_price" in link:
+                last_result["found_price"] = {"N": str(link["found_price"])}
 
             await update_dynamodb_item(link["pk"], link["sk"], last_result)
             logger.info(
-                f"Processed {link['url']}: {'ALERTED' if result['send_alert'] else 'NO ALERT'}"
+                f"Processed {link['url']}: {'ALERTED' if link['send_alert'] else 'NO ALERT'}"
             )
         else:
             raise Exception(f"Unknown check type: {link['type']}")
