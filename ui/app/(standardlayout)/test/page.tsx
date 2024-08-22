@@ -74,7 +74,7 @@ function Home() {
     }
   };
 
-  const handleDelete = async (items: CheckItem[]) => {
+  const deleteCheckItems = async (items: CheckItem[]) => {
     console.log("Deleting items:", items);
     try {
       await Promise.all(items.map((item) => deleteItem(item)));
@@ -94,7 +94,7 @@ function Home() {
         <div>
           <CoreTable
             data={data}
-            handleDelete={handleDelete}
+            handleDelete={deleteCheckItems}
             isLoading={isDataLoading}
             handleCreateItemSubmit={handleCreateItemSubmit}
             isCreateItemLoading={isCreateItemLoading}

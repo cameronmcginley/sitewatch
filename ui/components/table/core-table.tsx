@@ -88,10 +88,10 @@ const CoreTable = ({
     );
   };
 
-  const handleDeleteItems = async () => {
+  const deleteCheckItems = async (item?: CheckItem) => {
     try {
       setIsDeleteLoading(true);
-      await handleDelete(selectedItems);
+      await handleDelete(item ?? selectedItems);
     } finally {
       setIsDeleteLoading(false);
       setSelectedItems([]);
@@ -154,9 +154,7 @@ const CoreTable = ({
         </div>
       </div>
 
-      <div
-        className={`relative ${isDeleteLoading ? "opacity-50" : "opacity-100"}`}
-      >
+      <div className={`relative`}>
         <Table>
           <TableHeader>
             <TableRow>
@@ -235,6 +233,7 @@ const CoreTable = ({
         isOpen={isSidebarFlyoutOpen}
         onClose={handleCloseSidebarFlyout}
         checkData={flyoutItem}
+        handleDelete={deleteCheckItems}
       />
     </div>
   );
