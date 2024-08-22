@@ -1,35 +1,86 @@
-import React from "react";
-import { MutatingDots } from "react-loader-spinner";
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 
 const DeleteOverlay = () => {
-  // Define the gradient background directly in CSS
-  const gradientBackground = `radial-gradient(circle, 
-    rgba(0,0,0,1) 0%, 
-    rgba(0,0,0,1) 50%, 
-    rgba(0,0,0,0) 100%
-    )`;
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setProgress((oldProgress) => {
+        if (oldProgress === 100) {
+          return 0;
+        }
+        const diff = Math.random() * 10;
+        return Math.min(oldProgress + diff, 100);
+      });
+    }, 500);
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, []);
 
   return (
-    <div className="absolute inset-0 flex flex-col justify-center items-center bg-black bg-opacity-50">
-      <div className="flex flex-col justify-center items-center">
-        <div
-          className="absolute w-64 h-64 rounded-full"
-          style={{
-            background: gradientBackground,
-          }}
-        ></div>
-        <p className="text-2xl font-semibold text-white z-10">Deleting...</p>
-        <MutatingDots
-          height="100"
-          width="100"
-          color="#000"
-          secondaryColor="#000"
-          radius="12.5"
-          ariaLabel="mutating-dots-loading"
-          wrapperStyle={{ zIndex: "10" }}
-          wrapperClass=""
-        />
-      </div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.3 }}
+        className="relative z-100 bg-white text-black border border-gray-200 rounded-lg shadow-lg p-6 max-w-sm w-full mx-4"
+      >
+        <h2 className="text-2xl font-bold text-foreground mb-4">Deleting...</h2>
+        <p className="text-muted-foreground mb-6">
+          Please wait while we remove the selected item.
+        </p>
+        <div className="relative pt-1">
+          <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-secondary">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.5 }}
+              className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-primary"
+            />
+          </div>
+        </div>
+        <div className="flex justify-center">
+          <motion.div
+            animate={{
+              scale: [1, 1.2, 1],
+            }}
+            transition={{
+              duration: 1.5,
+              repeat: Infinity,
+              repeatType: "reverse",
+            }}
+            className="w-3 h-3 bg-primary rounded-full mx-1"
+          />
+          <motion.div
+            animate={{
+              scale: [1, 1.2, 1],
+            }}
+            transition={{
+              duration: 1.5,
+              repeat: Infinity,
+              repeatType: "reverse",
+              delay: 0.2,
+            }}
+            className="w-3 h-3 bg-primary rounded-full mx-1"
+          />
+          <motion.div
+            animate={{
+              scale: [1, 1.2, 1],
+            }}
+            transition={{
+              duration: 1.5,
+              repeat: Infinity,
+              repeatType: "reverse",
+              delay: 0.4,
+            }}
+            className="w-3 h-3 bg-primary rounded-full mx-1"
+          />
+        </div>
+      </motion.div>
     </div>
   );
 };
