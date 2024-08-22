@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -10,7 +11,16 @@ import {
   PlayIcon,
   CheckIcon,
   XCircleIcon,
+  SaveIcon,
 } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 
 interface SidebarFlyoutProps {
   isOpen: boolean;
@@ -23,6 +33,9 @@ export const SidebarFlyout = ({
   onClose,
   checkData,
 }: SidebarFlyoutProps) => {
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editedData, setEditedData] = useState(checkData);
+
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleString();
   };
@@ -46,13 +59,30 @@ export const SidebarFlyout = ({
     }
   };
 
+  const handleEdit = () => {
+    setIsEditMode(true);
+    setEditedData({ ...checkData });
+  };
+
+  const handleSave = () => {
+    // Implement save logic here
+    setIsEditMode(false);
+    // Update checkData with editedData
+  };
+
+  const handleInputChange = (field, value) => {
+    setEditedData((prev) => ({ ...prev, [field]: value }));
+  };
+
   if (!isOpen) return null;
 
   return (
     <div className="z-50 fixed inset-y-0 right-0 w-96 bg-background border-l border-border shadow-lg transition-transform transform translate-x-0 overflow-hidden">
       <div className="h-full flex flex-col">
         <div className="flex justify-between items-center p-4 border-b border-border">
-          <h2 className="text-xl font-semibold">Check Details</h2>
+          <h2 className="text-xl font-semibold">
+            {isEditMode ? "Edit Check" : "Check Details"}
+          </h2>
           <Button variant="ghost" size="icon" onClick={onClose}>
             <XIcon className="h-4 w-4" />
           </Button>
@@ -63,7 +93,15 @@ export const SidebarFlyout = ({
               <h3 className="text-sm font-medium text-muted-foreground">
                 Alias
               </h3>
-              <p className="text-lg font-semibold">{checkData.alias}</p>
+              {isEditMode ? (
+                <Input
+                  value={editedData.alias}
+                  onChange={(e) => handleInputChange("alias", e.target.value)}
+                  className="mt-1"
+                />
+              ) : (
+                <p className="text-lg font-semibold">{checkData.alias}</p>
+              )}
             </div>
             <div>
               <h3 className="text-sm font-medium text-muted-foreground">
@@ -75,17 +113,40 @@ export const SidebarFlyout = ({
               <h3 className="text-sm font-medium text-muted-foreground">
                 Status
               </h3>
-              <Badge
-                variant={
-                  checkData.status === "ACTIVE" ? "success" : "destructive"
-                }
-              >
-                {checkData.status}
-              </Badge>
+              {isEditMode ? (
+                <Select
+                  value={editedData.status}
+                  onValueChange={(value) => handleInputChange("status", value)}
+                >
+                  <SelectTrigger className="w-full mt-1">
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ACTIVE">ACTIVE</SelectItem>
+                    <SelectItem value="INACTIVE">INACTIVE</SelectItem>
+                  </SelectContent>
+                </Select>
+              ) : (
+                <Badge
+                  variant={
+                    checkData.status === "ACTIVE" ? "success" : "destructive"
+                  }
+                >
+                  {checkData.status}
+                </Badge>
+              )}
             </div>
             <div>
               <h3 className="text-sm font-medium text-muted-foreground">URL</h3>
-              <p className="text-sm break-all">{checkData.url}</p>
+              {isEditMode ? (
+                <Input
+                  value={editedData.url}
+                  onChange={(e) => handleInputChange("url", e.target.value)}
+                  className="mt-1"
+                />
+              ) : (
+                <p className="text-sm break-all">{checkData.url}</p>
+              )}
             </div>
             <div>
               <h3 className="text-sm font-medium text-muted-foreground">
@@ -112,7 +173,15 @@ export const SidebarFlyout = ({
               <h3 className="text-sm font-medium text-muted-foreground">
                 Email
               </h3>
-              <p>{checkData.email}</p>
+              {isEditMode ? (
+                <Input
+                  value={editedData.email}
+                  onChange={(e) => handleInputChange("email", e.target.value)}
+                  className="mt-1"
+                />
+              ) : (
+                <p>{checkData.email}</p>
+              )}
             </div>
             <div>
               <h3 className="text-sm font-medium text-muted-foreground">
@@ -135,13 +204,29 @@ export const SidebarFlyout = ({
           </div>
         </ScrollArea>
         <div className="p-4 border-t border-border space-y-2">
-          <Button className="w-full" variant="default">
-            <PlayIcon className="mr-2 h-4 w-4" /> Run Check Now
-          </Button>
-          <div className="flex space-x-2">
-            <Button className="flex-1" variant="outline">
-              <EditIcon className="mr-2 h-4 w-4" /> Edit
+          {isEditMode ? (
+            <Button className="w-full" variant="default" onClick={handleSave}>
+              <SaveIcon className="mr-2 h-4 w-4" /> Save Changes
             </Button>
+          ) : (
+            <Button className="w-full" variant="default">
+              <PlayIcon className="mr-2 h-4 w-4" /> Run Check Now
+            </Button>
+          )}
+          <div className="flex space-x-2">
+            {isEditMode ? (
+              <Button
+                className="flex-1"
+                variant="outline"
+                onClick={() => setIsEditMode(false)}
+              >
+                Cancel
+              </Button>
+            ) : (
+              <Button className="flex-1" variant="outline" onClick={handleEdit}>
+                <EditIcon className="mr-2 h-4 w-4" /> Edit
+              </Button>
+            )}
             <Button className="flex-1" variant="destructive">
               <TrashIcon className="mr-2 h-4 w-4" /> Delete
             </Button>

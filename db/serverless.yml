@@ -47,15 +47,21 @@ functions:
     handler: lambda_stream_processor.lambda_handler
     memorySize: 512
     timeout: 60 # 1 minute
-    # events:
-    #   - stream:
-    #       type: dynamodb
-    #       arn:
-    #         Fn::GetAtt:
-    #           - UrlCheckerTable
-    #           - StreamArn
-    #       batchSize: 100
-    #       startingPosition: LATEST
+    events:
+      - stream:
+          type: dynamodb
+          arn:
+            Fn::GetAtt:
+              - UrlCheckerTable
+              - StreamArn
+          batchSize: 100
+          startingPosition: LATEST
+          filterPatterns:
+            - eventName: [MODIFY, INSERT, REMOVE]
+              dynamodb:
+                UrlCheckerTable:
+                  sk:
+                    S: [CHECK]
     environment:
       REDIS_HOST: ${self:provider.environment.REDIS_HOST}
       REDIS_PORT: ${self:provider.environment.REDIS_PORT}
