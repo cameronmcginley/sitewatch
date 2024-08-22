@@ -39,6 +39,7 @@ def transform_item(item):
         "pk": item.get("pk"),
         "sk": item.get("sk"),
         "cron": item.get("cron"),
+        # Redis passes False as a string, so we need to convert it back to a boolean
         "useProxy": item.get("useProxy", False),
         "runNowOverride": item.get("runNowOverride", False),
     }
@@ -78,6 +79,9 @@ async def read_from_redis():
                 except (json.JSONDecodeError, TypeError):
                     # If it's not a JSON string, keep the original value
                     pass
+                # Convert specific fields to boolean
+                if field in ["useProxy", "runNowOverride"]:
+                    item[field] = value.lower() == "true"
             items.append(item)
 
         logger.info(f"Successfully read {len(items)} items from Redis cache")
