@@ -25,10 +25,7 @@ import { convertMsToTime, cronToPlainText } from "./table/utils";
 import { updateItem } from "@/lib/api/items";
 import { RunCheckButton } from "./run-check-button";
 import { useSession } from "next-auth/react";
-import { createItemFormSchema } from "./items/schema";
 import { z } from "zod";
-import { check } from "drizzle-orm/mysql-core";
-import { set } from "date-fns";
 
 interface SidebarFlyoutProps {
   isOpen: boolean;
@@ -97,7 +94,6 @@ export const SidebarFlyout = ({
     console.log("editedData", editedData);
     editedData.updatedAt = new Date().toISOString();
     try {
-      // Define the editable fields schema
       const editableSchema = z.object({
         updatedAt: z.string(),
         alias: z.string().trim().min(1).max(100).optional(),
@@ -106,22 +102,15 @@ export const SidebarFlyout = ({
         useProxy: z.boolean().optional(),
       });
 
-      // Validate the editable fields
       const validationResult = editableSchema.safeParse(editedData);
       console.log("validationResult", validationResult);
 
       if (!validationResult.success) {
         console.error(validationResult.error);
-        // toast({
-        //   title: "Validation Error",
-        //   description: "Please check your inputs and try again.",
-        //   variant: "destructive",
-        // });
         alert("Please check your inputs and try again.");
         return;
       }
 
-      // If validation passes, update the item
       await updateItem(
         {
           pk: currentCheckData.pk,
@@ -131,35 +120,19 @@ export const SidebarFlyout = ({
         validationResult.data
       );
 
-      // Update the local state
-      // setCheckData((prevData) => ({ ...prevData, ...validationResult.data }));
-
-      // Exit edit mode
       setIsEditMode(false);
-      // checkData = editedData;
       setCurrentCheckData(editedData);
 
-      // toast({
-      //   title: "Changes Saved",
-      //   description: "Your changes have been successfully saved.",
-      // });
       alert("Your changes have been successfully saved.");
-
-      // Refresh the data
       fetchDataForUser(currentCheckData.userid);
     } catch (error) {
       console.error("Error saving changes:", error);
-      // toast({
-      //   title: "Error",
-      //   description:
-      //     "An error occurred while saving changes. Please try again.",
-      //   variant: "destructive",
-      // });
       alert("An error occurred while saving changes. Please try again.");
     }
   };
 
   const handleInputChange = (field, value) => {
+    console.log("field", field, "value", value);
     setEditedData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -168,6 +141,115 @@ export const SidebarFlyout = ({
   };
 
   if (!isOpen) return null;
+
+  const items = [
+    {
+      label: "Alias",
+      value: currentCheckData?.alias || "Loading...",
+      key: "alias",
+      type: "text",
+    },
+    {
+      label: "Check Type",
+      value: currentCheckData?.check_type || "Loading...",
+      type: "text",
+    },
+    {
+      label: "Status",
+      value: currentCheckData ? (
+        <StatusBadge status={currentCheckData.status} />
+      ) : (
+        "Loading..."
+      ),
+      key: "status",
+      type: "select",
+      options: CHECK_STATUS_VALUES,
+    },
+    {
+      label: "URL",
+      value: currentCheckData ? (
+        <a
+          className="text-blue-500 hover:underline"
+          href={currentCheckData.url}
+        >
+          {currentCheckData.url}
+        </a>
+      ) : (
+        "Loading..."
+      ),
+      type: "link",
+    },
+    {
+      label: "Attributes",
+      value: currentCheckData
+        ? Object.entries(currentCheckData.attributes).map(([key, value]) => (
+            <div key={key} className="flex justify-between items-center">
+              <span className="text-sm capitalize truncate flex-shrink-0 mr-2">
+                {key}:
+              </span>
+              <span className="font-medium truncate flex-grow">
+                {currentCheckData.check_type === "EBAY PRICE THRESHOLD" && "$"}
+                {renderAttributeValue(value)}
+              </span>
+            </div>
+          ))
+        : "Loading...",
+      type: "custom",
+    },
+    {
+      label: "Schedule",
+      value: currentCheckData ? (
+        <>
+          <p>Interval: {convertMsToTime(currentCheckData.delayMs)}</p>
+          <p>
+            Runs{" "}
+            {currentCheckData.delayMs > 60 * 60 * 1000 &&
+              currentCheckData.delayMs < 7 * 24 * 60 * 60 * 1000 &&
+              "Daily in UTC"}{" "}
+            {cronToPlainText(currentCheckData.cron)}
+          </p>
+          <p className="text-gray-400 text-sm truncate">
+            Cron: {currentCheckData.cron}
+          </p>
+        </>
+      ) : (
+        "Loading..."
+      ),
+      type: "custom",
+    },
+    {
+      label: "Email",
+      value: currentCheckData?.email || "Loading...",
+      key: "email",
+      type: "text",
+    },
+    {
+      label: "Created At",
+      value: currentCheckData
+        ? formatDate(currentCheckData.createdAt)
+        : "Loading...",
+      type: "text",
+    },
+    {
+      label: "Last Updated",
+      value: currentCheckData
+        ? formatDate(currentCheckData.updatedAt)
+        : "Loading...",
+      type: "text",
+    },
+    {
+      label: "Use Proxy",
+      value: currentCheckData
+        ? renderAttributeValue(currentCheckData.useProxy)
+        : renderAttributeValue(false),
+      key: "useProxy",
+      type: "boolean",
+      options: [
+        { value: true, label: "Yes" },
+        { value: false, label: "No" },
+      ],
+    },
+  ];
 
   return (
     <>
@@ -184,25 +266,13 @@ export const SidebarFlyout = ({
           <>
             <ScrollArea className="flex-grow">
               <div className="p-4 space-y-4 w-96">
-                {[
-                  {
-                    label: "Alias",
-                    value: currentCheckData.alias,
-                    key: "alias",
-                  },
-                  { label: "Check Type", value: currentCheckData.check_type },
-                  {
-                    label: "Status",
-                    value: <StatusBadge status={currentCheckData.status} />,
-                    key: "status",
-                  },
-                ].map((item) => (
+                {items.map((item) => (
                   <div key={item.label} className="flex flex-col">
                     <h3 className="text-sm font-medium text-muted-foreground">
                       {item.label}
                     </h3>
                     {isEditMode && item.key ? (
-                      item.key === "status" ? (
+                      item.type === "select" ? (
                         <Select
                           value={editedData[item.key]}
                           onValueChange={(value) =>
@@ -210,133 +280,17 @@ export const SidebarFlyout = ({
                           }
                         >
                           <SelectTrigger className="w-full mt-1">
-                            <SelectValue placeholder="Select status" />
+                            <SelectValue placeholder={`Select ${item.label}`} />
                           </SelectTrigger>
                           <SelectContent>
-                            {CHECK_STATUS_VALUES.map((status) => (
-                              <SelectItem key={status} value={status}>
-                                {status}
+                            {item.options.map((option) => (
+                              <SelectItem key={option} value={option}>
+                                {option}
                               </SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
-                      ) : (
-                        <Input
-                          value={editedData[item.key]}
-                          onChange={(e) =>
-                            handleInputChange(item.key, e.target.value)
-                          }
-                          className="mt-1"
-                        />
-                      )
-                    ) : (
-                      <p className="break-words" title={item.value}>
-                        {item.value}
-                      </p>
-                    )}
-                  </div>
-                ))}
-                <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">
-                    URL
-                  </h3>
-                  <p className="break-words" title={currentCheckData.url}>
-                    <a
-                      className="text-blue-500 hover:underline"
-                      href={currentCheckData.url}
-                    >
-                      {currentCheckData.url}
-                    </a>
-                  </p>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">
-                    Attributes
-                  </h3>
-                  <div className="space-y-2 mt-1">
-                    {Object.entries(currentCheckData.attributes).map(
-                      ([key, value]) => (
-                        <div
-                          key={key}
-                          className="flex justify-between items-center"
-                        >
-                          <span
-                            className="text-sm capitalize truncate flex-shrink-0 mr-2"
-                            title={key}
-                          >
-                            {key}:
-                          </span>
-                          <span className="font-medium truncate flex-grow">
-                            {currentCheckData.check_type ===
-                              "EBAY PRICE THRESHOLD" && "$"}
-                            {renderAttributeValue(value)}
-                          </span>
-                        </div>
-                      )
-                    )}
-                  </div>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">
-                    Schedule
-                  </h3>
-                  <p
-                    className="truncate"
-                    title={`Interval: ${convertMsToTime(
-                      currentCheckData.delayMs
-                    )}`}
-                  >
-                    Interval: {convertMsToTime(currentCheckData.delayMs)}
-                  </p>
-                  <p
-                    className=""
-                    title={`Runs ${
-                      currentCheckData.delayMs > 60 * 60 * 1000 &&
-                      currentCheckData.delayMs < 7 * 24 * 60 * 60 * 1000
-                        ? "Daily in UTC"
-                        : ""
-                    } ${cronToPlainText(currentCheckData.cron)}`}
-                  >
-                    Runs{" "}
-                    {currentCheckData.delayMs > 60 * 60 * 1000 &&
-                      currentCheckData.delayMs < 7 * 24 * 60 * 60 * 1000 &&
-                      "Daily in UTC"}{" "}
-                    {cronToPlainText(currentCheckData.cron)}
-                  </p>
-                  <p
-                    className="text-gray-400 text-sm truncate"
-                    title={`Cron: ${currentCheckData.cron}`}
-                  >
-                    Cron: {currentCheckData.cron}
-                  </p>
-                </div>
-                {[
-                  {
-                    label: "Email",
-                    value: currentCheckData.email,
-                    key: "email",
-                  },
-                  {
-                    label: "Created At",
-                    value: formatDate(currentCheckData.createdAt),
-                  },
-                  {
-                    label: "Last Updated",
-                    value: formatDate(currentCheckData.updatedAt),
-                  },
-                  {
-                    label: "Use Proxy",
-                    value: renderAttributeValue(currentCheckData.useProxy),
-                    key: "useProxy",
-                    type: "boolean",
-                  },
-                ].map((item) => (
-                  <div key={item.label} className="flex flex-col">
-                    <h3 className="text-sm font-medium text-muted-foreground">
-                      {item.label}
-                    </h3>
-                    {isEditMode && item.key ? (
-                      item.type === "boolean" ? (
+                      ) : item.type === "boolean" ? (
                         <Select
                           value={editedData[item.key]}
                           onValueChange={(value) =>
@@ -344,15 +298,17 @@ export const SidebarFlyout = ({
                           }
                         >
                           <SelectTrigger className="w-full mt-1">
-                            <SelectValue placeholder="Select value" />
+                            <SelectValue placeholder={`Select ${item.label}`} />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem key="true" value={true}>
-                              Yes
-                            </SelectItem>
-                            <SelectItem key="false" value={false}>
-                              No
-                            </SelectItem>
+                            {item.options.map((option) => (
+                              <SelectItem
+                                key={option.value}
+                                value={option.value}
+                              >
+                                {option.label}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                       ) : (

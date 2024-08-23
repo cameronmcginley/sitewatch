@@ -1,7 +1,10 @@
-import { DynamoDBClient, UpdateItemCommand } from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { DynamoDBDocumentClient, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { getHeaders, getDynamoTableName } from "../utils/db.mjs";
 
+// Initialize DynamoDB Client and DocumentClient
 const dynamoDb = new DynamoDBClient({ region: "us-east-2" });
+const ddbDocClient = DynamoDBDocumentClient.from(dynamoDb);
 
 export const handler = async (event) => {
   const headers = getHeaders();
@@ -26,7 +29,7 @@ export const handler = async (event) => {
 
   const expressionAttributeValues = Object.keys(attributes).reduce(
     (acc, key, idx) => {
-      acc[`:val${idx}`] = { S: String(attributes[key]) };
+      acc[`:val${idx}`] = attributes[key];
       return acc;
     },
     {}
@@ -34,7 +37,7 @@ export const handler = async (event) => {
 
   const params = {
     TableName: tableName,
-    Key: { pk: { S: pk }, sk: { S: sk } },
+    Key: { pk, sk },
     UpdateExpression: updateExpression,
     ExpressionAttributeNames: expressionAttributeNames,
     ExpressionAttributeValues: expressionAttributeValues,
@@ -42,7 +45,7 @@ export const handler = async (event) => {
   };
 
   try {
-    const data = await dynamoDb.send(new UpdateItemCommand(params));
+    const data = await ddbDocClient.send(new UpdateCommand(params));
     return {
       statusCode: 200,
       body: JSON.stringify({ message: "Item updated successfully", data }),
