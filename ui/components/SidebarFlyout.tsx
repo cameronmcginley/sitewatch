@@ -103,7 +103,7 @@ export const SidebarFlyout = ({
         alias: z.string().trim().min(1).max(100).optional(),
         status: z.enum(["ACTIVE", "PAUSED"]).optional(),
         email: z.string().email().trim().min(1).max(255).optional(),
-        // useProxy: z.boolean().optional(),
+        useProxy: z.boolean().optional(),
       });
 
       // Validate the editable fields
@@ -327,6 +327,8 @@ export const SidebarFlyout = ({
                   {
                     label: "Use Proxy",
                     value: renderAttributeValue(currentCheckData.useProxy),
+                    key: "useProxy",
+                    type: "boolean",
                   },
                 ].map((item) => (
                   <div key={item.label} className="flex flex-col">
@@ -334,13 +336,34 @@ export const SidebarFlyout = ({
                       {item.label}
                     </h3>
                     {isEditMode && item.key ? (
-                      <Input
-                        value={editedData[item.key]}
-                        onChange={(e) =>
-                          handleInputChange(item.key, e.target.value)
-                        }
-                        className="mt-1"
-                      />
+                      item.type === "boolean" ? (
+                        <Select
+                          value={editedData[item.key]}
+                          onValueChange={(value) =>
+                            handleInputChange(item.key, value)
+                          }
+                        >
+                          <SelectTrigger className="w-full mt-1">
+                            <SelectValue placeholder="Select value" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem key="true" value={true}>
+                              Yes
+                            </SelectItem>
+                            <SelectItem key="false" value={false}>
+                              No
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        <Input
+                          value={editedData[item.key]}
+                          onChange={(e) =>
+                            handleInputChange(item.key, e.target.value)
+                          }
+                          className="mt-1"
+                        />
+                      )
                     ) : (
                       <p className="break-words" title={item.value}>
                         {item.value}
