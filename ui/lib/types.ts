@@ -7,6 +7,18 @@ export type CheckStatus = "ACTIVE" | "PAUSED";
 export const CHECK_STATUS_VALUES: CheckStatus[] = ["ACTIVE", "PAUSED"];
 export type LastResultStatus = "ALERTED" | "NO ALERT" | "FAILED";
 
+export interface CheckItemAttributes {
+  "KEYWORD CHECK": {
+    keyword: string;
+    opposite: boolean;
+  };
+  "EBAY PRICE THRESHOLD": {
+    threshold: number;
+  };
+  "PAGE DIFFERENCE": {
+    percent_diff: number;
+  };
+}
 export interface CheckItem {
   alias: string;
   check_type: CheckType;
@@ -28,19 +40,6 @@ export interface CheckItem {
   mostRecentAlert?: string;
   cron: string;
   attributes: CheckItemAttributes[CheckType];
-}
-
-export interface CheckItemAttributes {
-  "KEYWORD CHECK": {
-    keyword: string;
-    opposite: boolean;
-  };
-  "EBAY PRICE THRESHOLD": {
-    threshold: number;
-  };
-  "PAGE DIFFERENCE": {
-    percent_diff: number;
-  };
 }
 
 // export type AttributesForCheckType<T extends CheckType> =

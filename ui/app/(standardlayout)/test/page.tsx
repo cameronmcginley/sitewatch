@@ -112,6 +112,7 @@ function Home() {
             handleCreateItemSubmit={handleCreateItemSubmit}
             isCreateItemModalOpen={isCreateItemModalOpen}
             setIsCreateItemModalOpen={setIsCreateItemModalOpen}
+            fetchDataForUser={fetchDataForUser}
           />
         </div>
       </div>

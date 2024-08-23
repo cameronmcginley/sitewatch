@@ -36,6 +36,7 @@ const CoreTable = ({
   handleCreateItemSubmit,
   isCreateItemModalOpen,
   setIsCreateItemModalOpen,
+  fetchDataForUser,
 }) => {
   const [selectedCheckType, setSelectedCheckType] = useState("ALL");
   const [selectedItems, setSelectedItems] = useState<CheckItem[]>([]);
@@ -210,6 +211,7 @@ const CoreTable = ({
         onClose={handleCloseSidebarFlyout}
         checkData={flyoutItem}
         handleDelete={handleDelete}
+        fetchDataForUser={fetchDataForUser}
       />
     </div>
   );
