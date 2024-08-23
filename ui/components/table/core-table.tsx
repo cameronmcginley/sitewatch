@@ -34,7 +34,6 @@ const CoreTable = ({
   handleDelete,
   isLoading,
   handleCreateItemSubmit,
-  isCreateItemLoading,
   isCreateItemModalOpen,
   setIsCreateItemModalOpen,
 }) => {
@@ -127,7 +126,6 @@ const CoreTable = ({
           <CreateCheckButton
             isCreateItemModalOpen={isCreateItemModalOpen}
             setIsCreateItemModalOpen={setIsCreateItemModalOpen}
-            isCreateItemLoading={isCreateItemLoading}
             handleCreateItemSubmit={handleCreateItemSubmit}
             isMobile={isMobile}
           />
@@ -204,13 +202,6 @@ const CoreTable = ({
               onPageChange={setCurrentPage}
             />
           </div>
-        )}
-
-        {isCreateItemLoading && (
-          <LoadingOverlay
-            mainText="Creating..."
-            subText="Please wait while we create your check."
-          />
         )}
       </div>
 

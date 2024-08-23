@@ -110,7 +110,6 @@ function Home() {
             handleDelete={handleDelete}
             isLoading={isDataLoading}
             handleCreateItemSubmit={handleCreateItemSubmit}
-            isCreateItemLoading={isCreateItemLoading}
             isCreateItemModalOpen={isCreateItemModalOpen}
             setIsCreateItemModalOpen={setIsCreateItemModalOpen}
           />
@@ -122,6 +121,13 @@ function Home() {
         onOpenChange={setIsDeleteModalOpen}
         handleDelete={() => deleteCheckItems(itemsToDelete)}
       />
+
+      {isCreateItemLoading && (
+        <LoadingOverlay
+          mainText="Creating..."
+          subText="Please wait while we create your check."
+        />
+      )}
 
       {isDeleteLoading && (
         <LoadingOverlay

@@ -12,7 +12,6 @@ import ItemForm from "@/components/items/item-form";
 interface CreateCheckButtonProps {
   isCreateItemModalOpen: boolean;
   setIsCreateItemModalOpen: (open: boolean) => void;
-  isCreateItemLoading: boolean;
   handleCreateItemSubmit: () => void;
   isMobile: boolean;
 }
@@ -20,7 +19,6 @@ interface CreateCheckButtonProps {
 export const CreateCheckButton: React.FC<CreateCheckButtonProps> = ({
   isCreateItemModalOpen,
   setIsCreateItemModalOpen,
-  isCreateItemLoading,
   handleCreateItemSubmit,
   isMobile,
 }) => {
@@ -34,14 +32,10 @@ export const CreateCheckButton: React.FC<CreateCheckButtonProps> = ({
       </DialogTrigger>
       <DialogContent className="max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>
-            {isCreateItemLoading ? "Creating Check" : "Create New Check"}
-          </DialogTitle>
+          <DialogTitle>{"Create New Check"}</DialogTitle>
         </DialogHeader>
         <div className="relative">
-          {/* <div className={isCreateItemLoading ? "opacity-50" : ""}> */}
           <ItemForm handleCreateItemSubmit={handleCreateItemSubmit} />
-          {/* </div> */}
         </div>
       </DialogContent>
     </Dialog>
