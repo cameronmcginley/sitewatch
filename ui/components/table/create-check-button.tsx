@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import ItemForm from "@/components/items/item-form";
-import { CreateOverlay } from "./create-overlay";
 
 interface CreateCheckButtonProps {
   isCreateItemModalOpen: boolean;
@@ -27,7 +26,7 @@ export const CreateCheckButton: React.FC<CreateCheckButtonProps> = ({
 }) => {
   return (
     <Dialog
-      open={isCreateItemModalOpen || isCreateItemLoading}
+      open={isCreateItemModalOpen}
       onOpenChange={setIsCreateItemModalOpen}
     >
       <DialogTrigger asChild>
@@ -40,10 +39,9 @@ export const CreateCheckButton: React.FC<CreateCheckButtonProps> = ({
           </DialogTitle>
         </DialogHeader>
         <div className="relative">
-          {true && <CreateOverlay />}
-          <div className={isCreateItemLoading ? "opacity-50" : ""}>
-            <ItemForm handleCreateItemSubmit={handleCreateItemSubmit} />
-          </div>
+          {/* <div className={isCreateItemLoading ? "opacity-50" : ""}> */}
+          <ItemForm handleCreateItemSubmit={handleCreateItemSubmit} />
+          {/* </div> */}
         </div>
       </DialogContent>
     </Dialog>

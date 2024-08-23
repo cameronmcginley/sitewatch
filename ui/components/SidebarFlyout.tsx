@@ -25,14 +25,6 @@ import { convertMsToTime, cronToPlainText } from "./table/utils";
 import { updateItem } from "@/lib/api/items";
 import { RunCheckButton } from "./run-check-button";
 import { useSession } from "next-auth/react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 
 interface SidebarFlyoutProps {
   isOpen: boolean;
@@ -50,7 +42,6 @@ export const SidebarFlyout = ({
   const [isEditMode, setIsEditMode] = useState(false);
   const [editedData, setEditedData] = useState(checkData);
   const [isUserAllowedToRunNow, setIsUserAllowedToRunNow] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const { data: session, status } = useSession();
 
   useEffect(() => {
@@ -103,12 +94,6 @@ export const SidebarFlyout = ({
 
   const handleRunNow = (pk, sk, userid) => {
     updateItem({ pk, sk, userid }, { runNowOverride: true });
-  };
-
-  const deleteCheckItems = (pk, sk) => {
-    handleDelete([{ pk, sk }]);
-    setIsDeleteModalOpen(false);
-    onClose();
   };
 
   if (!isOpen) return null;
@@ -297,41 +282,21 @@ export const SidebarFlyout = ({
             <Button
               className="flex-1"
               variant="destructive"
-              onClick={() => setIsDeleteModalOpen(true)}
+              onClick={() =>
+                handleDelete([
+                  {
+                    pk: checkData.pk,
+                    sk: checkData.sk,
+                    userid: session?.user?.id,
+                  },
+                ])
+              }
             >
               <TrashIcon className="mr-2 h-4 w-4" /> Delete
             </Button>
           </div>
         </div>
       </div>
-
-      <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              Are you sure you want to delete this check?
-            </DialogTitle>
-            <DialogDescription>
-              This action cannot be undone. This will permanently delete the
-              check and remove all associated data.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsDeleteModalOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={() => deleteCheckItems(checkData.pk, checkData.sk)}
-            >
-              Delete
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </>
   );
 };

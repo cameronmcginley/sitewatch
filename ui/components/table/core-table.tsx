@@ -23,17 +23,8 @@ import {
   getTypeSpecificColumns,
 } from "./cell-formatters";
 import { CheckItem } from "@/lib/types";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import ItemForm from "@/components/items/item-form";
-import { MutatingDots } from "react-loader-spinner";
 import { CustomPagination } from "./custom-pagination";
-import DeleteOverlay from "./delete-overlay";
+import { LoadingOverlay } from "./loading-overlay";
 import { CreateCheckButton } from "./create-check-button";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { SidebarFlyout } from "@/components/SidebarFlyout";
@@ -49,7 +40,6 @@ const CoreTable = ({
 }) => {
   const [selectedCheckType, setSelectedCheckType] = useState("ALL");
   const [selectedItems, setSelectedItems] = useState<CheckItem[]>([]);
-  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [isSidebarFlyoutOpen, setIsSidebarFlyoutOpen] = useState(false);
   const [flyoutItem, setFlyoutItem] = useState<CheckItem | null>(null);
@@ -86,16 +76,6 @@ const CoreTable = ({
     setSelectedItems((prev) =>
       prev.includes(item) ? prev.filter((i) => i !== item) : [...prev, item]
     );
-  };
-
-  const deleteCheckItems = async (item?: CheckItem) => {
-    try {
-      setIsDeleteLoading(true);
-      await handleDelete(item ?? selectedItems);
-    } finally {
-      setIsDeleteLoading(false);
-      setSelectedItems([]);
-    }
   };
 
   const isMobile = useMediaQuery("(max-width: 640px)");
@@ -138,7 +118,7 @@ const CoreTable = ({
         >
           {selectedItems.length > 0 && (
             <Button
-              onClick={handleDeleteItems}
+              onClick={() => handleDelete(selectedItems)}
               className="bg-red-700 hover:bg-red-600 w-full sm:w-auto"
             >
               Delete {selectedItems.length} items
@@ -226,14 +206,19 @@ const CoreTable = ({
           </div>
         )}
 
-        {isDeleteLoading && <DeleteOverlay />}
+        {isCreateItemLoading && (
+          <LoadingOverlay
+            mainText="Creating..."
+            subText="Please wait while we create your check."
+          />
+        )}
       </div>
 
       <SidebarFlyout
         isOpen={isSidebarFlyoutOpen}
         onClose={handleCloseSidebarFlyout}
         checkData={flyoutItem}
-        handleDelete={deleteCheckItems}
+        handleDelete={handleDelete}
       />
     </div>
   );

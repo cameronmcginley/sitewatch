@@ -5,12 +5,12 @@ import { useSession } from "next-auth/react";
 import CoreTable from "@/components/table/core-table";
 import { fetchData, addItem, deleteItem } from "@/lib/api/items";
 import { CheckItem } from "@/lib/types";
-import { CustomPagination } from "@/components/table/custom-pagination";
 import { createItemFormSchema } from "@/components/items/schema";
 import { z } from "zod";
 import { USER_TYPE_TO_LIMITS } from "@/lib/constants";
 import { fetchUser } from "@/lib/api/users";
-import { HeroWavy } from "@/components/ui/hero-wavy";
+import { DeleteConfirmation } from "@/components/delete-confirmation";
+import { LoadingOverlay } from "@/components/table/loading-overlay";
 
 function Home() {
   const { data: session, status } = useSession();
@@ -18,6 +18,9 @@ function Home() {
   const [isDataLoading, setIsDataLoading] = useState(true);
   const [isCreateItemModalOpen, setIsCreateItemModalOpen] = useState(false);
   const [isCreateItemLoading, setIsCreateItemLoading] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [itemsToDelete, setItemsToDelete] = useState<CheckItem[]>([]);
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   useEffect(() => {
     if (status === "authenticated" && session?.user?.id) {
@@ -45,6 +48,7 @@ function Home() {
   ) => {
     console.log("Adding item:", values);
     setIsCreateItemLoading(true);
+    setIsCreateItemModalOpen(false);
 
     // Check for user's limit first
     const userLimit = USER_TYPE_TO_LIMITS[session.user?.userType];
@@ -55,7 +59,6 @@ function Home() {
 
     if (currentCount >= userLimit) {
       setIsCreateItemLoading(false);
-      setIsCreateItemModalOpen(false);
       alert(
         `You have reached your limit of ${userLimit} checks. Please delete some checks to add more.`
       );
@@ -70,18 +73,28 @@ function Home() {
       console.error("Error adding item:", error);
     } finally {
       setIsCreateItemLoading(false);
-      setIsCreateItemModalOpen(false);
     }
   };
 
   const deleteCheckItems = async (items: CheckItem[]) => {
     console.log("Deleting items:", items);
+    setIsDeleteLoading(true);
+    setIsDeleteModalOpen(false);
     try {
       await Promise.all(items.map((item) => deleteItem(item)));
       fetchDataForUser(session.user.id);
     } catch (error) {
       console.error("Error deleting items:", error);
+    } finally {
+      setItemsToDelete([]);
+      setIsDeleteLoading(false);
     }
+  };
+
+  const handleDelete = async (items: CheckItem[]) => {
+    console.log("handleDelete", items);
+    setItemsToDelete(items);
+    setIsDeleteModalOpen(true);
   };
 
   return (
@@ -94,7 +107,7 @@ function Home() {
         <div>
           <CoreTable
             data={data}
-            handleDelete={deleteCheckItems}
+            handleDelete={handleDelete}
             isLoading={isDataLoading}
             handleCreateItemSubmit={handleCreateItemSubmit}
             isCreateItemLoading={isCreateItemLoading}
@@ -103,6 +116,19 @@ function Home() {
           />
         </div>
       </div>
+
+      <DeleteConfirmation
+        isOpen={isDeleteModalOpen}
+        onOpenChange={setIsDeleteModalOpen}
+        handleDelete={() => deleteCheckItems(itemsToDelete)}
+      />
+
+      {isDeleteLoading && (
+        <LoadingOverlay
+          mainText="Deleting..."
+          subText="Please wait while we remove the selected item."
+        />
+      )}
     </>
   );
 }

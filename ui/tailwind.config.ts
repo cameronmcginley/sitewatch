@@ -100,6 +100,10 @@ const config = {
             transform: "translate3d(0, 0, 0)",
           },
         },
+        "bounce-squaresWave": {
+          "0%": { backgroundColor: "rgb(0, 0, 0)" },
+          "100%": { backgroundColor: "rgb(255, 255, 255)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -107,6 +111,7 @@ const config = {
         "collapsible-down": "accordion-down 0.2s ease-out",
         "collapsible-up": "accordion-up 0.2s ease-out",
         "fade-in-down": "fade-in-down 1s ease-in 0.25s 1",
+        "bounce-squaresWave": "bounce-squaresWave 1.5s infinite normal",
       },
     },
   },
