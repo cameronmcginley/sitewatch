@@ -38,6 +38,20 @@ custom:
       - X-Amz-Security-Token
       - X-Amz-User-Agent
 
+  apiKeys:
+    dev:
+      name: sitewatchApiKeyDev
+    prod:
+      name: sitewatchApiKeyProd
+
+  usagePlan:
+    throttle:
+      burstLimit: 50
+      rateLimit: 10
+    quota:
+      limit: 10000
+      period: DAY
+
 functions:
   createUser:
     handler: functions/createUser.handler
@@ -46,6 +60,7 @@ functions:
           path: users
           method: post
           cors: ${self:custom.corsConfig}
+          private: true
 
   getUser:
     handler: functions/getUser.handler
@@ -58,6 +73,7 @@ functions:
               querystrings:
                 userid: true
           cors: ${self:custom.corsConfig}
+          private: true
 
   updateUser:
     handler: functions/updateUser.handler
@@ -70,6 +86,7 @@ functions:
               querystrings:
                 userid: true
           cors: ${self:custom.corsConfig}
+          private: true
 
   createCheck:
     handler: functions/createCheck.handler
@@ -78,6 +95,7 @@ functions:
           path: items
           method: post
           cors: ${self:custom.corsConfig}
+          private: true
 
   getCheck:
     handler: functions/getCheck.handler
@@ -90,6 +108,7 @@ functions:
               querystrings:
                 userid: false
           cors: ${self:custom.corsConfig}
+          private: true
 
   updateCheck:
     handler: functions/updateCheck.handler
@@ -98,6 +117,7 @@ functions:
           path: items
           method: put
           cors: ${self:custom.corsConfig}
+          private: true
 
   deleteCheck:
     handler: functions/deleteCheck.handler
@@ -106,6 +126,7 @@ functions:
           path: items
           method: delete
           cors: ${self:custom.corsConfig}
+          private: true
 
   optionsHandler:
     handler: functions/optionsHandler.handler
@@ -122,3 +143,56 @@ functions:
 package:
   include:
     - functions/**
+
+resources:
+  Resources:
+    # ApiGatewayUsageAlarm:
+    #   Type: AWS::CloudWatch::Alarm
+    #   Properties:
+    #     AlarmName: "ApiGatewayUsageAlarm"
+    #     MetricName: "Count"
+    #     Namespace: "AWS/ApiGateway"
+    #     Statistic: "Sum"
+    #     Period: 86400 # Check daily
+    #     EvaluationPeriods: 1
+    #     Threshold: 900000 # before reaching 1 million calls
+    #     ComparisonOperator: "GreaterThanOrEqualToThreshold"
+    #     AlarmActions:
+    #       - !Sub "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:YourNotificationTopic"
+    #     Dimensions:
+    #       - Name: "ApiName"
+    #         Value:
+    #           Ref: "ApiGatewayRestApi"
+
+    ApiGatewayUsagePlan:
+      Type: AWS::ApiGateway::UsagePlan
+      Properties:
+        UsagePlanName: "SiteWatchUsagePlan"
+        Throttle:
+          BurstLimit: ${self:custom.usagePlan.throttle.burstLimit}
+          RateLimit: ${self:custom.usagePlan.throttle.rateLimit}
+        Quota:
+          Limit: ${self:custom.usagePlan.quota.limit}
+          Period: ${self:custom.usagePlan.quota.period}
+        ApiStages:
+          - ApiId:
+              Ref: "ApiGatewayRestApi"
+            Stage: ${self:provider.stage}
+
+    ApiGatewayApiKey:
+      Type: AWS::ApiGateway::ApiKey
+      Properties:
+        Name: ${self:custom.apiKeys.${self:provider.stage}.name}
+        Enabled: true
+        Value: ${ssm:/sitewatch/${self:provider.stage}/apiKey}
+        StageKeys:
+          - RestApiId:
+              Ref: "ApiGatewayRestApi"
+            StageName: ${self:provider.stage}
+
+    # ApiGatewayUsagePlanKey:
+    #   Type: AWS::ApiGateway::UsagePlanKey
+    #   Properties:
+    #     KeyId: !Ref ApiGatewayApiKey
+    #     KeyType: "API_KEY"
+    #     UsagePlanId: !Ref ApiGatewayUsagePlan

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogTrigger,
@@ -7,8 +7,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { MutatingDots } from "react-loader-spinner";
 import ItemForm from "@/components/items/item-form";
+import { CreateOverlay } from "./create-overlay";
 
 interface CreateCheckButtonProps {
   isCreateItemModalOpen: boolean;
@@ -31,28 +31,20 @@ export const CreateCheckButton: React.FC<CreateCheckButtonProps> = ({
       onOpenChange={setIsCreateItemModalOpen}
     >
       <DialogTrigger asChild>
-        <Button className={`${isMobile ? "w-full" : ""}`}>Create Check</Button>
+        <Button className={isMobile ? "w-full" : ""}>Create Check</Button>
       </DialogTrigger>
       <DialogContent className="max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            {isCreateItemLoading ? "Creating Item..." : "Create New Check"}
+            {isCreateItemLoading ? "Creating Check" : "Create New Check"}
           </DialogTitle>
         </DialogHeader>
-        {isCreateItemLoading ? (
-          <div className="flex flex-col justify-center items-center">
-            <MutatingDots
-              height={100}
-              width={100}
-              color="#000"
-              secondaryColor="#000"
-              radius={12.5}
-              ariaLabel="mutating-dots-loading"
-            />
+        <div className="relative">
+          {true && <CreateOverlay />}
+          <div className={isCreateItemLoading ? "opacity-50" : ""}>
+            <ItemForm handleCreateItemSubmit={handleCreateItemSubmit} />
           </div>
-        ) : (
-          <ItemForm handleCreateItemSubmit={handleCreateItemSubmit} />
-        )}
+        </div>
       </DialogContent>
     </Dialog>
   );

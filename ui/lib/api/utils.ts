@@ -37,7 +37,12 @@ export async function handleApiRequest<T>(
 }
 
 export function createApiClient(baseURL: string) {
-  const client = axios.create({ baseURL });
+  const client = axios.create({
+    baseURL,
+    headers: {
+      "X-Api-Key": process.env.NEXT_PUBLIC_API_KEY,
+    },
+  });
 
   return {
     get: <T>(url: string, config?: AxiosRequestConfig) =>
