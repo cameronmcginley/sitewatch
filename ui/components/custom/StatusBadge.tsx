@@ -4,8 +4,8 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { BADGE_COLOR_CLASS } from "@/lib/constants";
 import { Badge } from "@/components/ui/badge";
-import { emptyDash } from "@/components/table/constants";
-import { toSentenceCase } from "@/components/table/utils";
+import { emptyDash } from "@/components/checks/table/constants";
+import { toSentenceCase } from "@/lib/checks/utils";
 import { CheckStatus } from "@/lib/types";
 
 interface StatusBadgeProps {

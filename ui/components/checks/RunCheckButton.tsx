@@ -9,7 +9,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { getTimeUntilNext5Minutes } from "./table/utils";
+import { getTimeUntilNext5Minutes } from "@/lib/checks/utils";
 
 export const RunCheckButton = ({ checkData, handleRunNow, isUserAllowed }) => {
   const [isDisabled, setIsDisabled] = useState(!isUserAllowed);

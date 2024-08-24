@@ -1,14 +1,9 @@
 import {
   msToTimeStr,
   toSentenceCase,
-  getNextRunDate,
-  isHappeningNow,
   getTimeAgo,
-  getTimeZone,
   formatDateWithTimezone,
-  formatTimeWithTimezone,
-  convertDelayToCron,
-  getNextRunTimeWithCron,
+  getNextRunTimeFromCron,
 } from "./utils";
 
 describe("utils functions", () => {
@@ -31,22 +26,7 @@ describe("utils functions", () => {
     });
   });
 
-  describe("getNextRunDate", () => {
-    it("should calculate the next run date correctly", () => {
-      const now = new Date();
-      const delayMs = 4 * 60 * 60 * 1000; // 4 hours
-      const startHour = "3";
-      const nextRunDate = getNextRunDate(startHour, delayMs);
-
-      // Check if the next run date is greater than now
-      expect(nextRunDate > now).toBe(true);
-
-      // Check if the next run date is set to the correct hour
-      expect(nextRunDate.getUTCHours()).toBe(3);
-    });
-  });
-
-  describe("getNextRunTimeWithCron", () => {
+  describe("getNextRunTimeFromCron", () => {
     const testCases = [
       {
         cronString: "*/5 * * * *", // Runs every 5 minutes
@@ -163,7 +143,7 @@ describe("utils functions", () => {
       ({ cronString, currentDate, expectedRunTime }) => {
         jest.setSystemTime(new Date(currentDate));
 
-        const nextRunTime = getNextRunTimeWithCron(cronString);
+        const nextRunTime = getNextRunTimeFromCron(cronString);
         expect(nextRunTime.toISOString()).toBe(
           new Date(expectedRunTime).toISOString()
         );
@@ -174,17 +154,7 @@ describe("utils functions", () => {
 
     it("should handle invalid cron strings gracefully", () => {
       const cronString = "invalid cron string";
-      expect(() => getNextRunTimeWithCron(cronString)).toThrow();
-    });
-  });
-  describe("isHappeningNow", () => {
-    it("should correctly determine if an execution should be happening now", () => {
-      const lastExecutedAt = new Date().toISOString();
-      const startHour = "3";
-      const delayMs = 4 * 60 * 60 * 1000; // 4 hours
-
-      const result = isHappeningNow(lastExecutedAt, startHour, delayMs);
-      expect(result).toBe(false);
+      expect(() => getNextRunTimeFromCron(cronString)).toThrow();
     });
   });
 
@@ -193,13 +163,6 @@ describe("utils functions", () => {
       const pastDate = new Date(Date.now() - 5 * 60 * 1000); // 5 minutes ago
       const result = getTimeAgo(pastDate);
       expect(result).toBe("5 minutes ago");
-    });
-  });
-
-  describe("getTimeZone", () => {
-    it("should return the current time zone", () => {
-      const timeZone = getTimeZone();
-      expect(timeZone).toBe(Intl.DateTimeFormat().resolvedOptions().timeZone);
     });
   });
 
@@ -216,73 +179,6 @@ describe("utils functions", () => {
           minute: "2-digit",
           timeZoneName: "short",
         }).format(date)
-      );
-    });
-  });
-
-  describe("formatTimeWithTimezone", () => {
-    it("should format time with time zone", () => {
-      const hour = 15; // 3 PM
-      const formattedTime = formatTimeWithTimezone(hour);
-      const now = new Date();
-      const utcDate = new Date(
-        Date.UTC(
-          now.getUTCFullYear(),
-          now.getUTCMonth(),
-          now.getUTCDate(),
-          hour,
-          0,
-          0
-        )
-      );
-
-      expect(formattedTime).toBe(
-        utcDate.toLocaleTimeString("en-US", {
-          hour: "numeric",
-          minute: "numeric",
-          hour12: true,
-          timeZone: getTimeZone(),
-          timeZoneName: "short",
-        })
-      );
-    });
-  });
-
-  describe("convertDelayToCron", () => {
-    it("should convert '5 minutes' to cron expression", () => {
-      const result = convertDelayToCron("5 minutes");
-      expect(result).toBe("*/5 * * * *");
-    });
-
-    it("should convert '30 minutes' to cron expression", () => {
-      const result = convertDelayToCron("30 minutes");
-      expect(result).toBe("*/30 * * * *");
-    });
-
-    it("should convert '4 hours' to cron expression with hour offset", () => {
-      const result = convertDelayToCron("4 hours", 3);
-      expect(result).toBe("0 */4 * * *");
-    });
-
-    it("should convert '1 day' to cron expression with hour offset", () => {
-      const result = convertDelayToCron("1 day", 19);
-      expect(result).toBe("0 19 */1 * *");
-    });
-
-    it("should convert '1 week' to cron expression with hour offset", () => {
-      const result = convertDelayToCron("1 week", 19);
-      expect(result).toBe("0 19 * * 1");
-    });
-
-    it("should throw error for unsupported delay format", () => {
-      expect(() => convertDelayToCron("1 month")).toThrow(
-        "Invalid delay format"
-      );
-    });
-
-    it("should throw error for missing hour offset for delays over 1 hour", () => {
-      expect(() => convertDelayToCron("4 hours")).toThrow(
-        "Hour offset must be specified for delays over 1 hour"
       );
     });
   });

@@ -19,11 +19,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { StatusBadge } from "./status-badge";
+import { StatusBadge } from "@/components/custom/StatusBadge";
 import { CHECK_STATUS_VALUES } from "@/lib/types";
-import { convertMsToTime, cronToPlainText } from "./table/utils";
-import { updateItem } from "@/lib/api/items";
-import { RunCheckButton } from "./run-check-button";
+import { msToTimeStr, cronToPlainText } from "@/lib/checks/utils";
+import { updateCheck } from "@/lib/api/checks";
+import { RunCheckButton } from "@/components/checks/RunCheckButton";
 import { useSession } from "next-auth/react";
 import { z } from "zod";
 
@@ -53,8 +53,8 @@ export const SidebarFlyout = ({
   }, [checkData]);
 
   useEffect(() => {
-    if (status === "authenticated" && session?.user?.id) {
-      setIsUserAllowedToRunNow(session?.user?.userType !== "default");
+    if (status === "authenticated" && session.user.id) {
+      setIsUserAllowedToRunNow(session.user.userType !== "default");
     }
   }, [status, session]);
 
@@ -111,7 +111,7 @@ export const SidebarFlyout = ({
         return;
       }
 
-      await updateItem(
+      await updateCheck(
         {
           pk: currentCheckData.pk,
           sk: currentCheckData.sk,
@@ -137,7 +137,7 @@ export const SidebarFlyout = ({
   };
 
   const handleRunNow = (pk, sk, userid) => {
-    updateItem({ pk, sk, userid }, { runNowOverride: true });
+    updateCheck({ pk, sk, userid }, { runNowOverride: true });
   };
 
   if (!isOpen) return null;
@@ -200,7 +200,7 @@ export const SidebarFlyout = ({
       label: "Schedule",
       value: currentCheckData ? (
         <>
-          <p>Interval: {convertMsToTime(currentCheckData.delayMs)}</p>
+          <p>Interval: {msToTimeStr(currentCheckData.delayMs)}</p>
           <p>
             Runs{" "}
             {currentCheckData.delayMs > 60 * 60 * 1000 &&
@@ -242,7 +242,7 @@ export const SidebarFlyout = ({
       value: currentCheckData
         ? renderAttributeValue(currentCheckData.useProxy)
         : renderAttributeValue(false),
-      key: session?.user?.userType === "default" ? undefined : "useProxy",
+      key: session.user.userType === "default" ? undefined : "useProxy",
       type: "boolean",
       options: [
         { value: true, label: "Yes" },
@@ -371,7 +371,7 @@ export const SidebarFlyout = ({
                       {
                         pk: currentCheckData.pk,
                         sk: currentCheckData.sk,
-                        userid: session?.user?.id,
+                        userid: session.user.id,
                       },
                     ])
                   }

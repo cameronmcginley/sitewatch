@@ -131,13 +131,13 @@ const Navbar: React.FC = () => {
               <DropdownMenuContent className="">
                 <DropdownMenuItem>
                   <div className="flex flex-col">
-                    <span className="font-medium">{session.user?.email}</span>
+                    <span className="font-medium">{session.user.email}</span>
                     <span className="text-sm text-muted-foreground">
-                      {USER_TYPE_TO_DISPLAY_TEXT[session.user?.userType] ?? ""}
+                      {USER_TYPE_TO_DISPLAY_TEXT[session.user.userType] ?? ""}
                     </span>
                     <span className="text-sm text-muted-foreground">
                       Check Limit:{""}
-                      {USER_TYPE_TO_LIMITS[session.user?.userType] ?? ""}
+                      {USER_TYPE_TO_LIMITS[session.user.userType] ?? ""}
                     </span>
                   </div>
                 </DropdownMenuItem>

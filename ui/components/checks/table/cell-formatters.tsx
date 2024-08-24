@@ -8,24 +8,24 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { InfoCircledIcon } from "@radix-ui/react-icons";
-import { checkType_descriptions, emptyDash, loadingDots } from "./constants";
+import {
+  checkType_descriptions,
+  emptyDash,
+  loadingDots,
+} from "@/components/checks/table/constants";
 import {
   toSentenceCase,
-  getNextRunDate,
-  isHappeningNow,
   formatDateWithTimezone,
   getTimeAgo,
   msToTimeStr,
-  formatTimeWithTimezone,
   getNextRunTimeFromCron,
   isHappeningNowFromCron,
   cronToPlainText,
-} from "./utils";
+} from "@/lib/checks/utils";
 import { cn } from "@/lib/utils";
 import { BADGE_COLOR_CLASS } from "@/lib/constants";
-import { time } from "console";
 import { CheckItem, CheckType } from "@/lib/types";
-import { StatusBadge } from "../status-badge";
+import { StatusBadge } from "@/components/custom/StatusBadge";
 
 export const formatCells = (item: CheckItem, columns) =>
   columns.map((column) => column.formatter(item));
@@ -328,19 +328,21 @@ const formatMostRecentAlertCell = (item: CheckItem) => {
 
 const formatKeywordCell = (item: CheckItem) => (
   <TableCell className={`${columnWidths.keyword} truncate`}>
-    {item.attributes.keyword ?? emptyDash}
+    {("keyword" in item.attributes && item.attributes.keyword) ?? emptyDash}
   </TableCell>
 );
 
 const formatTargetPriceCell = (item: CheckItem) => (
   <TableCell className={`${columnWidths.targetPrice} truncate`}>
-    {item.attributes.threshold ? `$${item.attributes.threshold}` : emptyDash}
+    {"threshold" in item.attributes && item.attributes.threshold
+      ? `$${item.attributes.threshold}`
+      : emptyDash}
   </TableCell>
 );
 
 const formatDiffPercentageCell = (item: CheckItem) => (
   <TableCell className={`${columnWidths.diffPercentage} truncate`}>
-    {item.attributes.percent_diff
+    {"percent_diff" in item.attributes && item.attributes.percent_diff
       ? `${item.attributes.percent_diff}%`
       : emptyDash}
   </TableCell>

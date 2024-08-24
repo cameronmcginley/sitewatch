@@ -23,11 +23,10 @@ import {
   getTypeSpecificColumns,
 } from "./cell-formatters";
 import { CheckItem } from "@/lib/types";
-import { CustomPagination } from "./custom-pagination";
-import { LoadingOverlay } from "./loading-overlay";
-import { CreateCheckButton } from "./create-check-button";
+import { CustomPagination } from "./CustomPagination";
+import { CreateCheckButton } from "./CreateCheckButton";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { SidebarFlyout } from "@/components/SidebarFlyout";
+import { SidebarFlyout } from "@/components/checks/SidebarFlyout";
 
 const CoreTable = ({
   data,

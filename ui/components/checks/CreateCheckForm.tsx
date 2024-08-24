@@ -21,10 +21,10 @@ import {
 } from "@/components/ui/select";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { convertToCron, cronToPlainText } from "../table/utils";
+import { convertToCron, cronToPlainText } from "@/lib/checks/utils";
 import { Switch } from "@/components/ui/switch";
 import { useWatch } from "react-hook-form";
-import { createItemFormSchema } from "./schema";
+import { createCheckFormSchema } from "@/lib/checks/schema";
 
 const frequencyOptions = [
   { label: "5 minutes", value: 300000 },
@@ -53,12 +53,12 @@ const checkTypeOptions = [
   { label: "PAGE DIFFERENCE", value: "PAGE DIFFERENCE" },
 ];
 
-const ItemForm = ({ handleCreateItemSubmit }) => {
+const CreateCheckForm = ({ handleCreateItemSubmit }) => {
   const { data: session, status } = useSession();
   const [cronDescription, setCronDescription] = useState("");
 
-  const form = useForm<z.infer<typeof createItemFormSchema>>({
-    resolver: zodResolver(createItemFormSchema),
+  const form = useForm<z.infer<typeof createCheckFormSchema>>({
+    resolver: zodResolver(createCheckFormSchema),
     defaultValues: {
       userid: "",
       type: "CHECK",
@@ -82,7 +82,7 @@ const ItemForm = ({ handleCreateItemSubmit }) => {
   const dayOfWeek = useWatch({ control: form.control, name: "dayOfWeek" });
 
   useEffect(() => {
-    if (status === "authenticated" && session?.user?.id) {
+    if (status === "authenticated" && session.user.id) {
       form.setValue("userid", session.user.id);
     }
   }, [status, session]);
@@ -109,7 +109,7 @@ const ItemForm = ({ handleCreateItemSubmit }) => {
     }
   }, [checkType]);
 
-  function onSubmit(values: z.infer<typeof createItemFormSchema>) {
+  function onSubmit(values: z.infer<typeof createCheckFormSchema>) {
     console.log(values);
     handleCreateItemSubmit(values);
   }
@@ -270,7 +270,7 @@ const ItemForm = ({ handleCreateItemSubmit }) => {
               <FormControl>
                 <Switch
                   checked={
-                    session?.user?.userType === "default" ? false : field.value
+                    session.user.userType === "default" ? false : field.value
                   }
                   onCheckedChange={field.onChange}
                 />
@@ -329,12 +329,12 @@ const ItemForm = ({ handleCreateItemSubmit }) => {
                       key={option.value}
                       value={option.value.toString()}
                       disabled={
-                        session?.user?.userType === "default" &&
+                        session.user.userType === "default" &&
                         option.value < 14400000
                       }
                     >
                       {option.label}{" "}
-                      {session?.user?.userType === "default" &&
+                      {session.user.userType === "default" &&
                         option.value < 14400000 &&
                         "(Premium)"}
                     </SelectItem>
@@ -426,4 +426,4 @@ const ItemForm = ({ handleCreateItemSubmit }) => {
   );
 };
 
-export default ItemForm;
+export default CreateCheckForm;

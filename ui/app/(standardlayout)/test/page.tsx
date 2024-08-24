@@ -2,15 +2,15 @@
 
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import CoreTable from "@/components/table/core-table";
-import { fetchData, addItem, deleteItem } from "@/lib/api/items";
+import CoreTable from "@/components/checks/table/CoreTable";
+import { fetchChecksByUser, createCheck, deleteCheck } from "@/lib/api/checks";
 import { CheckItem } from "@/lib/types";
-import { createItemFormSchema } from "@/components/items/schema";
+import { createCheckFormSchema } from "@/lib/checks/schema";
 import { z } from "zod";
 import { USER_TYPE_TO_LIMITS } from "@/lib/constants";
 import { fetchUser } from "@/lib/api/users";
-import { DeleteConfirmation } from "@/components/delete-confirmation";
-import { LoadingOverlay } from "@/components/table/loading-overlay";
+import { DeleteConfirmation } from "@/components/checks/DeleteConfirmation";
+import { LoadingOverlay } from "@/components/checks/LoadingOverlay";
 
 function Home() {
   const { data: session, status } = useSession();
@@ -23,8 +23,8 @@ function Home() {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   useEffect(() => {
-    if (status === "authenticated" && session?.user?.id) {
-      fetchDataForUser(session.user?.id);
+    if (status === "authenticated" && session.user.id) {
+      fetchDataForUser(session.user.id);
     }
   }, [status, session]);
 
@@ -32,7 +32,7 @@ function Home() {
     setIsDataLoading(true);
     console.log("Fetching data for user:", userid);
 
-    const fetchedData = await fetchData(userid);
+    const fetchedData = await fetchChecksByUser(userid);
     if (fetchedData) {
       fetchedData.sort(
         (a, b) =>
@@ -44,14 +44,14 @@ function Home() {
   }
 
   const handleCreateItemSubmit = async (
-    values: z.infer<typeof createItemFormSchema>
+    values: z.infer<typeof createCheckFormSchema>
   ) => {
     console.log("Adding item:", values);
     setIsCreateItemLoading(true);
     setIsCreateItemModalOpen(false);
 
     // Check for user's limit first
-    const userLimit = USER_TYPE_TO_LIMITS[session.user?.userType];
+    const userLimit = USER_TYPE_TO_LIMITS[session.user.userType];
     const userData = await fetchUser(session.user.id);
     const currentCount = userData?.[0]?.checkCount || 0;
 
@@ -66,7 +66,7 @@ function Home() {
     }
 
     try {
-      await addItem(values);
+      await createCheck(values);
       await fetchDataForUser(session.user.id);
     } catch (error) {
       setIsCreateItemLoading(false);
@@ -81,7 +81,7 @@ function Home() {
     setIsDeleteLoading(true);
     setIsDeleteModalOpen(false);
     try {
-      await Promise.all(items.map((item) => deleteItem(item)));
+      await Promise.all(items.map((item) => deleteCheck(item)));
       fetchDataForUser(session.user.id);
     } catch (error) {
       console.error("Error deleting items:", error);

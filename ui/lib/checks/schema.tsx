@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const createItemFormSchema = z
+export const createCheckFormSchema = z
   .object({
     userid: z.string().trim().min(1).max(100),
     type: z.string().trim().min(1).max(50),

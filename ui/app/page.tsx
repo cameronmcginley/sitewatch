@@ -34,7 +34,7 @@ const checks = [
 
 const signInClick = (session, status) => {
   // If already signed in, redirect to dashboard
-  if (status === "authenticated" && session?.user?.id) {
+  if (status === "authenticated" && session.user.id) {
     window.location.href = "/test";
   } else {
     window.location.href = "/sign-in";

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   Dialog,
   DialogTrigger,
@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import ItemForm from "@/components/items/item-form";
+import CreateCheckForm from "@/components/checks/CreateCheckForm";
 
 interface CreateCheckButtonProps {
   isCreateItemModalOpen: boolean;
@@ -35,7 +35,7 @@ export const CreateCheckButton: React.FC<CreateCheckButtonProps> = ({
           <DialogTitle>{"Create New Check"}</DialogTitle>
         </DialogHeader>
         <div className="relative">
-          <ItemForm handleCreateItemSubmit={handleCreateItemSubmit} />
+          <CreateCheckForm handleCreateItemSubmit={handleCreateItemSubmit} />
         </div>
       </DialogContent>
     </Dialog>
