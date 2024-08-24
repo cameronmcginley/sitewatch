@@ -38,7 +38,7 @@ function Home() {
         (a, b) =>
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       );
-      setData(fetchedData);
+      setData(fetchedData as CheckItem[]);
       setIsDataLoading(false);
     }
   }

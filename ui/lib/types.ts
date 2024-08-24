@@ -41,6 +41,3 @@ export interface CheckItem {
   cron: string;
   attributes: CheckItemAttributes[CheckType];
 }
-
-// export type AttributesForCheckType<T extends CheckType> =
-//   CheckItemAttributes[T];

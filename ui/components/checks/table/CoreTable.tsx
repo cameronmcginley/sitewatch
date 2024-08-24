@@ -22,7 +22,7 @@ import {
   getGenericColumns,
   getTypeSpecificColumns,
 } from "./cell-formatters";
-import { CheckItem } from "@/lib/types";
+import { CheckItem, CheckType } from "@/lib/types";
 import { CustomPagination } from "./CustomPagination";
 import { CreateCheckButton } from "./CreateCheckButton";
 import { useMediaQuery } from "@/hooks/use-media-query";
@@ -37,14 +37,18 @@ const CoreTable = ({
   setIsCreateItemModalOpen,
   fetchDataForUser,
 }) => {
-  const [selectedCheckType, setSelectedCheckType] = useState("ALL");
+  const [selectedCheckType, setSelectedCheckType] = useState<CheckType | "ALL">(
+    "ALL"
+  );
   const [selectedItems, setSelectedItems] = useState<CheckItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isSidebarFlyoutOpen, setIsSidebarFlyoutOpen] = useState(false);
   const [flyoutItem, setFlyoutItem] = useState<CheckItem | null>(null);
   const itemsPerPage = 10;
 
-  const checkTypes = ["ALL", ...new Set(data.map((item) => item.checkType))];
+  const usedCheckTypes = ["ALL"].concat(
+    Array.from(new Set(data.map((item) => item.checkType)))
+  );
 
   const columns =
     selectedCheckType === "ALL"
@@ -95,12 +99,17 @@ const CoreTable = ({
           <p className="font-medium text-sm sm:text-base">
             Filter by Check Type
           </p>
-          <Select onValueChange={setSelectedCheckType} defaultValue="ALL">
+          <Select
+            onValueChange={(value: string) =>
+              setSelectedCheckType(value as CheckType | "ALL")
+            }
+            defaultValue="ALL"
+          >
             <SelectTrigger className={`${isMobile ? "w-full" : "w-[180px]"}`}>
               <SelectValue placeholder="Filter by Check Type" />
             </SelectTrigger>
             <SelectContent>
-              {checkTypes.map((type) => (
+              {usedCheckTypes.map((type) => (
                 <SelectItem key={type} value={type}>
                   <p className="font-medium">{type}</p>
                 </SelectItem>

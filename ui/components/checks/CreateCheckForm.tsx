@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
@@ -57,19 +58,19 @@ const CreateCheckForm = ({ handleCreateItemSubmit }) => {
   const { data: session, status } = useSession();
   const [cronDescription, setCronDescription] = useState("");
 
-  const form = useForm<z.infer<typeof createCheckFormSchema>>({
+  const form = useForm<Partial<z.infer<typeof createCheckFormSchema>>>({
     resolver: zodResolver(createCheckFormSchema),
     defaultValues: {
-      userid: "",
+      userid: undefined,
       type: "CHECK",
-      checkType: "",
-      url: "",
+      checkType: undefined,
+      url: undefined,
       useProxy: false,
-      alias: "",
-      email: "",
+      alias: undefined,
+      email: undefined,
       delayMs: 14400000,
       attributes: {},
-      cron: "",
+      cron: undefined,
       lastResult: null,
       mostRecentAlert: null,
       status: "ACTIVE",
