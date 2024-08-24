@@ -3,7 +3,7 @@ import { CheckItem } from "../lib/types";
 export const dummyData: CheckItem[] = [
   {
     alias: "Alias 0",
-    check_type: "EBAY PRICE THRESHOLD",
+    checkType: "EBAY PRICE THRESHOLD",
     pk: "CHECK#7db7gdnpzp",
     sk: "CHECK",
     type: "CHECK",
@@ -27,7 +27,7 @@ export const dummyData: CheckItem[] = [
   },
   {
     alias: "Alias 1",
-    check_type: "EBAY PRICE THRESHOLD",
+    checkType: "EBAY PRICE THRESHOLD",
     pk: "CHECK#r56uay1tpi",
     sk: "CHECK",
     type: "CHECK",
@@ -50,7 +50,7 @@ export const dummyData: CheckItem[] = [
   },
   {
     alias: "Alias 2",
-    check_type: "EBAY PRICE THRESHOLD",
+    checkType: "EBAY PRICE THRESHOLD",
     pk: "CHECK#fa3aht13smm",
     sk: "CHECK",
     type: "CHECK",
@@ -73,7 +73,7 @@ export const dummyData: CheckItem[] = [
   },
   {
     alias: "Alias 3",
-    check_type: "EBAY PRICE THRESHOLD",
+    checkType: "EBAY PRICE THRESHOLD",
     pk: "CHECK#liu6sitq18",
     sk: "CHECK",
     type: "CHECK",
@@ -97,7 +97,7 @@ export const dummyData: CheckItem[] = [
   },
   {
     alias: "Alias 4",
-    check_type: "KEYWORD CHECK",
+    checkType: "KEYWORD CHECK",
     pk: "CHECK#h4oxn6bru5",
     sk: "CHECK",
     type: "CHECK",
@@ -122,7 +122,7 @@ export const dummyData: CheckItem[] = [
   },
   {
     alias: "Alias 5",
-    check_type: "KEYWORD CHECK",
+    checkType: "KEYWORD CHECK",
     pk: "CHECK#ogzqq7ydcmo",
     sk: "CHECK",
     type: "CHECK",
@@ -147,7 +147,7 @@ export const dummyData: CheckItem[] = [
   },
   {
     alias: "Alias 6",
-    check_type: "PAGE DIFFERENCE",
+    checkType: "PAGE DIFFERENCE",
     pk: "CHECK#l1vxzzjpxc",
     sk: "CHECK",
     type: "CHECK",
@@ -171,7 +171,7 @@ export const dummyData: CheckItem[] = [
   },
   {
     alias: "Alias 7",
-    check_type: "EBAY PRICE THRESHOLD",
+    checkType: "EBAY PRICE THRESHOLD",
     pk: "CHECK#1az4w7mhi9b",
     sk: "CHECK",
     type: "CHECK",
@@ -195,7 +195,7 @@ export const dummyData: CheckItem[] = [
   },
   {
     alias: "Alias 8",
-    check_type: "KEYWORD CHECK",
+    checkType: "KEYWORD CHECK",
     pk: "CHECK#q9npvinr9hg",
     sk: "CHECK",
     type: "CHECK",
@@ -220,7 +220,7 @@ export const dummyData: CheckItem[] = [
   },
   {
     alias: "Alias 9",
-    check_type: "KEYWORD CHECK",
+    checkType: "KEYWORD CHECK",
     pk: "CHECK#35g52sw26sy",
     sk: "CHECK",
     type: "CHECK",
@@ -245,7 +245,7 @@ export const dummyData: CheckItem[] = [
   },
   {
     alias: "Alias 10",
-    check_type: "EBAY PRICE THRESHOLD",
+    checkType: "EBAY PRICE THRESHOLD",
     pk: "CHECK#uesl77f3rej",
     sk: "CHECK",
     type: "CHECK",
@@ -269,7 +269,7 @@ export const dummyData: CheckItem[] = [
   },
   {
     alias: "Alias 11",
-    check_type: "PAGE DIFFERENCE",
+    checkType: "PAGE DIFFERENCE",
     pk: "CHECK#9inzwhrmvkj",
     sk: "CHECK",
     type: "CHECK",
@@ -293,7 +293,7 @@ export const dummyData: CheckItem[] = [
   },
   {
     alias: "Alias 12",
-    check_type: "EBAY PRICE THRESHOLD",
+    checkType: "EBAY PRICE THRESHOLD",
     pk: "CHECK#yjcgsuamz9g",
     sk: "CHECK",
     type: "CHECK",
@@ -317,7 +317,7 @@ export const dummyData: CheckItem[] = [
   },
   {
     alias: "Alias 13",
-    check_type: "PAGE DIFFERENCE",
+    checkType: "PAGE DIFFERENCE",
     pk: "CHECK#3vut3x0m62g",
     sk: "CHECK",
     type: "CHECK",
@@ -341,7 +341,7 @@ export const dummyData: CheckItem[] = [
   },
   {
     alias: "Alias 14",
-    check_type: "PAGE DIFFERENCE",
+    checkType: "PAGE DIFFERENCE",
     pk: "CHECK#fj6lg3zlj58",
     sk: "CHECK",
     type: "CHECK",
@@ -365,7 +365,7 @@ export const dummyData: CheckItem[] = [
   },
   {
     alias: "Alias 15",
-    check_type: "PAGE DIFFERENCE",
+    checkType: "PAGE DIFFERENCE",
     pk: "CHECK#1n30haypcun",
     sk: "CHECK",
     type: "CHECK",
@@ -389,7 +389,7 @@ export const dummyData: CheckItem[] = [
   },
   {
     alias: "Alias 16",
-    check_type: "KEYWORD CHECK",
+    checkType: "KEYWORD CHECK",
     pk: "CHECK#ilncy2e3re",
     sk: "CHECK",
     type: "CHECK",
@@ -413,7 +413,7 @@ export const dummyData: CheckItem[] = [
   },
   {
     alias: "Alias 17",
-    check_type: "EBAY PRICE THRESHOLD",
+    checkType: "EBAY PRICE THRESHOLD",
     pk: "CHECK#yxk1qupevf",
     sk: "CHECK",
     type: "CHECK",
@@ -436,7 +436,7 @@ export const dummyData: CheckItem[] = [
   },
   {
     alias: "Alias 18",
-    check_type: "EBAY PRICE THRESHOLD",
+    checkType: "EBAY PRICE THRESHOLD",
     pk: "CHECK#iq9w5yd9xxl",
     sk: "CHECK",
     type: "CHECK",
@@ -460,7 +460,7 @@ export const dummyData: CheckItem[] = [
   },
   {
     alias: "Alias 19",
-    check_type: "KEYWORD CHECK",
+    checkType: "KEYWORD CHECK",
     pk: "CHECK#syes274mhrf",
     sk: "CHECK",
     type: "CHECK",
@@ -485,7 +485,7 @@ export const dummyData: CheckItem[] = [
   },
   {
     alias: "Alias 20",
-    check_type: "KEYWORD CHECK",
+    checkType: "KEYWORD CHECK",
     pk: "CHECK#k4ppnpcrpyb",
     sk: "CHECK",
     type: "CHECK",
@@ -510,7 +510,7 @@ export const dummyData: CheckItem[] = [
   },
   {
     alias: "Alias 21",
-    check_type: "PAGE DIFFERENCE",
+    checkType: "PAGE DIFFERENCE",
     pk: "CHECK#jw9eyt9tsrs",
     sk: "CHECK",
     type: "CHECK",
@@ -534,7 +534,7 @@ export const dummyData: CheckItem[] = [
   },
   {
     alias: "Alias 22",
-    check_type: "PAGE DIFFERENCE",
+    checkType: "PAGE DIFFERENCE",
     pk: "CHECK#v2wds6z5pcj",
     sk: "CHECK",
     type: "CHECK",
@@ -558,7 +558,7 @@ export const dummyData: CheckItem[] = [
   },
   {
     alias: "Alias 23",
-    check_type: "PAGE DIFFERENCE",
+    checkType: "PAGE DIFFERENCE",
     pk: "CHECK#0u297t4ub2e",
     sk: "CHECK",
     type: "CHECK",
@@ -581,7 +581,7 @@ export const dummyData: CheckItem[] = [
   },
   {
     alias: "Alias 24",
-    check_type: "KEYWORD CHECK",
+    checkType: "KEYWORD CHECK",
     pk: "CHECK#8j3tqhrl0gh",
     sk: "CHECK",
     type: "CHECK",
@@ -606,7 +606,7 @@ export const dummyData: CheckItem[] = [
   },
   {
     alias: "Alias 25",
-    check_type: "PAGE DIFFERENCE",
+    checkType: "PAGE DIFFERENCE",
     pk: "CHECK#k6d1mtjoc9a",
     sk: "CHECK",
     type: "CHECK",
@@ -630,7 +630,7 @@ export const dummyData: CheckItem[] = [
   },
   {
     alias: "Alias 26",
-    check_type: "KEYWORD CHECK",
+    checkType: "KEYWORD CHECK",
     pk: "CHECK#635tvt4dr2t",
     sk: "CHECK",
     type: "CHECK",
@@ -655,7 +655,7 @@ export const dummyData: CheckItem[] = [
   },
   {
     alias: "Alias 27",
-    check_type: "KEYWORD CHECK",
+    checkType: "KEYWORD CHECK",
     pk: "CHECK#ajadjhnfowi",
     sk: "CHECK",
     type: "CHECK",
@@ -679,7 +679,7 @@ export const dummyData: CheckItem[] = [
   },
   {
     alias: "Alias 28",
-    check_type: "KEYWORD CHECK",
+    checkType: "KEYWORD CHECK",
     pk: "CHECK#hp7w6upob3w",
     sk: "CHECK",
     type: "CHECK",
@@ -704,7 +704,7 @@ export const dummyData: CheckItem[] = [
   },
   {
     alias: "Alias 29",
-    check_type: "EBAY PRICE THRESHOLD",
+    checkType: "EBAY PRICE THRESHOLD",
     pk: "CHECK#acb488of6ho",
     sk: "CHECK",
     type: "CHECK",

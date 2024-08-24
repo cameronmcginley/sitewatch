@@ -45,7 +45,7 @@ const CoreTable = ({
   const [flyoutItem, setFlyoutItem] = useState<CheckItem | null>(null);
   const itemsPerPage = 10;
 
-  const checkTypes = ["ALL", ...new Set(data.map((item) => item.check_type))];
+  const checkTypes = ["ALL", ...new Set(data.map((item) => item.checkType))];
 
   const columns =
     selectedCheckType === "ALL"
@@ -55,7 +55,7 @@ const CoreTable = ({
   const filteredData =
     selectedCheckType === "ALL"
       ? data
-      : data.filter((item: CheckItem) => item.check_type === selectedCheckType);
+      : data.filter((item: CheckItem) => item.checkType === selectedCheckType);
 
   const paginatedData = filteredData.slice(
     (currentPage - 1) * itemsPerPage,

@@ -1,6 +1,6 @@
 REDIS_ITEM_FIELDS = [
     "alias",
-    "check_type",
+    "checkType",
     "url",
     "email",
     "pk",

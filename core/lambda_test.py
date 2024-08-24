@@ -45,7 +45,7 @@ patch("lambda_executor.update_dynamodb_item", update_dynamodb_item).start()
 dummy_data = [
     {
         "alias": {"S": "Alias 0"},
-        "check_type": {"S": "EBAY PRICE THRESHOLD"},
+        "checkType": {"S": "EBAY PRICE THRESHOLD"},
         "pk": {"S": "CHECK#2qpzse3v7ju"},
         "sk": {"S": "CHECK"},
         "type": {"S": "CHECK"},
@@ -58,7 +58,7 @@ dummy_data = [
     },
     {
         "alias": {"S": "Alias 1"},
-        "check_type": {"S": "EBAY PRICE THRESHOLD"},
+        "checkType": {"S": "EBAY PRICE THRESHOLD"},
         "pk": {"S": "CHECK#svefu69ebif"},
         "sk": {"S": "CHECK"},
         "type": {"S": "CHECK"},
@@ -71,7 +71,7 @@ dummy_data = [
     },
     {
         "alias": {"S": "Alias 2"},
-        "check_type": {"S": "KEYWORD CHECK"},
+        "checkType": {"S": "KEYWORD CHECK"},
         "pk": {"S": "CHECK#4vs6l43yfej"},
         "sk": {"S": "CHECK"},
         "type": {"S": "CHECK"},
@@ -130,13 +130,13 @@ from lambda_executor import lambda_handler as executor_handler
 from lambda_processor import lambda_handler as processor_handler
 
 # Replace actual check functions with mocks
-for check_type, func in CHECKTYPE_TO_FUNCTION_MAP.items():
+for checkType, func in CHECKTYPE_TO_FUNCTION_MAP.items():
     if func is not None:
-        mock_func = mock_functions.get(check_type)
+        mock_func = mock_functions.get(checkType)
         if mock_func:
-            CHECKTYPE_TO_FUNCTION_MAP[check_type] = MagicMock(side_effect=mock_func)
+            CHECKTYPE_TO_FUNCTION_MAP[checkType] = MagicMock(side_effect=mock_func)
         else:
-            print(f"Warning: No mock function defined for {check_type}")
+            print(f"Warning: No mock function defined for {checkType}")
 
 
 async def test_lambda_functions():
@@ -153,8 +153,8 @@ async def test_lambda_functions():
 
     print("\nChecking function calls:")
     function_calls = [
-        [check_type, mock_func.call_count]
-        for check_type, mock_func in CHECKTYPE_TO_FUNCTION_MAP.items()
+        [checkType, mock_func.call_count]
+        for checkType, mock_func in CHECKTYPE_TO_FUNCTION_MAP.items()
         if mock_func is not None
     ]
     print(
@@ -164,12 +164,12 @@ async def test_lambda_functions():
     print("\nDetailed Results Table:")
     results_table = [
         [
-            item["check_type"]["S"],
+            item["checkType"]["S"],
             item["url"]["S"],
             item["alias"]["S"],
             item["email"]["S"],
             "Success"
-            if CHECKTYPE_TO_FUNCTION_MAP[item["check_type"]["S"]].call_count > 0
+            if CHECKTYPE_TO_FUNCTION_MAP[item["checkType"]["S"]].call_count > 0
             else "N/A",
         ]
         for item in dummy_data

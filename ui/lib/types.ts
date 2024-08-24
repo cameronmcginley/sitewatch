@@ -21,7 +21,7 @@ export interface CheckItemAttributes {
 }
 export interface CheckItem {
   alias: string;
-  check_type: CheckType;
+  checkType: CheckType;
   pk: string;
   sk: string;
   type: string;

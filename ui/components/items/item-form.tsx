@@ -62,7 +62,7 @@ const ItemForm = ({ handleCreateItemSubmit }) => {
     defaultValues: {
       userid: "",
       type: "CHECK",
-      check_type: "",
+      checkType: "",
       url: "",
       useProxy: false,
       alias: "",
@@ -76,7 +76,7 @@ const ItemForm = ({ handleCreateItemSubmit }) => {
     },
   });
 
-  const checkType = useWatch({ control: form.control, name: "check_type" });
+  const checkType = useWatch({ control: form.control, name: "checkType" });
   const delayMs = useWatch({ control: form.control, name: "delayMs" });
   const offset = useWatch({ control: form.control, name: "offset" });
   const dayOfWeek = useWatch({ control: form.control, name: "dayOfWeek" });
@@ -123,7 +123,7 @@ const ItemForm = ({ handleCreateItemSubmit }) => {
       >
         <FormField
           control={form.control}
-          name="check_type"
+          name="checkType"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Check type</FormLabel>
@@ -147,7 +147,7 @@ const ItemForm = ({ handleCreateItemSubmit }) => {
           )}
         />
         {/* Attribute fields */}
-        {form.watch("check_type") === "KEYWORD CHECK" && (
+        {form.watch("checkType") === "KEYWORD CHECK" && (
           <>
             <FormField
               control={form.control}
@@ -188,7 +188,7 @@ const ItemForm = ({ handleCreateItemSubmit }) => {
             />
           </>
         )}
-        {form.watch("check_type") === "EBAY PRICE THRESHOLD" && (
+        {form.watch("checkType") === "EBAY PRICE THRESHOLD" && (
           <FormField
             control={form.control}
             name="attributes.threshold"
@@ -214,7 +214,7 @@ const ItemForm = ({ handleCreateItemSubmit }) => {
             )}
           />
         )}
-        {form.watch("check_type") === "PAGE DIFFERENCE" && (
+        {form.watch("checkType") === "PAGE DIFFERENCE" && (
           <FormField
             control={form.control}
             name="attributes.percent_diff"

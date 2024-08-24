@@ -40,7 +40,7 @@ export const handler = async (event) => {
       createdAt: createdAt,
       updatedAt: updatedAt,
       alias: item.alias,
-      check_type: item.check_type,
+      checkType: item.checkType,
       url: item.url,
       userid: item.userid,
       lastResult: item.lastResult,

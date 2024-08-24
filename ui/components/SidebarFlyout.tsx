@@ -151,7 +151,7 @@ export const SidebarFlyout = ({
     },
     {
       label: "Check Type",
-      value: currentCheckData?.check_type || "Loading...",
+      value: currentCheckData?.checkType || "Loading...",
       type: "text",
     },
     {
@@ -188,7 +188,7 @@ export const SidebarFlyout = ({
                 {key}:
               </span>
               <span className="font-medium truncate flex-grow">
-                {currentCheckData.check_type === "EBAY PRICE THRESHOLD" && "$"}
+                {currentCheckData.checkType === "EBAY PRICE THRESHOLD" && "$"}
                 {renderAttributeValue(value)}
               </span>
             </div>
@@ -242,7 +242,7 @@ export const SidebarFlyout = ({
       value: currentCheckData
         ? renderAttributeValue(currentCheckData.useProxy)
         : renderAttributeValue(false),
-      key: "useProxy",
+      key: session?.user?.userType === "default" ? undefined : "useProxy",
       type: "boolean",
       options: [
         { value: true, label: "Yes" },

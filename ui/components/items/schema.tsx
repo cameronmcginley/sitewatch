@@ -4,7 +4,7 @@ export const createItemFormSchema = z
   .object({
     userid: z.string().trim().min(1).max(100),
     type: z.string().trim().min(1).max(50),
-    check_type: z.enum([
+    checkType: z.enum([
       "KEYWORD CHECK",
       "PAGE DIFFERENCE",
       "EBAY PRICE THRESHOLD",
@@ -39,7 +39,7 @@ export const createItemFormSchema = z
       }
     }
 
-    if (data.check_type === "KEYWORD CHECK") {
+    if (data.checkType === "KEYWORD CHECK") {
       if (data.attributes.keyword === undefined) {
         ctx.addIssue({
           path: ["attributes", "keyword"],
@@ -49,17 +49,17 @@ export const createItemFormSchema = z
       }
     }
 
-    if (data.check_type === "PAGE DIFFERENCE") {
+    if (data.checkType === "PAGE DIFFERENCE") {
       if (data.attributes.percent_diff === undefined) {
         ctx.addIssue({
           path: ["attributes", "percent_diff"],
-          message: "Percent_diff is required for PAGE DIFFERENCE.",
+          message: "Percent is required for PAGE DIFFERENCE.",
           code: "custom",
         });
       }
     }
 
-    if (data.check_type === "EBAY PRICE THRESHOLD") {
+    if (data.checkType === "EBAY PRICE THRESHOLD") {
       if (data.attributes.threshold === undefined) {
         ctx.addIssue({
           path: ["attributes", "threshold"],

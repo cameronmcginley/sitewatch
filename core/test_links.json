@@ -9,7 +9,7 @@
         "alias": {
             "S": "Grape Glass Bottle"
         },
-        "check_type": {
+        "checkType": {
             "S": "AVAILABILITY"
         },
         "url": {
@@ -47,7 +47,7 @@
         "alias": {
             "S": "Nuka Cola Glass Bottle"
         },
-        "check_type": {
+        "checkType": {
             "S": "AVAILABILITY"
         },
         "url": {
@@ -85,7 +85,7 @@
         "alias": {
             "S": "Nuka Cola Caps Tin"
         },
-        "check_type": {
+        "checkType": {
             "S": "AVAILABILITY"
         },
         "url": {
@@ -123,7 +123,7 @@
         "alias": {
             "S": "Cramorant 226 PSA 9"
         },
-        "check_type": {
+        "checkType": {
             "S": "EBAY_PRICE_THRESHOLD"
         },
         "url": {
@@ -165,7 +165,7 @@
         "alias": {
             "S": "Cramorant 226 PSA 10"
         },
-        "check_type": {
+        "checkType": {
             "S": "EBAY_PRICE_THRESHOLD"
         },
         "url": {

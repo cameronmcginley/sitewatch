@@ -33,7 +33,7 @@ def transform_item(item):
     logger.info(f"Transforming item: {item['pk']}")
     transformed = {
         "alias": item.get("alias"),
-        "type": item.get("check_type"),
+        "type": item.get("checkType"),
         "url": item.get("url"),
         "email": item.get("email"),
         "pk": item.get("pk"),
@@ -44,12 +44,12 @@ def transform_item(item):
         "runNowOverride": item.get("runNowOverride", False),
     }
 
-    if item["check_type"] == "EBAY PRICE THRESHOLD":
+    if item["checkType"] == "EBAY PRICE THRESHOLD":
         transformed["threshold"] = float(item["attributes"]["threshold"])
         logger.debug(
             f"Added threshold {transformed['threshold']} for EBAY PRICE THRESHOLD item"
         )
-    elif item["check_type"] == "KEYWORD CHECK":
+    elif item["checkType"] == "KEYWORD CHECK":
         transformed["keyword"] = item["attributes"]["keyword"]
         transformed["opposite"] = item["attributes"]["opposite"]
         logger.debug(f"Added keyword '{transformed['keyword']}' for KEYWORD CHECK item")

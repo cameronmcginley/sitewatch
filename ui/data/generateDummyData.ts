@@ -97,7 +97,7 @@ export const generateDummyData = (rows: number): CheckItem[] => {
 
     data.push({
       alias: `Alias ${i}`,
-      check_type: checkType,
+      checkType: checkType,
       pk: pk,
       sk: sk,
       type: "CHECK",

@@ -8,7 +8,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { InfoCircledIcon } from "@radix-ui/react-icons";
-import { check_type_descriptions, emptyDash, loadingDots } from "./constants";
+import { checkType_descriptions, emptyDash, loadingDots } from "./constants";
 import {
   toSentenceCase,
   getNextRunDate,
@@ -143,11 +143,11 @@ const formatCheckTypeCell = (item: CheckItem) => (
             <InfoCircledIcon />
           </TooltipTrigger>
           <TooltipContent>
-            {check_type_descriptions[item.check_type] ?? emptyDash}
+            {checkType_descriptions[item.checkType] ?? emptyDash}
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-      <span className="truncate">{item.check_type ?? emptyDash}</span>
+      <span className="truncate">{item.checkType ?? emptyDash}</span>
     </div>
   </TableCell>
 );
