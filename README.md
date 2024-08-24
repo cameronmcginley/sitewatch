@@ -1,255 +1,254 @@
 # SiteWatch
 
-SiteWatch is an extensible solution for automating the website monitoring and alerting using a variety of functions. It allows for customizable checks based on user-defined criteria and intervals, sending out email notifications when conditions are met.
+SiteWatch is a solution for automating website monitoring and alerting. A user can upload a URL, a desired interval, and select one of our custom check functions (keyword check, page difference, etc), and will recieve email alerts when conditions are met.
 
-## Features
+See [here]() for more documentation (including a demo video) on features and functionality of the app itself. This readme will focus on the architecture, tech stack, and development.
 
-- **Automated Monitoring**: Continuously monitors specified URLs at user-defined intervals.
-- **Customizable Functions**: Supports various functions for different types of checks, such as keyword presence and price thresholds.
-- **Email Notifications**: Sends alerts when specified criteria are met, using configurable email settings.
-- **Extensible Architecture**: Easily add new check functions as needed. Current functionalities include keyword presence and price threshold checks.
-- **Configuration**: Customize URLs, keywords, and price thresholds via a straightforward setup process.
-- **Authentication and Permissions**: Features authentication with different permissions per account, controlling the number of URL checks allowed and the frequency of checks.
+![Architecture Diagram](assets/architecture_diagram.png)
 
-## How It Works
+## Architecture Overview
 
-1. **User Configuration**: Specify the URLs to monitor, the type of check (e.g., keyword or price threshold), and the checking interval via UI.
-2. **Automated Checks**: The Lambda function executes the specified checks at the defined intervals.
-3. **Notification**: Sends an email notification when the criteria for any check are met.
+SiteWatch employs a serverless architecture using AWS services, with a React-based frontend hosted on Vercel. The system is divided into several key components:
 
-## Current Check Functions
+1. **Frontend**: Next.js application with React
+2. **API Layer**: AWS API Gateway with Lambda functions
+3. **Core Processing**: Lambda functions for URL processing and execution
+4. **Proxy**: Oxylabs proxy for fetching website data
+5. **Database**: DynamoDB for primary storage, Redis for caching
+6. **Authentication**: NextAuth.js for OAuth-based authentication
+7. **Scheduling**: Amazon EventBridge for timed executions
+8. **Email Notifications**: Gmail API
 
-1. **KEYWORD_CHECK**: Monitors a specified URL for the presence (or lack thereof) of user-defined keywords, triggering notifications when keywords are detected.
-   - Parameters: `url: string`, `keyword: string`, `opposite: boolean`
-2. **EBAY_PRICE_THRESHOLD**: Searches for the lowest priced item on Ebay and alerts the user when the price falls below a predefined threshold.
-   - Parameters: `url: string`, `threshold: number`
-3. **AI_CHECK**: Lets a user define a LLM prompt with a notification condition, gets alerted if LLM determines condition met.
-   - Parameters: `prompt: string`, `notify_condition: string`
-4. **PAGE_DIFFERENCE**: Each run, stores the current HTML from given URL. If the current run find X% difference, alerts user. Percent defined by user.
-   - Parameters: `percent_diff: number | "ANY"`
-
-### URL Preprocessing
-
-Some URL Parameter preprocessing is done after it is submitted by a user, and is typically just a validity check. Some functions have unique processing:
-
-1. **EBAY_PRICE_THRESHOLD**: 
-   - Verifies URL is valid Ebay link
-   - Verifies search parameter in URL, if not then request from User
-   - Adds URL parameters (if does not exist) to query and sort by "buy it now" and "lowest price first"
-
-## Project Structure
-
-```
-project-root/
-├── core/
-│   └── ...                 # Core logic of the service
-├── api/
-│   └── ...                 # API endpoints and handlers
-├── ui/
-│   └── ...                 # User interface components and logic
-└── deploy/
-    ├── deploy-core.mjs
-    └── deploy-api.mjs
-```
-
-1. Core
-   1. Processor Lambda
-      1. Fetches all URLs stored in DynamoDB ready to run
-      2. Batches URLs, spins up Executor Lambda for each batch
-   2. Executor Lambda
-      1. Performs functionality cheks on given URLs
-      2. Sends emails through GMail API when necessary
-2. API
-   1. CRUD Lambdas for interacting with DynamoDB
-3. UI
-   1. Frontend, authentication, user interaction
-4. Deploy
-   1. Serverless Framework deploys for Core and API, see [Deployment](#deployment)
-
-## Architecture
+## Technology Stack
 
 ### Frontend
 - TypeScript
 - Next.js
 - React
-- Vercel Hosting
-- NextAuth.js
-  - OAuth-based authentication for Next.js
-- Axios
-  - Promise-based HTTP client
-- Tailwind
+- Vercel (hosting)
+- NextAuth.js (authentication)
+- Axios (HTTP client)
+- Tailwind CSS
 - shadcn/ui
-- Aceternity UI
-  - Fancy hero section
 
 ### Backend
-- Lambdas
-  - Core Processor/Executor Lambda (Python 3.8)
-  - API CRUD Lambdas (Node.js 20.x)
+- AWS Lambda
+  - Core Processor/Executor (Python 3.8)
+  - API CRUD functions (Node.js 20.x)
 - Amazon EventBridge
-  - Run core processor lambda on timer
 - AWS API Gateway
-  - Manages APIs, integrates with Lambda, provides security
 - DynamoDB
-  - Single-table design
+- Redis (caching layer)
 - Gmail API
-- Serverless Framework
-  - AWS Deployments
-  - Deploys Processor/Executor Lambdas, API Gateway, API Lambdas, DynamoDB
-  - Dev and Prod environments
-- AWS SSM Parameter Store
-  - Store secrets and parameters
+- Serverless Framework (for AWS deployments)
+- AWS SSM Parameter Store (secrets management)
 
-![Architecture Diagram](assets/architecture_diagram.png)
+## Project Structure
+
+```
+root/
+├── core/
+│   ├── lambda_processor.py
+│   ├── lambda_executor.py
+│   ├── fetch_url.py
+│   └── url_check_functions/
+├── api/
+│   └── functions/
+├── db/
+│   ├── lambda_redis_sync.py
+│   └── lambda_stream_processor.py
+├── ui/
+│   ├── components/
+│   └── app/
+└── deploy/
+    └── deploy.mjs
+```
 
 ## Core Functionality
 
-As mentioned above, core functionality is implemented via a `Processor Lambda` and an `Executor Lambda`. The processor is responsible for fetching URLs from DynamoDB, and spinning up executor lambdas each with a batch of URLs to process.
+The core functionality is implemented via two main Lambda functions:
 
-Table here
+1. **Processor Lambda**
+   1. Fetches check items from Redis, failover to DynamoDB
+   2. Computes which checks are ready to run based off their `cron` field
+   3. Batches and spins of executor lambdas
+2. **Executor Lambda**
+   1. Asynchronously performs the custom check functions against each url
+   2. Writes necessary data back to DynamoDB
+   3. Send email alerts for checks if necessary
 
-User interacts via a main table on the front end, where they can see their list of URLs currently being monitored, along with some helpful information. Here they can also create a new URL monitor, selecting a Check Type and entering the required paramaters for that Check Type. Supports editing any field.
+Key features of the core implementation:
 
-Implements some nice-to-haves, like:
+- Asynchronous URL fetching using `aiohttp` and `asyncio`
+- Randomized User-Agent and proxy selection
+- Extensible architecture for adding new check functions
 
-- If you choose to run every 24 hours you can select which hour to run at each day. Similar can be done for every check >1 hour.
-- Table field indicating when next run will happen, and the result status and time of the previous run
-- When you were most recently alerted by the specific URL monitor
-- A flyout page with more information
-- Sorting by different Check Types will show that type's parameters in the table
-- Many table fields can be hovered over for more information
+## API Layer
 
-### Implementation Details
+The API layer handles CRUD operations for managing `users` and `checks` in DynamoDB.
 
-- Built in Python
-- Built with `aiohttp` and `asyncio` to fetch HTML from URLs asynchronously to improve performance. Note there is a concurrency limit of 1000 on AWS Lambda. 
-  - See `/core/lambda_executor.py`
-- Implements random `header` and `proxy` selection when making requests.
-  - See `/core/fetch_url.py`
-- Easily extensible with new functions, just plug-and-play.
-  - See `/core/url_check_functions/`
-- Test suite for verifying all end to end core functionality
-  - See `/core/lambda_test.py`
-- Generates test data with 100k+ real URLs taken from [Common Crawl](https://data.commoncrawl.org/crawl-data/CC-MAIN-2024-26/index.html) dataset
+Implemented with AWS API Gateway to route requests to lambda functions.
 
-### Todo
+**Features:**
+- Secure configuration management via AWS SSM Parameter Store.
+- API key-based authentication for accessing endpoints.
 
-- Unique tests for each unique check function would be nice
-- pino logging
+### Endpoints
 
-## API Functionality
+**Checks Endpoints**
 
-The API layer is responsible for interacting with DynamoDB, managing user configurations, and providing endpoints for the frontend to communicate with the backend. It includes CRUD operations for managing URLs and user settings.
+1. `GET /checks`
+   - Query parameters: `userid`
+   - Retrieves all checks for a specific user
 
-### Key Features
+2. `POST /checks`
+   - Creates a new check
+   - Request body: Check details (excluding `pk` and `sk`)
 
-1. **CRUD Operations**: Create, Read, Update, Delete operations for managing user configurations.
-2. **Secure Configuration Management**: Uses AWS SSM Parameter Store for securely managing and retrieving configuration parameters and secrets.
+3. `PUT /checks`
+   - Updates an existing check
+   - Request body: `pk`, `sk`, `userid`, and fields to update
 
-### How It Works
+4. `DELETE /checks`
+   - Deletes a check
+   - Request body: `pk`, `sk`
 
-1. **Endpoint Handling**: API Gateway routes requests to appropriate Lambda functions.
-2. **SSM Parameter Retrieval**: Lambda functions retrieve sensitive data like database connection strings and API keys from AWS SSM Parameter Store.
-3. **Database Interactions**: Lambda functions perform CRUD operations on DynamoDB using parameters retrieved from SSM.
+**Users Endpoints**
 
- 
-## Authentication & Permissioning
+1. `GET /users`
+   - Query parameters: `userid`
+   - Retrieves user information
 
-Uses NextAuth.js, currently allowing sign-in via Google. Implements `middleware` to verify page level access.
+2. `POST /users`
+   - Creates a new user
+   - Request body: User details (excluding `id` and `checkCount`)
 
-Permissions tied to each account. Allows for different limits or tier per account. For example, the current free tier allows for a maximum of 5 URLs being watched, with a minimum delay between runs at 4 hours.
+3. `PUT /users`
+   - Query parameters: `userid`
+   - Updates user information
+   - Request body: Fields to update (may include `checkCountChange` to increment/decrement)
+
+4. `DELETE /users`
+   - Query parameters: `userid`
+   - Deletes a user
+
+## Data Storage and Caching
+
+- **DynamoDB**: Primary database using a single-table design
+  - Stores **Checks** (the defitinition item including URL and interval) and **Users**
+- **Redis**: Caching layer to optimize read operations and reduce DynamoDB costs
+  - Syncs with DynamoDB on DB updates and daily at midnight UTC
+    - **Stream Processor Lambda** and **Redis Sync Lambda**
+  
+### Why Redis?
+
+In our data, we store run intervals (i.e. run a given check every 30 mins) in cron format. This allows very dynamic intervals to be defined.
+
+However, checking when an item is actually ready to run is not straightforward. We must manually check the current time against a given cron to see if that item is ready to run.
+
+This functionality can not be implemented on a database query, therefore we are required to fetch every check from the database and perform this function in our lambda.
+
+DynamoDB costs are based on data sent, and with our processor lambda running every 5 minutes, there is a lot of waste since most items will not be ready to run every 5 minutes. 
+
+Caching in redis (the subset of fields we need in the executor anyways) lets us read all of our items without cost.
+
+
+## Authentication and Permissions
+
+- NextAuth.js for OAuth-based authentication (currently supporting Google sign-in)
+- Custom middleware for page-level access control
+- Tiered permissions system tied to user accounts
 
 ## Deployment
 
-To deploy the application, follow these steps. Make sure you have the necessary environment variables and dependencies set up.
+The project uses the Serverless Framework for deploying AWS resources:
 
-### Prerequisites
+- Separate deployment scripts for core functionality, API, and DB
+- Support for both development and production environments
+- Automatic UI deployment via Vercel on main branch changes
 
-- [Node.js](https://nodejs.org/) installed
-- [Serverless Framework](https://www.serverless.com/framework/docs/getting-started/) installed
-- AWS credentials configured for Serverless
+## Extensibility
 
-### Setup
+The system is designed to be easily extensible, particularly for adding new URL check functions. This involves updating UI constants, type definitions, and implementing the new function logic.
 
-1. **Install dependencies:**
-    - `npm install`
+## Data
 
-2. **Ensure AWS credentials are configured:**
-    - Set up AWS credentials using the AWS CLI or manually configuring the ~/.aws/credentials file.
+Below represents how `checks` and `users` are stored.
 
-3. **Deploying Core**
-    - Dev: `npm run deploy:core:dev`
-    - Prod: `npm run deploy:core:prod`
+### Check Item
+```
+interface Check {
+  // Partition Key and Sort Key
+  pk: string;  // Format: "CHECK#{uuid}"
+  sk: string;  // Always "CHECK"
 
-3. **Deploying API**
-    - Dev: `npm run deploy:api:dev`
-    - Prod: `npm run deploy:api:prod`
+  // User-defined fields
+  alias: string;
+  url: string;
+  useProxy: boolean;
+  email: string;
+  checkType: 'KEYWORD_CHECK' | 'EBAY_PRICE_THRESHOLD' | 'AI_CHECK' | 'PAGE_DIFFERENCE';
+  attributes: {
+    [key: string]: any;  // Varies based on checkType
+  };
+  
+  // Scheduling
+  cron: string;
+  runNowOverride: boolean; // How the "run now" button in the UI works
 
-4. **Deploying UI**
-    - Changes to main branch auto-deployed by Vercel.
+  // Status and results
+  status: 'ACTIVE' | 'PAUSED';
+  lastResult?: {
+    status: 'SUCCESS' | 'FAILED';
+    message: string;
+    timestamp: string;
+  };
+  mostRecentAlert: string | null;
 
-## Adding New Check Function
+  // Metadata
+  userid: string;
+  createdAt: string;
+  updatedAt: string;
+  delayMs: number;
+}
+```
 
-To add a new custom function:
+### Check Item Synced to Redis
 
-1. Update ui/constants.ts
-2. Update lib/types.ts
-3. TODO
-4. Update Create Item Form
-   1. Add attributes to:
-      1. Schema .superRefine for form validation
-      2. To useEffect that resets attributes on switch
+```
+Key: "check:{uuid}"
 
-## Debugging Notes
+Hash fields:
+{
+  "alias": string,
+  "url": string,
+  "email": string,
+  "checkType": string,
+  "attributes": string (JSON stringified object),
+  "cron": string,
+  "runNowOverride": string ("true" or "false")
+}
+```
 
-### NextAuth
+### User Item
 
-See logs in terminal
+```
+interface User {
+  // Partition Key and Sort Key
+  pk: string;  // Format: "USER#{id}"
+  sk: string;  // Always "PROFILE"
 
-## URL Fetching Mechanism - Move to a section dedicated for implementation details
+  // User details
+  id: string;
+  name: string;
+  email: string;
+  provider: 'google';
+  userType: 'admin' | 'default';
 
-### Key Features
+  // Usage statistics
+  checkCount: number;
 
-Located in `/core/fetch_url.py`, the `fetch_url` function incorporates:
-
-- Asynchronous execution via `aiohttp` and `asyncio`
-- Concurrency management with `asyncio.Semaphore`
-  - Not really necessary, Lambda has default of 1000
-- Randomized User-Agent selection
-- Optional proxy integration, uses `oxylabs`
-- Content size limiting, currently 1 MB
-- Exponential backoff retry algorithm
-  - Currently retries disabled
-- Exception handling for various errors
-
-### Redis
-
-Redis database hosted by [Redis](https://redis.io/).
-
-Currently using the free tier with 30 MB of storage.
-
-#### Local Access
-
-1. Sign-in via [website](https://app.redislabs.com/#/).
-2. Launch `Redis Insight`
-   1. Choose database
-   2. Click `Browse data with Redis Insight` in top right
-
-#### Syncing
-
-DynamoDB to Redis syncing happens:
-
-1. When an update is made to the DynamoDB table
-   1. e.g. an insert, update, or delete
-   2. New and Old item passed to Lambda via DynamoDB stream
-2. Daily syncs at midnight UTC to ensure consistency
-
-Syncs are implemented via Lambdas.
-
-#### Use Case
-
-The Redis DB stores a subset of fields for all active items in the database. These fields are the fields which get directly using by the processor and executor lambdas, meaning we only need to read from Redis instead of DynamoDB.
-
-This is useful because as it stands, the only way to know which items are ready to run is to fetch all items in the database and manually check their crons, since this cannot be done via filtering on the DB read.
-
-With the processor lambda executing every 5 minutes, but most URL checks not happening every 5 minutes, a lot of data is read and immediately discarded. Implementing a cache database avoids the cost burden of DynamoDB and returning large, unnecessary payloads every 5 minutes.
+  // Metadata
+  createdAt: string;
+}
+```
