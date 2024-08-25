@@ -27,13 +27,18 @@ export const handler = async (event) => {
     KeyConditionExpression: "userid = :userid AND sk = :sk",
     ExpressionAttributeValues: {
       ":userid": userid,
-      ":sk": "CHECK", // change to DEFINITION
+      ":sk": "CHECK",
     },
   };
 
   try {
     const data = await dynamoDbDocClient.send(new QueryCommand(params));
     if (data.Items && data.Items.length > 0) {
+      data.Items.forEach((item) => {
+        if (item.lastResult) {
+          delete item.lastResult.page_text;
+        }
+      });
       return {
         statusCode: 200,
         headers,
