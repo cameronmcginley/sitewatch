@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { BADGE_COLOR_CLASS } from "@/lib/constants";
 
-export const checkType_descriptions = {
+export const checkTypeDescriptions = {
   "KEYWORD CHECK": "Check if a keyword exists in the page",
   "EBAY PRICE THRESHOLD":
     'Check if an eBay "Buy it Now" price is below a threshold',

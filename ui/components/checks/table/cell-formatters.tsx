@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/tooltip";
 import { InfoCircledIcon } from "@radix-ui/react-icons";
 import {
-  checkType_descriptions,
+  checkTypeDescriptions,
   emptyDash,
   loadingDots,
 } from "@/components/checks/table/constants";
@@ -143,7 +143,7 @@ const formatCheckTypeCell = (item: CheckItem) => (
             <InfoCircledIcon />
           </TooltipTrigger>
           <TooltipContent>
-            {checkType_descriptions[item.checkType] ?? emptyDash}
+            {checkTypeDescriptions[item.checkType] ?? emptyDash}
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

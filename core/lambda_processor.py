@@ -26,33 +26,23 @@ redis_client = redis.Redis(
 )
 
 
-def transform_item(item):
+def transform_item(check):
     """
     Transform a DynamoDB item into the format expected by the processing Lambda.
     """
-    logger.info(f"Transforming item: {item['pk']}")
+    logger.info(f"Transforming check item: {check['pk']}")
     transformed = {
-        "alias": item.get("alias"),
-        "type": item.get("checkType"),
-        "url": item.get("url"),
-        "email": item.get("email"),
-        "pk": item.get("pk"),
-        "sk": item.get("sk"),
-        "cron": item.get("cron"),
-        # Redis passes False as a string, so we need to convert it back to a boolean
-        "useProxy": item.get("useProxy", False),
-        "runNowOverride": item.get("runNowOverride", False),
+        "alias": check.get("alias"),
+        "checkType": check.get("checkType"),
+        "url": check.get("url"),
+        "email": check.get("email"),
+        "pk": check.get("pk"),
+        "sk": check.get("sk"),
+        "cron": check.get("cron"),
+        "useProxy": check.get("useProxy", False),
+        "runNowOverride": check.get("runNowOverride", False),
+        "attributes": check.get("attributes", {}),
     }
-
-    if item["checkType"] == "EBAY PRICE THRESHOLD":
-        transformed["threshold"] = float(item["attributes"]["threshold"])
-        logger.debug(
-            f"Added threshold {transformed['threshold']} for EBAY PRICE THRESHOLD item"
-        )
-    elif item["checkType"] == "KEYWORD CHECK":
-        transformed["keyword"] = item["attributes"]["keyword"]
-        transformed["opposite"] = item["attributes"]["opposite"]
-        logger.debug(f"Added keyword '{transformed['keyword']}' for KEYWORD CHECK item")
 
     return transformed
 
@@ -85,8 +75,6 @@ async def read_from_redis():
             items.append(item)
 
         logger.info(f"Successfully read {len(items)} items from Redis cache")
-        if items:
-            logger.info(f"First item: {items[0]}")
         return items
     except Exception as e:
         logger.error(f"Failed to read from Redis cache: {str(e)}")
@@ -116,7 +104,6 @@ async def scan_table():
             logger.info(
                 f"Scanned {len(response['Items'])} items, total items: {len(items)}"
             )
-            logger.info(f"First item: {items[0]}")
 
             if "LastEvaluatedKey" not in response:
                 break
@@ -132,16 +119,16 @@ async def invoke_executor(batch):
     Asynchronously invoke the executor Lambda function.
 
     Args:
-        batch (list): A batch of items to be processed by the Lambda function.
+        batch (list): A batch of check items to be processed by the Lambda function.
     """
-    logger.info(f"Invoking executor for batch of {len(batch)} items")
+    logger.info(f"Invoking executor for batch of {len(batch)} checks")
     await asyncio.to_thread(
         lambda_client.invoke,
         FunctionName=os.environ["EXECUTOR_LAMBDA_NAME"],
         InvocationType="Event",
-        Payload=json.dumps({"links": batch}),
+        Payload=json.dumps({"checks": batch}),
     )
-    logger.debug(f"Executor invoked successfully for batch of {len(batch)} items")
+    logger.debug(f"Executor invoked successfully for batch of {len(batch)} checks")
 
 
 async def main_handler(event, context):
@@ -157,36 +144,36 @@ async def main_handler(event, context):
     """
     logger.info("Starting Processor Lambda execution")
 
-    # Get items from Redis cache, if it fails then use DynamoDB
-    items = await scan_table()
-    logger.info(f"Retrieved {len(items)} items")
+    # Get checks from Redis cache, if it fails then use DynamoDB
+    checks = await scan_table()
+    logger.info(f"Retrieved {len(checks)} checks")
 
-    items_to_run = [item for item in items if is_task_ready_to_run(item["cron"])]
+    checks_to_run = [check for check in checks if is_task_ready_to_run(check["cron"])]
     logger.info(
-        f"{len(items_to_run)} items are ready to run based on their cron schedule"
+        f"{len(checks_to_run)} checks are ready to run based on their cron schedule"
     )
-    items_to_run_override = [
-        item for item in items if item.get("runNowOverride", False)
+    checks_to_run_override = [
+        check for check in checks if check.get("runNowOverride", False)
     ]
-    logger.info(f"{len(items_to_run_override)} items are set to run with override")
-    items_to_run.extend(items_to_run_override)
+    logger.info(f"{len(checks_to_run_override)} checks are set to run with override")
+    checks_to_run.extend(checks_to_run_override)
 
-    transformed_items = [transform_item(item) for item in items_to_run]
-    logger.info(f"Transformed {len(transformed_items)} items for processing")
+    transformed_checks = [transform_item(check) for check in checks_to_run]
+    logger.info(f"Transformed {len(transformed_checks)} checks for processing")
 
     batches = [
-        transformed_items[i : i + BATCH_SIZE]
-        for i in range(0, len(transformed_items), BATCH_SIZE)
+        transformed_checks[i : i + BATCH_SIZE]
+        for i in range(0, len(transformed_checks), BATCH_SIZE)
     ]
     logger.info(
-        f"Created {len(batches)} batches of items, each with up to {BATCH_SIZE} items"
+        f"Created {len(batches)} batches of checks, each with up to {BATCH_SIZE} checks"
     )
 
     # Invoke a new executor Lambda function for each batch
     await asyncio.gather(*[invoke_executor(batch) for batch in batches])
     logger.info(f"Invoked {len(batches)} Executor Lambda functions")
 
-    summary = f"Processed {len(items)} URLs, with {len(items_to_run)} set to run in {len(batches)} batches"
+    summary = f"Processed {len(checks)} checks, with {len(checks_to_run)} set to run in {len(batches)} batches"
     logger.info(f"Processor Lambda execution completed. Summary: {summary}")
 
     return {

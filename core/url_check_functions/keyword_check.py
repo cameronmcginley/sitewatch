@@ -12,8 +12,10 @@ async def keyword_check(item, content):
     Returns:
         dict: A dictionary containing the result of the keyword check.
     """
-    keyword_found = item["keyword"].lower() in content.lower()
-    send_alert = keyword_found if not item["opposite"] else not keyword_found
+    keyword_found = item["attributes"]["keyword"].lower() in content.lower()
+    send_alert = (
+        keyword_found if not item["attributes"]["opposite"] else not keyword_found
+    )
 
     result = {
         "send_alert": send_alert,

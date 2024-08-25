@@ -40,7 +40,7 @@ async def ebay_price_threshold(item, content):
         total_price = sum_of_numbers(price, shipping)
         result["found_price"] = total_price
 
-        if total_price < item["threshold"]:
+        if total_price < item["attributes"]["threshold"]:
             result["send_alert"] = True
             result["message"] = f"Price threshold met. Found price: ${total_price:.2f}"
         else:

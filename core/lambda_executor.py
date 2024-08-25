@@ -49,24 +49,24 @@ async def update_dynamodb_item(pk, sk, last_result):
         logger.error(f"Error updating item {pk} in DynamoDB: {e}")
 
 
-async def process_link(session, link):
+async def process_check(session, check):
     """
-    Process a single link asynchronously.
+    Process a single check asynchronously.
 
     Args:
         session (ClientSession): The aiohttp client session.
-        link (dict): The link to process.
+        check (dict): The check to process.
     """
     global error_counter
     error_counter["total"] += 1
     start_time = time.time()
 
-    logger.info(f"Starting to process link: {link['url']} at {start_time}")
+    logger.info(f"Starting to process check: {check['url']} at {start_time}")
 
     try:
-        if link["type"] in CHECKTYPE_TO_FUNCTION_MAP:
+        if check["checkType"] in CHECKTYPE_TO_FUNCTION_MAP:
             content = await fetch_url(
-                logger, session, link["url"], useProxy=link["useProxy"]
+                logger, session, check["url"], useProxy=check["useProxy"]
             )
 
             if not content:
@@ -77,32 +77,31 @@ async def process_link(session, link):
                 content.decode("utf-8") if isinstance(content, bytes) else content
             )
 
-            result = await CHECKTYPE_TO_FUNCTION_MAP[link["type"]](link, content_str)
+            result = await CHECKTYPE_TO_FUNCTION_MAP[check["checkType"]](
+                check, content_str
+            )
 
-            link.update(result)
+            # link.update(result)
+            check["result"] = result
 
             last_result = {
-                "status": "ALERTED" if link["send_alert"] else "NO ALERT",
-                "message": link["message"],
+                "status": "ALERTED" if check["result"]["send_alert"] else "NO ALERT",
+                "message": check["result"]["message"],
                 "timestamp": datetime.now(timezone.utc).strftime(
                     "%Y-%m-%dT%H:%M:%S.%fZ"
                 ),
             }
 
-            # Attach unique fields for different check types
-            if "found_price" in link:
-                last_result["found_price"] = {"N": str(link["found_price"])}
-
-            await update_dynamodb_item(link["pk"], link["sk"], last_result)
+            await update_dynamodb_item(check["pk"], check["sk"], last_result)
             logger.info(
-                f"Processed {link['url']}: {'ALERTED' if link['send_alert'] else 'NO ALERT'}"
+                f"Processed {check['url']}: {'ALERTED' if check['send_alert'] else 'NO ALERT'}"
             )
         else:
-            raise Exception(f"Unknown check type: {link['type']}")
+            raise Exception(f"Unknown check type: {check['checkType']}")
     except Exception as e:
-        logger.error(f"Error processing {link['url']}: {str(e)}")
+        logger.error(f"Error processing {check['url']}: {str(e)}")
         error_counter["errors"] += 1
-        link["send_alert"] = False
+        check["send_alert"] = False
 
         # Update DynamoDB with error information
         last_result = {
@@ -110,14 +109,14 @@ async def process_link(session, link):
             "message": str(e),
             "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
         }
-        await update_dynamodb_item(link["pk"], link["sk"], last_result)
+        await update_dynamodb_item(check["pk"], check["sk"], last_result)
     finally:
         elapsed_time = time.time() - start_time
         if elapsed_time > TIMEOUT_LIMIT:
-            logger.warning(f"Processing {link['url']} took {elapsed_time:.2f} seconds")
+            logger.warning(f"Processing {check['url']} took {elapsed_time:.2f} seconds")
         else:
             logger.info(
-                f"Finished processing {link['url']} at {time.time()} in {elapsed_time:.2f} seconds"
+                f"Finished processing {check['url']} at {time.time()} in {elapsed_time:.2f} seconds"
             )
 
 
@@ -129,24 +128,24 @@ async def main_handler(event, context):
         event (dict): The event data passed to the Lambda function.
         context (object): The context in which the Lambda function is running.
 
-    This function processes all links and sends email notifications for available products.
+    This function processes all checks and sends email notifications for available products.
     """
     start_time = time.time()
-    links = event.get("links", [])
-    logger.info(f"Starting processing of {len(links)} links")
+    checks = event.get("checks", [])
+    logger.info(f"Starting processing of {len(checks)} checks")
 
     async with ClientSession() as session:
-        tasks = [process_link(session, link) for link in links]
+        tasks = [process_check(session, check) for check in checks]
         await asyncio.gather(*tasks)
 
     elapsed_time = time.time() - start_time
     logger.info(f"Execution time: {elapsed_time:.2f} seconds")
     logger.info(f"Errors: {error_counter['errors']} out of {error_counter['total']}")
 
-    urls_to_alert = [link for link in links if link.get("send_alert") is True]
-    logger.info(f"Found {len(urls_to_alert)} URLs requiring alerts")
+    checks_to_alert = [check for check in checks if check.get("send_alert") is True]
+    logger.info(f"Found {len(checks_to_alert)} URLs requiring alerts")
 
-    await send_alerts(urls_to_alert)
+    await send_alerts(checks_to_alert)
 
 
 async def update_most_recent_alert(pk, sk):
@@ -171,57 +170,59 @@ async def update_most_recent_alert(pk, sk):
         logger.error(f"Error updating most recent alert for user {pk}: {e}")
 
 
-async def send_alerts(urls_to_alert):
+async def send_alerts(checks):
     """
     Send email alerts for products that have updates.
 
     Args:
-        links (list): A list of links to be processed.
+        checks (list): A list of checks to be processed.
 
     This function groups products by email and sends email alerts for each group.
     """
-    if not urls_to_alert:
+    if not checks:
         logger.info("No alerts to send")
         return
 
-    # Update most recent alert for all URLs concurrently
+    # Update most recent alert for all checks concurrently
     update_tasks = [
-        update_most_recent_alert(url["pk"], url["sk"]) for url in urls_to_alert
+        update_most_recent_alert(check["pk"], check["sk"]) for check in checks
     ]
     await asyncio.gather(*update_tasks)
 
     # Group products by email
-    urls_by_email = defaultdict(list)
-    for url in urls_to_alert:
-        urls_by_email[url["email"]].append(url)
+    checks_by_email = defaultdict(list)
+    for check in checks:
+        checks_by_email[check["email"]].append(check)
 
     EMAIL_SENDER = os.environ["email_sender"]
     EMAIL_PASSWORD = os.environ["email_password"]
 
-    for email, urls in urls_by_email.items():
-        subject = f"SiteWatch Alert on {len(urls)} URL{'s' if len(urls) > 1 else ''}"
+    for email, checks in checks_by_email.items():
+        subject = (
+            f"SiteWatch Alert on {len(checks)} URL{'s' if len(checks) > 1 else ''}"
+        )
         body = "The following urls have updates:\n\n"
 
-        for url in urls:
-            body += f"Product: {url['alias']}\n"
-            body += f"URL: {url['url']}\n"
-            body += f"  Check type: {url['type']}\n"
+        for check in checks:
+            body += f"Product: {check['alias']}\n"
+            body += f"URL: {check['url']}\n"
+            body += f"  Check type: {check['checkType']}\n"
 
-            if url["type"] == "EBAY PRICE THRESHOLD":
-                body += f"  Current Price: ${url['found_price']:.2f}\n"
-                body += f"  Threshold Price: ${url['threshold']:.2f}\n"
-            elif url["type"] == "KEYWORD CHECK":
-                body += f"  Keyword: {url['keyword']}\n"
+            if check["checkType"] == "EBAY PRICE THRESHOLD":
+                body += f"  Current Price: ${check['result']['found_price']:.2f}\n"
+                body += f"  Threshold Price: ${check['attributes']['threshold']:.2f}\n"
+            elif check["checkType"] == "KEYWORD CHECK":
+                body += f"  Keyword: {check['attributes']['keyword']}\n"
 
             body += "\n"
 
-        logger.info(f"Sending alert email to {email} for {len(urls)} URLs")
+        logger.info(f"Sending alert email to {email} for {len(checks)} URLs")
         await asyncio.to_thread(
             send_email, EMAIL_SENDER, email, EMAIL_PASSWORD, subject, body
         )
 
     logger.info(
-        f"Sent alerts for {len(urls_to_alert)} urls to {len(urls_by_email)} email(s)"
+        f"Sent alerts for {len(checks)} urls to {len(checks_by_email)} email(s)"
     )
 
 
