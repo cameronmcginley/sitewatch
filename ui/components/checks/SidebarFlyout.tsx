@@ -134,6 +134,16 @@ export const SidebarFlyout = ({
 
   const handleInputChange = (field, value) => {
     console.log("field", field, "value", value);
+
+    if (field.includes(".")) {
+      const [parent, child] = field.split(".");
+      setEditedData((prev) => ({
+        ...prev,
+        [parent]: { ...prev[parent], [child]: value },
+      }));
+      return;
+    }
+
     setEditedData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -196,7 +206,9 @@ export const SidebarFlyout = ({
             </div>
           ))
         : "Loading...",
-      type: "custom",
+      type: "attributes",
+      key: "attributes",
+      attributes: currentCheckData?.attributes,
     },
     {
       label: "Schedule",
@@ -313,6 +325,46 @@ export const SidebarFlyout = ({
                             ))}
                           </SelectContent>
                         </Select>
+                      ) : item.type === "attributes" ? (
+                        // Custom attributes, map over them and give an input based on its type
+                        item.value !== " Loading..." &&
+                        Object.entries(item.attributes).map(([key, value]) => (
+                          <div
+                            key={key}
+                            className="flex flex-col justify-between"
+                          >
+                            <span className="text-sm capitalize truncate flex-shrink-0 mr-2">
+                              {key}
+                            </span>
+                            {typeof value === "boolean" ? (
+                              <Select
+                                value={editedData["attributes"][key]}
+                                onValueChange={(value) =>
+                                  handleInputChange(`attributes.${key}`, value)
+                                }
+                              >
+                                <SelectTrigger className="w-full">
+                                  <SelectValue placeholder="Select" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value={true}>Yes</SelectItem>
+                                  <SelectItem value={false}>No</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            ) : (
+                              <Input
+                                value={editedData.attributes[key]}
+                                onChange={(e) =>
+                                  handleInputChange(
+                                    `attributes.${key}`,
+                                    e.target.value
+                                  )
+                                }
+                                className="mt-1"
+                              />
+                            )}
+                          </div>
+                        ))
                       ) : (
                         <Input
                           value={editedData[item.key]}
