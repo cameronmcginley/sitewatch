@@ -100,6 +100,7 @@ export const SidebarFlyout = ({
         status: z.enum(["ACTIVE", "PAUSED"]).optional(),
         email: z.string().email().trim().min(1).max(255).optional(),
         useProxy: z.boolean().optional(),
+        url: z.string().url().trim().min(1).max(255),
       });
 
       const validationResult = editableSchema.safeParse(editedData);
@@ -177,6 +178,7 @@ export const SidebarFlyout = ({
       ) : (
         "Loading..."
       ),
+      key: "url",
       type: "link",
     },
     {
