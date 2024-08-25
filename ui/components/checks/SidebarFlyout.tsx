@@ -91,6 +91,7 @@ export const SidebarFlyout = ({
   };
 
   const handleSave = async () => {
+    console.log("Saving changes:", editedData);
     editedData.updatedAt = new Date().toISOString();
     try {
       const editableSchema = z.object({
@@ -107,6 +108,13 @@ export const SidebarFlyout = ({
           threshold: z.number().min(0).max(1000000000).optional(),
         }),
       });
+
+      // convert percent_diff to a number if it's a string
+      if (typeof editedData.attributes.percent_diff === "string") {
+        editedData.attributes.percent_diff = parseFloat(
+          editedData.attributes.percent_diff
+        );
+      }
 
       const validationResult = editableSchema.safeParse(editedData);
 
