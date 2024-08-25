@@ -11,6 +11,8 @@ import { USER_TYPE_TO_LIMITS } from "@/lib/constants";
 import { fetchUser } from "@/lib/api/users";
 import { DeleteConfirmation } from "@/components/checks/DeleteConfirmation";
 import { LoadingOverlay } from "@/components/checks/LoadingOverlay";
+import { NoChecksFound } from "@/components/checks/table/NoChecksFound";
+import { set } from "date-fns";
 
 function Home() {
   const { data: session, status } = useSession();
@@ -21,6 +23,7 @@ function Home() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [itemsToDelete, setItemsToDelete] = useState<CheckItem[]>([]);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+  const [hasNoData, setHasNoData] = useState(false);
 
   useEffect(() => {
     if (status === "authenticated" && session.user.id) {
@@ -30,7 +33,6 @@ function Home() {
 
   async function fetchDataForUser(userid: string) {
     setIsDataLoading(true);
-    console.log("Fetching data for user:", userid);
 
     const fetchedData = await fetchChecksByUser(userid);
     if (fetchedData) {
@@ -40,13 +42,15 @@ function Home() {
       );
       setData(fetchedData as CheckItem[]);
       setIsDataLoading(false);
+      setHasNoData(false);
+    } else {
+      setHasNoData(true);
     }
   }
 
   const handleCreateItemSubmit = async (
     values: z.infer<typeof createCheckFormSchema>
   ) => {
-    console.log("Adding item:", values);
     setIsCreateItemLoading(true);
     setIsCreateItemModalOpen(false);
 
@@ -54,8 +58,6 @@ function Home() {
     const userLimit = USER_TYPE_TO_LIMITS[session.user.userType];
     const userData = await fetchUser(session.user.id);
     const currentCount = userData?.[0]?.checkCount || 0;
-
-    console.log("Current count:", currentCount, "User limit:", userLimit);
 
     if (currentCount >= userLimit) {
       setIsCreateItemLoading(false);
@@ -105,15 +107,23 @@ function Home() {
         </h1>
 
         <div>
-          <CoreTable
-            data={data}
-            handleDelete={handleDelete}
-            isLoading={isDataLoading}
-            handleCreateItemSubmit={handleCreateItemSubmit}
-            isCreateItemModalOpen={isCreateItemModalOpen}
-            setIsCreateItemModalOpen={setIsCreateItemModalOpen}
-            fetchDataForUser={fetchDataForUser}
-          />
+          {hasNoData ? (
+            <NoChecksFound
+              handleCreateItemSubmit={handleCreateItemSubmit}
+              isCreateItemModalOpen={isCreateItemModalOpen}
+              setIsCreateItemModalOpen={setIsCreateItemModalOpen}
+            />
+          ) : (
+            <CoreTable
+              data={data}
+              handleDelete={handleDelete}
+              isLoading={isDataLoading}
+              handleCreateItemSubmit={handleCreateItemSubmit}
+              isCreateItemModalOpen={isCreateItemModalOpen}
+              setIsCreateItemModalOpen={setIsCreateItemModalOpen}
+              fetchDataForUser={fetchDataForUser}
+            />
+          )}
         </div>
       </div>
 

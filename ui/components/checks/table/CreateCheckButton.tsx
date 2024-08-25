@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import CreateCheckForm from "@/components/checks/CreateCheckForm";
+import { PlusCircle } from "lucide-react";
 
 interface CreateCheckButtonProps {
   isCreateItemModalOpen: boolean;
@@ -28,7 +29,10 @@ export const CreateCheckButton: React.FC<CreateCheckButtonProps> = ({
       onOpenChange={setIsCreateItemModalOpen}
     >
       <DialogTrigger asChild>
-        <Button className={isMobile ? "w-full" : ""}>Create Check</Button>
+        <Button className={isMobile ? "w-full" : ""}>
+          <PlusCircle className="mr-2 h-4 w-4" />
+          Create Check
+        </Button>
       </DialogTrigger>
       <DialogContent className="max-h-[80vh] overflow-y-auto">
         <DialogHeader>

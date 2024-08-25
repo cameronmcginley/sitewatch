@@ -136,7 +136,7 @@ const Navbar: React.FC = () => {
                       {USER_TYPE_TO_DISPLAY_TEXT[session.user.userType] ?? ""}
                     </span>
                     <span className="text-sm text-muted-foreground">
-                      Check Limit:{""}
+                      Check Limit:{" "}
                       {USER_TYPE_TO_LIMITS[session.user.userType] ?? ""}
                     </span>
                   </div>
