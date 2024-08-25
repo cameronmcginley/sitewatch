@@ -7,6 +7,8 @@ const dynamoDb = new DynamoDBClient({ region: "us-east-2" });
 const ddbDocClient = DynamoDBDocumentClient.from(dynamoDb);
 
 export const handler = async (event) => {
+  console.log("Received event:", JSON.stringify(event, null, 2));
+
   const headers = getHeaders();
   const item = JSON.parse(event.body || "{}");
   const { pk, sk, ...attributes } = item;

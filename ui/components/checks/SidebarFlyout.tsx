@@ -101,6 +101,12 @@ export const SidebarFlyout = ({
         email: z.string().email().trim().min(1).max(255).optional(),
         useProxy: z.boolean().optional(),
         url: z.string().url().trim().min(1).max(255),
+        attributes: z.object({
+          percent_diff: z.number().min(0).max(100).optional(),
+          keyword: z.string().trim().max(255).optional(),
+          opposite: z.boolean().optional(),
+          threshold: z.number().min(0).max(1000000000).optional(),
+        }),
       });
 
       const validationResult = editableSchema.safeParse(editedData);
