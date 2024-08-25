@@ -94,14 +94,14 @@ async def process_check(session, check):
 
             await update_dynamodb_item(check["pk"], check["sk"], last_result)
             logger.info(
-                f"Processed {check['url']}: {'ALERTED' if check['send_alert'] else 'NO ALERT'}"
+                f"Processed {check['url']}: {'ALERTED' if check['result']['send_alert'] else 'NO ALERT'}"
             )
         else:
             raise Exception(f"Unknown check type: {check['checkType']}")
     except Exception as e:
         logger.error(f"Error processing {check['url']}: {str(e)}")
         error_counter["errors"] += 1
-        check["send_alert"] = False
+        check["result"] = {"send_alert": False}
 
         # Update DynamoDB with error information
         last_result = {
@@ -142,7 +142,9 @@ async def main_handler(event, context):
     logger.info(f"Execution time: {elapsed_time:.2f} seconds")
     logger.info(f"Errors: {error_counter['errors']} out of {error_counter['total']}")
 
-    checks_to_alert = [check for check in checks if check.get("send_alert") is True]
+    checks_to_alert = [
+        check for check in checks if check["result"]["send_alert"] is True
+    ]
     logger.info(f"Found {len(checks_to_alert)} URLs requiring alerts")
 
     await send_alerts(checks_to_alert)

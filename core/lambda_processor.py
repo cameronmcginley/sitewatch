@@ -111,6 +111,9 @@ async def scan_table():
 
         logger.info(f"Completed table scan, found {len(items)} active items")
 
+    # Filter out empty items if they exist
+    items = [item for item in items if item.get("cron")]
+
     return items
 
 

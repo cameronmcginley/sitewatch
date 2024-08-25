@@ -1,6 +1,3 @@
-from fetch_url import fetch_url
-
-
 async def keyword_check(item, content):
     """
     Performs a keyword check on the given URL and returns a result dictionary.
