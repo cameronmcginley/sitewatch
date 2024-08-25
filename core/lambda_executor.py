@@ -24,14 +24,14 @@ DEBUG = os.environ.get("debug", "false") == "true"
 error_counter = {"errors": 0, "total": 0}
 
 
-async def update_dynamodb_item(pk, sk, last_result):
+async def update_dynamodb_item(pk, sk, lastResult):
     """
     Update an item in DynamoDB with the latest result.
 
     Args:
         pk (str): The partition key of the item to update.
         sk (str): The sort key of the item to update.
-        last_result (dict): The last result to be stored in DynamoDB.
+        lastResult (dict): The last result to be stored in DynamoDB.
     """
     try:
         response = await asyncio.to_thread(
@@ -39,12 +39,12 @@ async def update_dynamodb_item(pk, sk, last_result):
             Key={"pk": pk, "sk": sk},
             UpdateExpression="SET lastResult = :lr, runNowOverride = :rno",
             ExpressionAttributeValues={
-                ":lr": last_result,
+                ":lr": lastResult,
                 ":rno": False,
             },
         )
         logger.info(f"Updated DynamoDB item: PK={pk}, SK={sk}")
-        logger.debug(f"Last Result: {last_result}")
+        logger.debug(f"Last Result: {lastResult}")
     except ClientError as e:
         logger.error(f"Error updating item {pk} in DynamoDB: {e}")
 
@@ -84,7 +84,7 @@ async def process_check(session, check):
             # link.update(result)
             check["result"] = result
 
-            last_result = {
+            lastResult = {
                 "status": "ALERTED" if check["result"]["send_alert"] else "NO ALERT",
                 "message": check["result"]["message"],
                 "timestamp": datetime.now(timezone.utc).strftime(
@@ -92,7 +92,11 @@ async def process_check(session, check):
                 ),
             }
 
-            await update_dynamodb_item(check["pk"], check["sk"], last_result)
+            # Append page_text to lastResult if it exists
+            if "page_text" in check["result"]:
+                lastResult["page_text"] = check["result"]["page_text"]
+
+            await update_dynamodb_item(check["pk"], check["sk"], lastResult)
             logger.info(
                 f"Processed {check['url']}: {'ALERTED' if check['result']['send_alert'] else 'NO ALERT'}"
             )
@@ -104,12 +108,12 @@ async def process_check(session, check):
         check["result"] = {"send_alert": False}
 
         # Update DynamoDB with error information
-        last_result = {
+        lastResult = {
             "status": "FAILED",
             "message": str(e),
             "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
         }
-        await update_dynamodb_item(check["pk"], check["sk"], last_result)
+        await update_dynamodb_item(check["pk"], check["sk"], lastResult)
     finally:
         elapsed_time = time.time() - start_time
         if elapsed_time > TIMEOUT_LIMIT:
@@ -215,6 +219,8 @@ async def send_alerts(checks):
                 body += f"  Threshold Price: ${check['attributes']['threshold']:.2f}\n"
             elif check["checkType"] == "KEYWORD CHECK":
                 body += f"  Keyword: {check['attributes']['keyword']}\n"
+            elif check["checkType"] == "PAGE DIFFERENCE":
+                body += f"  {check['result']['messsage']}\n"
 
             body += "\n"
 

@@ -26,6 +26,7 @@ import { convertToCron, cronToPlainText } from "@/lib/checks/utils";
 import { Switch } from "@/components/ui/switch";
 import { useWatch } from "react-hook-form";
 import { createCheckFormSchema } from "@/lib/checks/schema";
+import { InfoTooltip } from "../custom/InfoTooltip";
 
 const frequencyOptions = [
   { label: "5 minutes", value: 300000 },
@@ -155,7 +156,12 @@ const CreateCheckForm = ({ handleCreateItemSubmit }) => {
               name="attributes.keyword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Keyword</FormLabel>
+                  <FormLabel>
+                    <div className="flex items-center">
+                      Keyword
+                      <InfoTooltip text="Not case sensitive." />
+                    </div>
+                  </FormLabel>
                   <FormControl>
                     <Input placeholder="Keyword" {...field} />
                   </FormControl>
@@ -221,7 +227,15 @@ const CreateCheckForm = ({ handleCreateItemSubmit }) => {
             name="attributes.percent_diff"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Percent Difference</FormLabel>
+                <FormLabel>
+                  <div className="flex items-center">
+                    Percent Difference
+                    <InfoTooltip
+                      text="Uses levenshtein distance to calculate percent change between last check and 
+                  current check."
+                    />
+                  </div>
+                </FormLabel>
                 <FormControl>
                   <Input
                     type="number"

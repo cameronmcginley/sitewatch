@@ -42,6 +42,7 @@ def transform_item(check):
         "useProxy": check.get("useProxy", False),
         "runNowOverride": check.get("runNowOverride", False),
         "attributes": check.get("attributes", {}),
+        "lastResult": check.get("lastResult", {}),
     }
 
     return transformed

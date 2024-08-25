@@ -9,4 +9,5 @@ REDIS_ITEM_FIELDS = [
     "useProxy",
     "attributes",
     "runNowOverride",
+    "lastResult",
 ]

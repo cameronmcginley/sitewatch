@@ -29,11 +29,11 @@ send_email = MagicMock(side_effect=mock_send_email)
 patch("utils.send_email", send_email).start()
 
 
-async def mock_update_dynamodb_item(pk, sk, last_result):
+async def mock_update_dynamodb_item(pk, sk, lastResult):
     print(f"\nMock Updating DynamoDB item:")
     print(f"PK: {pk}")
     print(f"SK: {sk}")
-    print(f"Last Result: {last_result}")
+    print(f"Last Result: {lastResult}")
     print(f"Updated At: {datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S.%fZ')}")
     print(f"Updated item {pk} in DynamoDB")
 

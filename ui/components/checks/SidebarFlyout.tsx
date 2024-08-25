@@ -91,7 +91,6 @@ export const SidebarFlyout = ({
   };
 
   const handleSave = async () => {
-    console.log("editedData", editedData);
     editedData.updatedAt = new Date().toISOString();
     try {
       const editableSchema = z.object({
@@ -110,7 +109,6 @@ export const SidebarFlyout = ({
       });
 
       const validationResult = editableSchema.safeParse(editedData);
-      console.log("validationResult", validationResult);
 
       if (!validationResult.success) {
         console.error(validationResult.error);
@@ -139,8 +137,6 @@ export const SidebarFlyout = ({
   };
 
   const handleInputChange = (field, value) => {
-    console.log("field", field, "value", value);
-
     if (field.includes(".")) {
       const [parent, child] = field.split(".");
       setEditedData((prev) => ({
