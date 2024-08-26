@@ -257,22 +257,26 @@ interface User {
 
 ### Compressing Text Data
 
-Certain `checks`, e.g. `PAGE DIFFERENCE`, must store the text data from websites in order to compare past and current data. From the HTML, we extract text and do basic cleaning, followed by gzip compression and base64 encoding. I found gzip had the best compression performance.
+Certain `checks`, e.g. `PAGE DIFFERENCE`, must store the text data from websites in order to compare past and current data. From the HTML, we extract text and do basic cleaning, followed by zlib compression and base64 encoding. I chose zlib for compressing based on the below stats.
 
-When storing website's text data, this reduces bytes stored by about 50%. 
+When storing website's text data, this reduces bytes stored by about 40% on average. 
 
-#### Compression Statistics
+### Compression Statistics
 
-| URL ID | Original Char Count (Bytes) | Gzip Compressed Char Count (Bytes) | Zlib Compressed Char Count (Bytes) |
-|--------|-----------------------------|-------------------------------------|------------------------------------|
-| 1      | 5566                        | 2560                                 | 2544                                 |
-| 2      | 6100                        | 144                                 | 128                                |
-| 3      | 120                         | 48                                  | 32                                 |
+I measured a handful of websites with different algorithms.
 
-#### URL Table
+As shown, the greatest compression performance in terms of size decrease is `brotli`, but its efficiency (as a measure of percent size reduction / time (ms)) is one of the worst. For this reason I chose `zlib` given it has the best efficiency and low runtime, and still one of the highest performances in size reduction.
 
-| ID  | URL                        |
-|-----|----------------------------|
-| 1   | https://gear.bethesda.net/products/fallout-nuka-cola-quantum-glass-bottle-and-cap    |
-| 2   | http://example.com/page2    |
-| 3   | http://example.com/page3    |
+See test script at [core\data\test_compression.py](core\data\test_compression.py)
+
+| Compression Algorithm | Average Original Length (bytes) | Average Compressed Length (bytes) | Average Compression Time (ms) | Percentage Reduction (%) | Percentage Reduction per ms |
+|-----------------------|-------------------------------:|----------------------------------:|------------------------------:|-------------------------:|----------------------------:|
+| gzip (level 6)        |                           5066.4 |                             3149.6 |                        0.18642 |                  37.83%   |                   202.95%    |
+| gzip (level 9)        |                           5066.4 |                             3149.6 |                        0.13120 |                  37.83%   |                   288.37%    |
+| zlib                  |                           5066.4 |                             3133.6 |                        0.11108 |                  38.15%   |                   343.44%    |
+| brotli                |                           5066.4 |                             2486.4 |                        4.30636 |                  50.92%   |                    11.83%    |
+| lzma                  |                           5066.4 |                             3073.6 |                        4.25438 |                  39.33%   |                     9.25%    |
+| bz2                   |                           5066.4 |                             3196.0 |                        0.59416 |                  36.92%   |                    62.13%    |
+| snappy                |                           5066.4 |                             4564.0 |                        0.04128 |                   9.92%   |                   240.22%    |
+| zstd                  |                           5066.4 |                             3081.6 |                        1.27422 |                  39.18%   |                    30.74%    |
+

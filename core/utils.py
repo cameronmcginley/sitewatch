@@ -6,7 +6,6 @@ from email.mime.text import MIMEText
 from croniter import croniter
 from datetime import datetime, timezone, timedelta
 import zlib
-import gzip
 import base64
 import time
 from bs4 import BeautifulSoup
@@ -94,7 +93,7 @@ def sum_of_numbers(*texts):
 
 def compress_text(text):
     start_time = time.time()
-    compressed_data = gzip.compress(text.encode("utf-8"))
+    compressed_data = zlib.compress(text.encode("utf-8"))
     compressed_data = base64.b64encode(compressed_data).decode("utf-8")
     elapsed_time = time.time() - start_time
     logger.info(f"Compressed data in {elapsed_time*1000:.2f} ms")
@@ -108,8 +107,8 @@ def decompress_text(compressed_data):
         if isinstance(compressed_data, str):
             compressed_data = base64.b64decode(compressed_data)
 
-        decompressed_data = gzip.decompress(compressed_data).decode("utf-8")
-    except (gzip.BadGzipFile, AttributeError, base64.binascii.Error) as e:
+        decompressed_data = zlib.decompress(compressed_data).decode("utf-8")
+    except (zlib.error, AttributeError, base64.binascii.Error) as e:
         # Handle potential errors in decompression
         logger.error(f"Decompression error: {e}")
         decompressed_data = ""
