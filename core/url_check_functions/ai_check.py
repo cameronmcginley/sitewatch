@@ -33,16 +33,25 @@ def parse_ai_response(response):
     logger.info(f"Parsing AI response: {response}")
     response = response.split("\n")
 
-    # Only keep lines containing success and message
-    response = [line for line in response if "success" in line or "message" in line]
+    # Only keep lines containing do_alert and message
+    response = [line for line in response if "do_alert" in line or "message" in line]
 
     # Extract the values
-    success = response[0].split(": ")[1].strip()
-    success = True if success.lower() == "true" else False
+    do_alert = (
+        response[0]
+        .split(": ")[1]
+        .strip()
+        .replace("'", "")
+        .replace('"', "")
+        .replace(",", "")
+    )
+    do_alert = (
+        True if do_alert.lower() == "true" or "true" in do_alert.lower() else False
+    )
 
     message = response[1].split(": ")[1].strip().replace("'", "").replace('"', "")
 
-    return success, message
+    return do_alert, message
 
 
 async def ai_check(check, content):
@@ -54,7 +63,10 @@ async def ai_check(check, content):
     compressed_text = compress_text(text)
 
     # Check if previous and current text are the same
-    if check.get("lastResult", {}).get("page_text", "") == compressed_text:
+    if (
+        check.get("lastResult", {}) != "None"
+        and check.get("lastResult", {}).get("page_text", "") == compressed_text
+    ):
         logger.info("Text content has not changed since last check")
         return {
             "send_alert": True if check["lastResult"]["status"] == "ALERTED" else False,
@@ -65,10 +77,12 @@ async def ai_check(check, content):
     prompt = f"""
     Analyze the text content of a website to determine if it meets the user's prompt and condition.
 
-    Follow their prompt, and if the give condition is met, return a success message to indicate an alert is needed.
+    Follow their prompt, and if the give condition is met, return a flag to alert the user along with a message.
+
+    Consider the user's prompt to gather info, then consider the user's alert condition to determine if the user should be alerted.
 
     Response in JSON in markdown with format (and absolutely nothing else):
-    "success": True if the condition is met and user should be alerted, False otherwise.
+    "do_alert": True if the user's condition is met and user should be alerted, False otherwise.
     "message": A single line message to return to the user.
 
     User's prompt: {user_prompt}
@@ -83,13 +97,13 @@ async def ai_check(check, content):
         if check["attributes"]["model"] == "openai"
         else get_anthropic_response(prompt)
     )
-    success, message = parse_ai_response(response)
+    do_alert, message = parse_ai_response(response)
 
-    logger.info(f"Success: {success}")
+    logger.info(f"do_alert: {do_alert}")
     logger.info(f"Message: {message}")
 
     result = {
-        "send_alert": success,
+        "send_alert": do_alert,
         "message": message,
         "page_text": compressed_text,
     }

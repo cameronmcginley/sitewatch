@@ -204,8 +204,11 @@ const formatNextRunCell = (item: CheckItem) => {
   const status = item.status;
   const cron = item.cron;
   const lastExecutedAt = item.lastResult?.timestamp;
+  const runNowOverride = item.runNowOverride;
 
-  const nextRunDate = getNextRunTimeFromCron(cron);
+  const nextRunDate = !runNowOverride
+    ? getNextRunTimeFromCron(cron)
+    : getNextRunTimeFromCron("*/5 * * * *");
   const isHappeningNow = lastExecutedAt
     ? isHappeningNowFromCron(lastExecutedAt, cron)
     : false;

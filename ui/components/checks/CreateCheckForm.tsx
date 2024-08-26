@@ -294,9 +294,9 @@ const CreateCheckForm = ({ handleCreateItemSubmit }) => {
               name="attributes.userPrompt"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>User Prompt</FormLabel>
+                  <FormLabel>Prompt</FormLabel>
                   <FormControl>
-                    <Input placeholder="User Prompt" {...field} />
+                    <Input placeholder="Prompt" {...field} />
                   </FormControl>
                   <FormDescription>
                     Prompt to send to AI model for completion. For example,
@@ -311,9 +311,9 @@ const CreateCheckForm = ({ handleCreateItemSubmit }) => {
               name="attributes.userCondition"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>User Condition</FormLabel>
+                  <FormLabel>Alert Condition</FormLabel>
                   <FormControl>
-                    <Input placeholder="User Condition" {...field} />
+                    <Input placeholder="Alert Condition" {...field} />
                   </FormControl>
                   <FormDescription>
                     Condition to check for in AI model completion. For example,

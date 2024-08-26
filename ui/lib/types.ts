@@ -46,4 +46,5 @@ export interface CheckItem {
   mostRecentAlert?: string;
   cron: string;
   attributes: CheckItemAttributes[CheckType];
+  runNowOverride?: boolean;
 }
