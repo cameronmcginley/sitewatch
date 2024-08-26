@@ -24,6 +24,7 @@ function Home() {
   const [itemsToDelete, setItemsToDelete] = useState<CheckItem[]>([]);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [hasNoData, setHasNoData] = useState(false);
+  const [selectedItems, setSelectedItems] = useState<CheckItem[]>([]);
 
   useEffect(() => {
     if (status === "authenticated" && session.user.id) {
@@ -90,6 +91,7 @@ function Home() {
     } finally {
       setItemsToDelete([]);
       setIsDeleteLoading(false);
+      setSelectedItems([]);
     }
   };
 
@@ -122,6 +124,8 @@ function Home() {
               isCreateItemModalOpen={isCreateItemModalOpen}
               setIsCreateItemModalOpen={setIsCreateItemModalOpen}
               fetchDataForUser={fetchDataForUser}
+              selectedItems={selectedItems}
+              setSelectedItems={setSelectedItems}
             />
           )}
         </div>

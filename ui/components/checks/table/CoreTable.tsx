@@ -36,11 +36,12 @@ const CoreTable = ({
   isCreateItemModalOpen,
   setIsCreateItemModalOpen,
   fetchDataForUser,
+  selectedItems,
+  setSelectedItems,
 }) => {
   const [selectedCheckType, setSelectedCheckType] = useState<CheckType | "ALL">(
     "ALL"
   );
-  const [selectedItems, setSelectedItems] = useState<CheckItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isSidebarFlyoutOpen, setIsSidebarFlyoutOpen] = useState(false);
   const [flyoutItem, setFlyoutItem] = useState<CheckItem | null>(null);

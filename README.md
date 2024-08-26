@@ -252,3 +252,27 @@ interface User {
   createdAt: string;
 }
 ```
+
+## Performance and Metrics
+
+### Compressing Text Data
+
+Certain `checks`, e.g. `PAGE DIFFERENCE`, must store the text data from websites in order to compare past and current data. From the HTML, we extract text and do basic cleaning, followed by gzip compression and base64 encoding. I found gzip had the best compression performance.
+
+When storing website's text data, this reduces bytes stored by about 50%. 
+
+#### Compression Statistics
+
+| URL ID | Original Char Count (Bytes) | Gzip Compressed Char Count (Bytes) | Zlib Compressed Char Count (Bytes) |
+|--------|-----------------------------|-------------------------------------|------------------------------------|
+| 1      | 5566                        | 2560                                 | 2544                                 |
+| 2      | 6100                        | 144                                 | 128                                |
+| 3      | 120                         | 48                                  | 32                                 |
+
+#### URL Table
+
+| ID  | URL                        |
+|-----|----------------------------|
+| 1   | https://gear.bethesda.net/products/fallout-nuka-cola-quantum-glass-bottle-and-cap    |
+| 2   | http://example.com/page2    |
+| 3   | http://example.com/page3    |
