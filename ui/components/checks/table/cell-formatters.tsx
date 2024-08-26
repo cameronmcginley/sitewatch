@@ -58,6 +58,11 @@ export const getTypeSpecificColumns = (checkType: CheckType) => {
         ...genericColumns,
         { header: "Target Percent Diff", formatter: formatDiffPercentageCell },
       ];
+    case "AI CHECK":
+      return [
+        ...genericColumns,
+        { header: "Alert Condition", formatter: formatAiAlertConditionCell },
+      ];
     default:
       return genericColumns;
   }
@@ -344,6 +349,14 @@ const formatDiffPercentageCell = (item: CheckItem) => (
   <TableCell className={`${columnWidths.diffPercentage} truncate`}>
     {"percent_diff" in item.attributes && item.attributes.percent_diff
       ? `${item.attributes.percent_diff}%`
+      : emptyDash}
+  </TableCell>
+);
+
+const formatAiAlertConditionCell = (item: CheckItem) => (
+  <TableCell className={`${columnWidths.diffPercentage} truncate`}>
+    {"userCondition" in item.attributes && item.attributes.userCondition
+      ? item.attributes.userCondition
       : emptyDash}
   </TableCell>
 );

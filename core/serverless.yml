@@ -13,6 +13,7 @@ provider:
     REDIS_PORT: ${ssm:/sitewatch/${self:provider.stage}/redis/port}
     REDIS_PASSWORD: ${ssm:/sitewatch/${self:provider.stage}/redis/password}
     USE_REDIS: ${ssm:/sitewatch/${self:provider.stage}/use_redis}
+    OPEN_AI_API_KEY: ${ssm:/sitewatch/${self:provider.stage}/open_ai_api_key}
   iamRoleStatements:
     - Effect: Allow
       Action:

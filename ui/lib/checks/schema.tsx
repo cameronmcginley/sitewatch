@@ -8,6 +8,7 @@ export const createCheckFormSchema = z
       "KEYWORD CHECK",
       "PAGE DIFFERENCE",
       "EBAY PRICE THRESHOLD",
+      "AI CHECK",
     ]),
     url: z.string().url().trim().min(1).max(255),
     useProxy: z.boolean(),
@@ -19,6 +20,9 @@ export const createCheckFormSchema = z
       keyword: z.string().trim().max(255).optional(),
       opposite: z.boolean().optional(),
       threshold: z.number().min(0).max(1000000000).optional(),
+      userPrompt: z.string().trim().max(1000).optional(),
+      userCondition: z.string().trim().max(255).optional(),
+      model: z.string().trim().max(255).optional(),
     }),
     offset: z.number().int().optional(),
     dayOfWeek: z.string().optional(),
@@ -64,6 +68,37 @@ export const createCheckFormSchema = z
         ctx.addIssue({
           path: ["attributes", "threshold"],
           message: "Threshold is required for EBAY PRICE THRESHOLD.",
+          code: "custom",
+        });
+      }
+    }
+
+    if (data.checkType === "AI CHECK") {
+      if (data.delayMs < 30 * 60 * 1000) {
+        ctx.addIssue({
+          path: ["delayMs"],
+          message: "Delay must be at least 30 minutes for AI CHECK.",
+          code: "custom",
+        });
+      }
+      if (data.attributes.userPrompt === undefined) {
+        ctx.addIssue({
+          path: ["attributes", "userPrompt"],
+          message: "Prompt required for AI CHECK.",
+          code: "custom",
+        });
+      }
+      if (data.attributes.userCondition === undefined) {
+        ctx.addIssue({
+          path: ["attributes", "userCondition"],
+          message: "Condition required for AI CHECK.",
+          code: "custom",
+        });
+      }
+      if (data.attributes.model === undefined) {
+        ctx.addIssue({
+          path: ["attributes", "model"],
+          message: "Model required for AI CHECK.",
           code: "custom",
         });
       }

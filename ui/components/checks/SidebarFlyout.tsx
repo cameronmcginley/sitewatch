@@ -35,6 +35,15 @@ interface SidebarFlyoutProps {
   fetchDataForUser: (userid: string) => void;
 }
 
+const formatKey = (key) => {
+  // Split both camelCase and snake_case
+  return key
+    .split(/(?=[A-Z])/)
+    .join(" ")
+    .split("_")
+    .join(" ");
+};
+
 export const SidebarFlyout = ({
   isOpen,
   onClose,
@@ -207,7 +216,7 @@ export const SidebarFlyout = ({
         ? Object.entries(currentCheckData.attributes).map(([key, value]) => (
             <div key={key} className="flex justify-between items-center">
               <span className="text-sm capitalize truncate flex-shrink-0 mr-2">
-                {key}:
+                {formatKey(key)}:
               </span>
               <span className="font-medium truncate flex-grow">
                 {currentCheckData.checkType === "EBAY PRICE THRESHOLD" && "$"}
@@ -344,7 +353,7 @@ export const SidebarFlyout = ({
                             className="flex flex-col justify-between"
                           >
                             <span className="text-sm capitalize truncate flex-shrink-0 mr-2">
-                              {key}
+                              {formatKey(key)}
                             </span>
                             {typeof value === "boolean" ? (
                               <Select

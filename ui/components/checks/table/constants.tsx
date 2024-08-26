@@ -9,6 +9,7 @@ export const checkTypeDescriptions = {
   "EBAY PRICE THRESHOLD":
     'Check if an eBay "Buy it Now" price is below a threshold',
   "PAGE DIFFERENCE": "Check if a page has changed",
+  "AI CHECK": "Given a prompt, check if a model detects a condition",
 };
 
 export const loadingDots = (

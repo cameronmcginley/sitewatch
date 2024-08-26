@@ -15,6 +15,7 @@ export const CHECK_TYPES: CheckType[] = [
   "KEYWORD CHECK",
   "EBAY PRICE THRESHOLD",
   "PAGE DIFFERENCE",
+  "AI CHECK",
 ];
 
 export const CHECK_TYPE_ATTRIBUTES: {
@@ -23,6 +24,7 @@ export const CHECK_TYPE_ATTRIBUTES: {
   "KEYWORD CHECK": ["keyword", "opposite"],
   "EBAY PRICE THRESHOLD": ["threshold"],
   "PAGE DIFFERENCE": ["percent_diff"],
+  "AI CHECK": ["userPrompt", "userCondition", "model"],
 };
 
 export const BADGE_COLOR_CLASS: Record<string, string> = {

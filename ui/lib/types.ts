@@ -1,7 +1,8 @@
 export type CheckType =
   | "KEYWORD CHECK"
   | "EBAY PRICE THRESHOLD"
-  | "PAGE DIFFERENCE";
+  | "PAGE DIFFERENCE"
+  | "AI CHECK";
 
 export type CheckStatus = "ACTIVE" | "PAUSED";
 export const CHECK_STATUS_VALUES: CheckStatus[] = ["ACTIVE", "PAUSED"];
@@ -17,6 +18,11 @@ export interface CheckItemAttributes {
   };
   "PAGE DIFFERENCE": {
     percent_diff: number;
+  };
+  "AI CHECK": {
+    userPrompt: string;
+    userCondition: string;
+    model: string;
   };
 }
 export interface CheckItem {

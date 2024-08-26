@@ -221,6 +221,8 @@ async def send_alerts(checks):
                 body += f"  Keyword: {check['attributes']['keyword']}\n"
             elif check["checkType"] == "PAGE DIFFERENCE":
                 body += f"  {check['result']['messsage']}\n"
+            elif check["checkType"] == "AI CHECK":
+                body += f"  {check['result']['message']}\n"
 
             body += "\n"
 

@@ -1,38 +1,9 @@
-from bs4 import BeautifulSoup
 import Levenshtein
-import zlib
-import base64
-import time
 import logging
+from utils import compress_text, decompress_text, clean_content
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
-
-
-def compress_text(text):
-    start_time = time.time()
-    compressed_data = zlib.compress(text.encode("utf-8"))
-    compressed_data = base64.b64encode(compressed_data).decode("utf-8")
-    elapsed_time = time.time() - start_time
-    logger.info(f"Compressed data in {elapsed_time*1000:.2f} ms")
-    return compressed_data
-
-
-def decompress_text(compressed_data):
-    start_time = time.time()
-    try:
-        # If the compressed data is a string, decode it first
-        if isinstance(compressed_data, str):
-            compressed_data = base64.b64decode(compressed_data)
-
-        decompressed_data = zlib.decompress(compressed_data).decode("utf-8")
-    except (zlib.error, AttributeError, base64.binascii.Error) as e:
-        # Handle potential errors in decompression
-        logger.error(f"Decompression error: {e}")
-        decompressed_data = ""
-    elapsed_time = time.time() - start_time
-    logger.info(f"Decompressed data in {elapsed_time*1000:.2f} ms")
-    return decompressed_data
 
 
 def percent_difference(str1, str2):
@@ -59,11 +30,7 @@ async def page_difference(check, content):
     previous_text_compressed = check.get("lastResult", {}).get("page_text", "")
     previous_text = decompress_text(previous_text_compressed)
 
-    soup = BeautifulSoup(content, "html.parser")
-    text = (
-        soup.get_text().strip().replace("\n", " ").replace("\r", " ").replace("\t", " ")
-    )
-    text = " ".join(text.split())
+    text = clean_content(content)
     text_compressed = compress_text(text)
 
     logger.info(f"Length of previous text: {len(previous_text)}")

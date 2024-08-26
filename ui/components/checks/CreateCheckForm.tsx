@@ -53,6 +53,7 @@ const checkTypeOptions = [
   { label: "KEYWORD CHECK", value: "KEYWORD CHECK" },
   { label: "EBAY PRICE THRESHOLD", value: "EBAY PRICE THRESHOLD" },
   { label: "PAGE DIFFERENCE", value: "PAGE DIFFERENCE" },
+  { label: "AI CHECK", value: "AI CHECK" },
 ];
 
 const CreateCheckForm = ({ handleCreateItemSubmit }) => {
@@ -108,6 +109,11 @@ const CreateCheckForm = ({ handleCreateItemSubmit }) => {
     } else if (checkType === "PAGE DIFFERENCE") {
       form.setValue("attributes", {});
       form.setValue("attributes.percent_diff", undefined);
+    } else if (checkType === "AI CHECK") {
+      form.setValue("attributes", {});
+      form.setValue("attributes.model", undefined);
+      form.setValue("attributes.userPrompt", undefined);
+      form.setValue("attributes.userCondition", undefined);
     }
   }, [checkType]);
 
@@ -255,6 +261,69 @@ const CreateCheckForm = ({ handleCreateItemSubmit }) => {
               </FormItem>
             )}
           />
+        )}
+        {form.watch("checkType") === "AI CHECK" && (
+          <>
+            <FormField
+              control={form.control}
+              name="attributes.model"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Model</FormLabel>
+                  <Select
+                    onValueChange={(value) => field.onChange(value)}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Model" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="openai">OpenAI GPT-4o-Mini</SelectItem>
+                      <SelectItem value="anthropic">
+                        Anthropic Claude 3.5 Sonnet
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="attributes.userPrompt"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>User Prompt</FormLabel>
+                  <FormControl>
+                    <Input placeholder="User Prompt" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Prompt to send to AI model for completion. For example,
+                    &quot;Analyze this website for spelling errors.&quot;
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="attributes.userCondition"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>User Condition</FormLabel>
+                  <FormControl>
+                    <Input placeholder="User Condition" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Condition to check for in AI model completion. For example,
+                    &quot;Notify me if spelling errors found&quot;.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </>
         )}
         <FormField
           control={form.control}
