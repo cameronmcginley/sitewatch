@@ -1,4 +1,3 @@
-import "../globals.css";
 import React from "react";
 import Navbar from "@/components/sections/Navbar";
 import HeroWavy from "@/components/ui/hero-wavy";

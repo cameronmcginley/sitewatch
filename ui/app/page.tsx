@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { HeroWavy } from "@/components/ui/hero-wavy";
 import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -34,7 +34,6 @@ const checks = [
 ];
 
 const signInClick = (session, status) => {
-  // If already signed in, redirect to dashboard
   if (status === "authenticated" && session.user.id) {
     window.location.href = "/test";
   } else {
@@ -50,18 +49,18 @@ function Root() {
     <>
       <div className="relative w-full">
         <HeroWavy />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center z-20 w-full max-w-5xl px-4 pb-24">
-          <h1 className="font-semibold text-3xl md:text-5xl text-white">
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center z-20 w-full max-w-5xl px-4 pb-16 md:pb-24">
+          <h1 className="font-semibold text-2xl sm:text-3xl md:text-5xl text-white">
             Monitor Websites, Get Alerts
           </h1>
-          <p className="text-lg md:text-xl text-white mt-4 md:mt-8">
-            Never miss a beat. SiteWatch checks your chosen sites and sends you
-            alerts when your conditions are met.
+          <p className="text-base sm:text-lg md:text-xl text-white mt-4 md:mt-8">
+            SiteWatch checks your chosen sites, at your chosen interval, and
+            sends you alerts when your conditions are met.
           </p>
-          <p className="text-lg md:text-xl text-white mt-12 md:mt-24 mb-4">
-            Pick any URL, then pick one of our custom check functions
+          <p className="text-base sm:text-lg md:text-xl text-white mt-8 md:mt-12 mb-4">
+            Upload any URL, then pick one of our custom check functions
           </p>
-          <div className="flex flex-col md:flex-row flex-wrap justify-center gap-4">
+          <div className="flex flex-col md:flex-row flex-wrap justify-center gap-4 mt-4">
             {checks.map((check, index) => (
               <div
                 key={check.name}
@@ -72,23 +71,23 @@ function Root() {
                 <div
                   className={`bg-white rounded-xl transition-all duration-300 ease-in-out ${
                     hoveredCheck === index && "rounded-b-none"
-                  } px-4 py-2 flex items-center justify-between`}
+                  } px-3 py-2 sm:px-4 sm:py-2 flex items-center justify-between`}
                 >
                   <div className="flex items-center justify-center flex-grow">
                     <span className="text-blue-500 mr-2 font-semibold">✓</span>
-                    <span className="text-gray-700 font-semibold">
+                    <span className="text-gray-700 font-semibold text-sm sm:text-base">
                       {check.name}
                     </span>
                   </div>
                   <ChevronDown
-                    size={20}
+                    size={16}
                     className={`text-gray-400 transition-transform duration-300 ${
                       hoveredCheck === index ? "rotate-180" : ""
                     }`}
                   />
                 </div>
                 <div
-                  className={`absolute left-0 right-0 bg-white rounded-b-xl px-4 overflow-hidden transition-all duration-300 ease-in-out shadow-lg z-30 ${
+                  className={`absolute left-0 right-0 bg-white rounded-b-xl px-3 sm:px-4 overflow-hidden transition-all duration-300 ease-in-out shadow-lg z-30 ${
                     hoveredCheck === index
                       ? "opacity-100 max-h-40 py-2"
                       : "opacity-0 max-h-0"
@@ -100,16 +99,24 @@ function Root() {
                     })`,
                   }}
                 >
-                  <p className="text-gray-700">{check.description}</p>
+                  <p className="text-gray-700 text-sm sm:text-base">
+                    {check.description}
+                  </p>
                 </div>
               </div>
             ))}
           </div>
+          <Button
+            className="mt-12 sm:mt-16 bg-white hover:bg-gray-200 text-gray-700 text-base sm:text-lg font-semibold px-6 py-4 sm:px-8 sm:py-6"
+            onClick={() => signInClick(session, status)}
+          >
+            Get Started
+          </Button>
         </div>
         {/* Demo section */}
         <div
           className="absolute top-full left-1/2 transform -translate-x-1/2 z-10 w-full max-w-5xl px-4"
-          style={{ transform: "translate(-50%, -30%)" }}
+          style={{ transform: "translate(-50%, -20%)" }}
         >
           <div className="relative">
             <img
@@ -119,21 +126,21 @@ function Root() {
             />
             {/* Desktop buttons (hidden on mobile) */}
             <div
-              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 hidden md:block"
+              className="absolute mt-16 sm:mt-24 top-1/4 left-1/2 transform -translate-x-1/2 hidden sm:block"
               style={{ transform: "translate(-50%, -130%)" }}
             >
-              <div className="flex flex-col gap-4 bg-opacity-20 bg-black p-4 rounded-2xl">
-                <Button className="p-6" variant="default">
+              <div className="flex flex-col gap-4 bg-gray-900 p-4 rounded-xl">
+                <Button className="p-4 sm:p-6" variant="outline">
                   Watch demo
                 </Button>
-                <Button className="p-6" variant="outline">
+                <Button className="p-4 sm:p-6" variant="outline">
                   Read Documentation
                 </Button>
               </div>
             </div>
           </div>
-          {/* Mobile buttons (hidden on desktop) */}
-          <div className="mt-4 flex flex-col gap-4 md:hidden">
+          {/* Mobile buttons (visible on small screens) */}
+          <div className="mt-4 flex flex-col gap-4 sm:hidden">
             <Button className="p-4" variant="default">
               Watch demo
             </Button>
@@ -144,9 +151,9 @@ function Root() {
         </div>
       </div>
       {/* Below hero section */}
-      <div className="w-full pt-24 mt-48 lg:mt-96 pb-16">
+      <div className="w-full pt-48 sm:pt-32 mt-32 sm:mt-48 lg:mt-96 pb-16">
         <div className="max-w-5xl mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-12">
             <FeatureCard
               title="Run Checks Every 5 Minutes"
               description="Customize the frequency of your web checks, with options as frequent as every 5 minutes."
@@ -162,15 +169,15 @@ function Root() {
           </div>
 
           <div className="text-center">
-            <h3 className="text-2xl font-semibold pt-8 mb-8">
+            <h3 className="text-xl sm:text-2xl font-semibold pt-6 sm:pt-8 mb-6 sm:mb-8">
               Ready to get started?
             </h3>
             <Button
-              className="px-8 py-6 text-lg"
+              className="px-6 py-4 sm:px-8 sm:py-6 text-base sm:text-lg"
               variant="default"
               onClick={() => signInClick(session, status)}
             >
-              Sign In
+              {status === "authenticated" ? "Head to Application" : "Sign In"}
             </Button>
           </div>
         </div>
@@ -181,9 +188,9 @@ function Root() {
 
 function FeatureCard({ title, description }) {
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <h3 className="text-xl font-semibold mb-2">{title}</h3>
-      <p className="text-gray-600">{description}</p>
+    <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md">
+      <h3 className="text-lg sm:text-xl font-semibold mb-2">{title}</h3>
+      <p className="text-sm sm:text-base text-gray-600">{description}</p>
     </div>
   );
 }
