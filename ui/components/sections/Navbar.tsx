@@ -31,7 +31,7 @@ const navigationMenuItems: {
   href: string;
   links?: { title: string; href: string; description: string }[];
 }[] = [
-  { title: "Application", href: "/test" },
+  { title: "Application", href: "/app" },
   { title: "Docs", href: "/docs" },
 ];
 

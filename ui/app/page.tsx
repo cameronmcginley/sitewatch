@@ -35,7 +35,7 @@ const checks = [
 
 const signInClick = (session, status) => {
   if (status === "authenticated" && session.user.id) {
-    window.location.href = "/test";
+    window.location.href = "/app";
   } else {
     window.location.href = "/sign-in";
   }

@@ -1,36 +1,83 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Sitewatch UI
+
+This folder contains the `ui` component of the Sitewatch monorepo. It is a [Next.js](https://nextjs.org/) application designed to provide the frontend for the Sitewatch platform.
 
 ## Getting Started
 
-First, run the development server:
+To run the development server for the `ui` component:
 
 ```bash
-npm run dev
+npm run ui:dev
 # or
-yarn dev
+yarn ui:dev
 # or
-pnpm dev
-# or
-bun dev
+pnpm ui:dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser to view the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Building the Application
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+To build the production-ready version of the `ui` component:
 
-## Learn More
+```bash
+npm run ui:build
+# or
+yarn ui:build
+# or
+pnpm ui:build
+```
 
-To learn more about Next.js, take a look at the following resources:
+The build output will be located in the `ui/.next` directory.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Starting the Production Server
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+To start the production server for the `ui` component:
 
-## Deploy on Vercel
+```bash
+npm run ui:start
+# or
+yarn ui:start
+# or
+pnpm ui:start
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Linting
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+To run the linter for the `ui` component:
+
+```bash
+npm run ui:lint
+# or
+yarn ui:lint
+# or
+pnpm ui:lint
+```
+
+### Running Tests
+
+To run the test suite for the `ui` component:
+
+```bash
+npm run ui:test
+# or
+yarn ui:test
+# or
+pnpm ui:test
+```
+
+## Dependencies
+
+Here are some of the main tools used to build the frontend.
+
+- **[Next.js](https://nextjs.org/)**: Framework for server-rendered React applications.
+- **[React](https://reactjs.org/)**: Core library for building user interfaces.
+- **[Tailwind CSS](https://tailwindcss.com/)**: CSS framework for styling.
+- **[TypeScript](https://www.typescriptlang.org/)**
+- **[shadcn](https://shadcn.dev/)**: UI components built with Radix UI and Tailwind.
+- **[Framer Motion](https://www.framer.com/motion/)**: Animation library for React.
+- **[Zod](https://zod.dev/)**: TypeScript schema declaration and validation library.
+
+## Deployment
+
+For deployment instructions and details on the full platform deployment, refer to the root monorepo documentation.

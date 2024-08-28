@@ -14,7 +14,7 @@ import { LoadingOverlay } from "@/components/checks/LoadingOverlay";
 import { NoChecksFound } from "@/components/checks/table/NoChecksFound";
 import { set } from "date-fns";
 
-function Home() {
+const AppPage = () => {
   const { data: session, status } = useSession();
   const [data, setData] = useState<CheckItem[]>([]);
   const [isDataLoading, setIsDataLoading] = useState(true);
@@ -152,6 +152,6 @@ function Home() {
       )}
     </>
   );
-}
+};
 
-export default Home;
+export default AppPage;
