@@ -41,8 +41,6 @@ export const dlog = (
   Item ${created ? "Created" : deleted ? "Deleted" : "Updated"}:
   User: {
     id: ${user.id}
-    name: ${user.name}
-    email: ${user.email}
   }
   CheckItem: {
     PK: ${item.pk}
