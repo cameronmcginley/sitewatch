@@ -26,6 +26,7 @@ import { updateCheck } from "@/lib/api/checks";
 import { RunCheckButton } from "@/components/checks/RunCheckButton";
 import { useSession } from "next-auth/react";
 import { z } from "zod";
+import { dlog } from "@/utils/logger";
 
 interface SidebarFlyoutProps {
   isOpen: boolean;
@@ -140,6 +141,13 @@ export const SidebarFlyout = ({
           userid: currentCheckData.userid,
         },
         validationResult.data
+      );
+      dlog(
+        { ...currentCheckData, ...validationResult.data },
+        session.user,
+        false,
+        false,
+        true
       );
 
       setIsEditMode(false);

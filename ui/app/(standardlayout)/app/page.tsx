@@ -13,6 +13,7 @@ import { DeleteConfirmation } from "@/components/checks/DeleteConfirmation";
 import { LoadingOverlay } from "@/components/checks/LoadingOverlay";
 import { NoChecksFound } from "@/components/checks/table/NoChecksFound";
 import { set } from "date-fns";
+import { dlog } from "@/utils/logger";
 
 const AppPage = () => {
   const { data: session, status } = useSession();
@@ -70,6 +71,7 @@ const AppPage = () => {
 
     try {
       await createCheck(values);
+      dlog(values as CheckItem, session.user, true);
       await fetchDataForUser(session.user.id);
     } catch (error) {
       setIsCreateItemLoading(false);
@@ -85,6 +87,7 @@ const AppPage = () => {
     setIsDeleteModalOpen(false);
     try {
       await Promise.all(items.map((item) => deleteCheck(item)));
+      items.forEach((item) => dlog(item, session.user, false, true));
       fetchDataForUser(session.user.id);
     } catch (error) {
       console.error("Error deleting items:", error);
