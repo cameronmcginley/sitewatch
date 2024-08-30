@@ -2,7 +2,7 @@ import os
 import json
 import redis
 import logging
-from utils import write_all_items_to_redis
+from utils import write_all_items_to_redis, get_redis_key
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -40,7 +40,7 @@ def lambda_handler(event, context):
             sk = old_image["sk"]["S"]
 
             # Create a Redis key and delete the corresponding entry in Redis
-            redis_key = f"{pk}:{sk}"
+            redis_key = get_redis_key(pk, sk)
             redis_client.delete(redis_key)
 
             logger.info(f"Deleted Redis key {redis_key}")

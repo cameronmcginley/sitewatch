@@ -2,6 +2,7 @@ import json
 from constants import REDIS_ITEM_FIELDS
 from boto3.dynamodb.types import TypeDeserializer
 from decimal import Decimal
+import os
 
 deserializer = TypeDeserializer()
 
@@ -73,7 +74,7 @@ def write_all_items_to_redis(redis_client, items, logger):
             logger.debug(f"Processing item: {item}")
             pk = extract_dynamodb_value(item["pk"])
             sk = extract_dynamodb_value(item["sk"])
-            key = f"{pk}:{sk}"
+            key = get_redis_key(pk, sk)
 
             field_value_map = {}
             for field in REDIS_ITEM_FIELDS:
@@ -89,3 +90,11 @@ def write_all_items_to_redis(redis_client, items, logger):
         # Execute the pipeline to write all the commands in batch
         pipe.execute()
         logger.info(f"Updated Redis keys with fields: {REDIS_ITEM_FIELDS}")
+
+
+def get_redis_key(pk, sk):
+    """
+    Creates a Redis key from the partition key and sort key.
+    """
+    stage = os.environ.get("STAGE")
+    return f"{stage}:{pk}:{sk}"

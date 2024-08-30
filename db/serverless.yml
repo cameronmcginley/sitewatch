@@ -6,6 +6,7 @@ provider:
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'us-east-2'}
   environment:
+    STAGE: ${self:provider.stage}
     DYNAMODB_TABLE_NAME: ${self:service}-${self:provider.stage}-main-table
     REDIS_HOST: ${ssm:/sitewatch/${self:provider.stage}/redis/host}
     REDIS_PORT: ${ssm:/sitewatch/${self:provider.stage}/redis/port}

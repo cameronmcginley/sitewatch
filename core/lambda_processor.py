@@ -58,7 +58,9 @@ async def read_from_redis():
     logger.info("Attempting to read from Redis cache")
     try:
         # Assume "cache" is a list of keys, you would iterate over these keys to get full items
-        keys = await asyncio.to_thread(redis_client.keys, "*")
+        keys = await asyncio.to_thread(
+            redis_client.keys, f"{os.environ.get('STAGE')}:*:*"
+        )
         items = []
 
         for key in keys:
