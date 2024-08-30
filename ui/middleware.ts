@@ -7,5 +7,9 @@ export default withAuth(function middleware(req) {
   }
 });
 
-// / becomes $
-export const config = { matcher: ["/((?!$|sign-in).*)"] };
+// Exclude static files, images, API routes, and allow the root `/` route
+export const config = {
+  matcher: [
+    "/((?!api|_next/static|_next/image|favicon.ico|sign-in|docs|public|$|demo.png).*)",
+  ],
+};

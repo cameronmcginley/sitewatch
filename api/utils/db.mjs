@@ -4,13 +4,20 @@ import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
  * Get headers for CORS.
  * @returns {Object} Headers for CORS.
  */
-export const getHeaders = () => ({
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Credentials": true,
-  "Access-Control-Allow-Headers":
-    "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent",
-  "Access-Control-Allow-Methods": "OPTIONS,POST,GET,PUT,DELETE",
-});
+export const getHeaders = () => {
+  const stage = process.env.STAGE || "dev";
+
+  const origin =
+    stage === "prod" ? "https://sitewatchapp.com" : "http://localhost:3000";
+
+  return {
+    "Access-Control-Allow-Origin": origin,
+    "Access-Control-Allow-Credentials": true,
+    "Access-Control-Allow-Headers":
+      "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent",
+    "Access-Control-Allow-Methods": "OPTIONS,POST,GET,PUT,DELETE",
+  };
+};
 
 const ssm = new SSMClient({ region: "us-east-2" });
 

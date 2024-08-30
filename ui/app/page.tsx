@@ -120,7 +120,7 @@ function Root() {
         >
           <div className="relative">
             <img
-              src="/download2.png"
+              src="/demo.png"
               alt="download"
               className="rounded-2xl border-2 border-black w-full"
             />
