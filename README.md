@@ -280,3 +280,32 @@ See test script at [core\data\test_compression.py](core\data\test_compression.py
 | snappy                |                           5066.4 |                             4564.0 |                        0.04128 |                   9.92%   |                   240.22%    |
 | zstd                  |                           5066.4 |                             3081.6 |                        1.27422 |                  39.18%   |                    30.74%    |
 
+
+### Overview
+
+The SiteWatch frontend is deployed on a Virtual Private Server (VPS) using a DigitalOcean Droplet. This VPS is configured to serve the Next.js application and handle incoming HTTP requests.
+
+### Key Components Inside the VPS
+
+1. **Nginx**:
+   - **Role**: Acts as a web server and reverse proxy, directing incoming HTTP/HTTPS traffic to the Next.js application.
+   - **Functionality**:
+     - **Reverse Proxy**: Listens on ports 80 (HTTP) and 443 (HTTPS), forwarding traffic to the application running on port 3000.
+     - **Security**: Manages SSL/TLS certificates to secure client-server communication.
+
+2. **PM2**:
+   - **Role**: Manages the Node.js process, ensuring the Next.js application stays running continuously.
+   - **Functionality**:
+     - **Process Management**: Runs and monitors the application.
+     - **Auto-Restart**: Automatically restarts the application if it crashes or stops unexpectedly.
+     - **Logging**: Captures logs.
+
+### How It Works
+
+- **Traffic Handling**: Nginx receives requests to `sitewatchapp.com` and proxies them to the Next.js application on port 3000.
+- **Application Management**: PM2 ensures continuous uptime by restarting the application if it fails.
+- **SSL Management**: Nginx handles SSL/TLS, securing data transmission if SSL is configured.
+
+### Deploying
+
+Automatically calls deploy script when code is pushed to the `main` branch.
