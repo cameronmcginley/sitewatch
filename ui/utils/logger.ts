@@ -50,7 +50,6 @@ export const dlog = (
     Attributes:
 ${formatAttributes(item.attributes)}
     URL: ${item.url}
-    Email: ${item.email}
     DelayMs: ${item.delayMs}
     Cron: ${item.cron}
   }
