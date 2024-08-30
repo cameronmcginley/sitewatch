@@ -1,8 +1,40 @@
 # SiteWatch
 
-SiteWatch is a solution for automating website monitoring and alerting. A user can upload a URL, a desired interval, and select one of our custom check functions (keyword check, page difference, etc), and will recieve email alerts when conditions are met.
+## Table of Contents
+- [SiteWatch](#sitewatch)
+  - [Table of Contents](#table-of-contents)
+  - [Introduction](#introduction)
+  - [Architecture Overview](#architecture-overview)
+  - [Technology Stack](#technology-stack)
+    - [Frontend](#frontend)
+    - [Backend](#backend)
+  - [Project Structure](#project-structure)
+  - [Core Functionality](#core-functionality)
+  - [API Layer](#api-layer)
+    - [Endpoints](#endpoints)
+  - [Data Management](#data-management)
+    - [Data Storage and Caching](#data-storage-and-caching)
+      - [Why Redis?](#why-redis)
+    - [Data Models](#data-models)
+      - [Check Item](#check-item)
+      - [Check Item Synced to Redis](#check-item-synced-to-redis)
+      - [User Item](#user-item)
+    - [Data Compression](#data-compression)
+      - [Compression Statistics](#compression-statistics)
+  - [Authentication and Permissions](#authentication-and-permissions)
+  - [Deployment and Hosting](#deployment-and-hosting)
+    - [Deployment](#deployment)
+    - [Hosting](#hosting)
+      - [Key Components Inside the VPS](#key-components-inside-the-vps)
+      - [How It Works](#how-it-works)
+      - [Deploying](#deploying)
+  - [Extensibility](#extensibility)
 
-See [here]() for more documentation (including a demo video) on features and functionality of the app itself. This readme will focus on the architecture, tech stack, and development.
+## Introduction
+
+SiteWatch is a solution for automating website monitoring and alerting. A user can upload a URL, a desired interval, and select one of our custom check functions (keyword check, page difference, etc), and will receive email alerts when conditions are met.
+
+See [here]() for more documentation (including a demo video) on features and functionality of the app itself. This README focuses on the architecture, tech stack, and development.
 
 ![Architecture Diagram](assets/architecture_diagram.png)
 
@@ -71,11 +103,11 @@ The core functionality is implemented via two main Lambda functions:
 1. **Processor Lambda**
    1. Fetches check items from Redis, failover to DynamoDB
    2. Computes which checks are ready to run based off their `cron` field
-   3. Batches and spins of executor lambdas
+   3. Batches and spins up executor lambdas
 2. **Executor Lambda**
-   1. Asynchronously performs the custom check functions against each url
+   1. Asynchronously performs the custom check functions against each URL
    2. Writes necessary data back to DynamoDB
-   3. Send email alerts for checks if necessary
+   3. Sends email alerts for checks if necessary
 
 Key features of the core implementation:
 
@@ -132,51 +164,32 @@ Implemented with AWS API Gateway to route requests to lambda functions.
    - Query parameters: `userid`
    - Deletes a user
 
-## Data Storage and Caching
+## Data Management
+
+### Data Storage and Caching
 
 - **DynamoDB**: Primary database using a single-table design
-  - Stores **Checks** (the defitinition item including URL and interval) and **Users**
+  - Stores **Checks** (the definition item including URL and interval) and **Users**
 - **Redis**: Caching layer to optimize read operations and reduce DynamoDB costs
   - Syncs with DynamoDB on DB updates and daily at midnight UTC
     - **Stream Processor Lambda** and **Redis Sync Lambda**
   
-### Why Redis?
+#### Why Redis?
 
 In our data, we store run intervals (i.e. run a given check every 30 mins) in cron format. This allows very dynamic intervals to be defined.
 
 However, checking when an item is actually ready to run is not straightforward. We must manually check the current time against a given cron to see if that item is ready to run.
 
-This functionality can not be implemented on a database query, therefore we are required to fetch every check from the database and perform this function in our lambda.
+This functionality cannot be implemented on a database query, therefore we are required to fetch every check from the database and perform this function in our lambda.
 
 DynamoDB costs are based on data sent, and with our processor lambda running every 5 minutes, there is a lot of waste since most items will not be ready to run every 5 minutes. 
 
-Caching in redis (the subset of fields we need in the executor anyways) lets us read all of our items without cost.
+Caching in Redis (the subset of fields we need in the executor anyways) lets us read all of our items without cost.
 
+### Data Models
 
-## Authentication and Permissions
-
-- NextAuth.js for OAuth-based authentication (currently supporting Google sign-in)
-- Custom middleware for page-level access control
-- Tiered permissions system tied to user accounts
-
-## Deployment
-
-The project uses the Serverless Framework for deploying AWS resources:
-
-- Separate deployment scripts for core functionality, API, and DB
-- Support for both development and production environments
-- Automatic UI deployment via Vercel on main branch changes
-
-## Extensibility
-
-The system is designed to be easily extensible, particularly for adding new URL check functions. This involves updating UI constants, type definitions, and implementing the new function logic.
-
-## Data
-
-Below represents how `checks` and `users` are stored.
-
-### Check Item
-```
+#### Check Item
+```typescript
 interface Check {
   // Partition Key and Sort Key
   pk: string;  // Format: "CHECK#{uuid}"
@@ -213,7 +226,7 @@ interface Check {
 }
 ```
 
-### Check Item Synced to Redis
+#### Check Item Synced to Redis
 
 ```
 Key: "check:{uuid}"
@@ -230,9 +243,9 @@ Hash fields:
 }
 ```
 
-### User Item
+#### User Item
 
-```
+```typescript
 interface User {
   // Partition Key and Sort Key
   pk: string;  // Format: "USER#{id}"
@@ -253,19 +266,17 @@ interface User {
 }
 ```
 
-## Performance and Metrics
+### Data Compression
 
-### Compressing Text Data
-
-Certain `checks`, e.g. `PAGE DIFFERENCE`, must store the text data from websites in order to compare past and current data. From the HTML, we extract text and do basic cleaning, followed by zlib compression and base64 encoding. I chose zlib for compressing based on the below stats.
+Certain `checks`, e.g. `PAGE DIFFERENCE`, must store the text data from websites in order to compare past and current data. From the HTML, we extract text and do basic cleaning, followed by zlib compression and base64 encoding. We chose zlib for compressing based on the statistics below.
 
 When storing website's text data, this reduces bytes stored by about 40% on average. 
 
-### Compression Statistics
+#### Compression Statistics
 
-I measured a handful of websites with different algorithms.
+We measured a handful of websites with different algorithms.
 
-As shown, the greatest compression performance in terms of size decrease is `brotli`, but its efficiency (as a measure of percent size reduction / time (ms)) is one of the worst. For this reason I chose `zlib` given it has the best efficiency and low runtime, and still one of the highest performances in size reduction.
+As shown, the greatest compression performance in terms of size decrease is `brotli`, but its efficiency (as a measure of percent size reduction / time (ms)) is one of the worst. For this reason we chose `zlib` given it has the best efficiency and low runtime, and still one of the highest performances in size reduction.
 
 See test script at [core\data\test_compression.py](core\data\test_compression.py)
 
@@ -280,12 +291,27 @@ See test script at [core\data\test_compression.py](core\data\test_compression.py
 | snappy                |                           5066.4 |                             4564.0 |                        0.04128 |                   9.92%   |                   240.22%    |
 | zstd                  |                           5066.4 |                             3081.6 |                        1.27422 |                  39.18%   |                    30.74%    |
 
+## Authentication and Permissions
 
-### Overview
+- NextAuth.js for OAuth-based authentication (currently supporting Google sign-in)
+- Custom middleware for page-level access control
+- Tiered permissions system tied to user accounts
+
+## Deployment and Hosting
+
+### Deployment
+
+The project uses the Serverless Framework for deploying AWS resources:
+
+- Separate deployment scripts for core functionality, API, and DB
+- Support for both development and production environments
+- Automatic UI deployment via Vercel on main branch changes
+
+### Hosting
 
 The SiteWatch frontend is deployed on a Virtual Private Server (VPS) using a DigitalOcean Droplet. This VPS is configured to serve the Next.js application and handle incoming HTTP requests.
 
-### Key Components Inside the VPS
+#### Key Components Inside the VPS
 
 1. **Nginx**:
    - **Role**: Acts as a web server and reverse proxy, directing incoming HTTP/HTTPS traffic to the Next.js application.
@@ -300,12 +326,18 @@ The SiteWatch frontend is deployed on a Virtual Private Server (VPS) using a Dig
      - **Auto-Restart**: Automatically restarts the application if it crashes or stops unexpectedly.
      - **Logging**: Captures logs.
 
-### How It Works
+#### How It Works
 
 - **Traffic Handling**: Nginx receives requests to `sitewatchapp.com` and proxies them to the Next.js application on port 3000.
 - **Application Management**: PM2 ensures continuous uptime by restarting the application if it fails.
 - **SSL Management**: Nginx handles SSL/TLS, securing data transmission if SSL is configured.
 
-### Deploying
+#### Deploying
 
 Automatically calls deploy script when code is pushed to the `main` branch.
+
+## Extensibility
+
+The system is designed to be easily extensible, particularly for adding new URL check functions. To add new check function, create a script file and edit the necessary places.
+
+TODO: Steps (basically just search the repo for "KEYWORD CHECK" and place the new check function in the same places)
