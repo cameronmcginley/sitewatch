@@ -18,7 +18,6 @@
     - [Data Models](#data-models)
       - [Check Item](#check-item)
       - [Check Item Synced to Redis](#check-item-synced-to-redis)
-      - [User Item](#user-item)
     - [Data Compression](#data-compression)
       - [Compression Statistics](#compression-statistics)
   - [Authentication and Permissions](#authentication-and-permissions)
@@ -239,29 +238,6 @@ Hash fields:
   "attributes": string (JSON stringified object),
   "cron": string,
   "runNowOverride": string ("true" or "false")
-}
-```
-
-#### User Item
-
-```typescript
-interface User {
-  // Partition Key and Sort Key
-  pk: string;  // Format: "USER#{id}"
-  sk: string;  // Always "PROFILE"
-
-  // User details
-  id: string;
-  name: string;
-  email: string;
-  provider: 'google';
-  userType: 'admin' | 'default';
-
-  // Usage statistics
-  checkCount: number;
-
-  // Metadata
-  createdAt: string;
 }
 ```
 
