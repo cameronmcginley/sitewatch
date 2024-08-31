@@ -64,10 +64,14 @@ urls = [
 
 
 def clean_content(content):
-    soup = BeautifulSoup(content, "html.parser")
+    # Parse HTML and extract text
+    soup = BeautifulSoup(content, "lxml")
     text = soup.get_text().lower()
-    text = text.strip().replace("\n", " ").replace("\r", " ").replace("\t", " ")
-    " ".join(text.split())
+
+    # Replace multiple spaces/newlines/tabs with a single space
+    text = re.sub(r"\s+", " ", text).strip()
+
+    return text
 
     # # Tokenize
     # tokens = word_tokenize(text)
@@ -81,8 +85,6 @@ def clean_content(content):
     # text = " ".join(tokens)
     # # Normalize Unicode characters
     # text = unicodedata.normalize("NFKD", text).encode("ASCII", "ignore").decode("ASCII")
-
-    return text
 
 
 def test_clean_content():

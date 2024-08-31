@@ -253,7 +253,7 @@ We measured a handful of websites with different algorithms.
 
 The table below shows some of the bester performers in terms of size reduction.
 
-Text preprocessing only includes cleaning, i.e. normalizing whitespace, lowercasing, etc. Tried improving with tokenization and word stemming, but didn't find much improvement if any. Same with combining compression algorithms like brotli and snappy. Average cleaning time is `17.80ms`.
+Text preprocessing only includes extracting text from html and cleaning, i.e. normalizing whitespace, lowercasing, etc. Tried improving with tokenization and word stemming, but didn't find much improvement if any. Same with combining compression algorithms like brotli and snappy. Average cleaning time is about `13ms`.
 
 As shown, the greatest size decrease uses `brotli`, but its efficiency is one of the worst. For this reason we chose `zstd (level 6)` its relatively good compression ratio, while maintaining quick speeds since this compression will happen frequently.
 

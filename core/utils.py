@@ -121,9 +121,11 @@ def decompress_text(compressed_data):
 
 
 def clean_content(content):
-    soup = BeautifulSoup(content, "html.parser")
-    text = (
-        soup.get_text().strip().replace("\n", " ").replace("\r", " ").replace("\t", " ")
-    )
-    text = " ".join(text.split())
+    # Parse HTML and extract text
+    soup = BeautifulSoup(content, "lxml")
+    text = soup.get_text().lower()
+
+    # Replace multiple spaces/newlines/tabs with a single space
+    text = re.sub(r"\s+", " ", text).strip()
+
     return text
