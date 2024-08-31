@@ -243,28 +243,31 @@ Hash fields:
 
 ### Data Compression
 
-Certain `checks`, e.g. `PAGE DIFFERENCE`, must store the text data from websites in order to compare past and current data. From the HTML, we extract text and do basic cleaning, followed by zlib compression and base64 encoding. We chose zlib for compressing based on the statistics below.
+Certain `checks`, e.g. `PAGE DIFFERENCE`, must store the text data from websites in order to compare past and current data. From the HTML, we extract text and do basic cleaning, followed by zstd compression and base64 encoding. We chose zlib for compressing based on the statistics below.
 
-When storing website's text data, this reduces bytes stored by about 40% on average. 
+When storing website's text data, this reduces bytes stored by about 50-60% on average. 
 
 #### Compression Statistics
 
 We measured a handful of websites with different algorithms.
 
-As shown, the greatest compression performance in terms of size decrease is `brotli`, but its efficiency (as a measure of percent size reduction / time (ms)) is one of the worst. For this reason we chose `zlib` given it has the best efficiency and low runtime, and still one of the highest performances in size reduction.
+The table below shows some of the bester performers in terms of size reduction.
 
-See test script at [core\data\test_compression.py](core\data\test_compression.py)
+Text preprocessing only includes cleaning, i.e. normalizing whitespace, lowercasing, etc. Tried improving with tokenization and word stemming, but didn't find much improvement if any. Same with combining compression algorithms like brotli and snappy. Average cleaning time is `17.80ms`.
 
-| Compression Algorithm | Average Original Length (bytes) | Average Compressed Length (bytes) | Average Compression Time (ms) | Percentage Reduction (%) | Percentage Reduction per ms |
-|-----------------------|-------------------------------:|----------------------------------:|------------------------------:|-------------------------:|----------------------------:|
-| gzip (level 6)        |                           5066.4 |                             3149.6 |                        0.18642 |                  37.83%   |                   202.95%    |
-| gzip (level 9)        |                           5066.4 |                             3149.6 |                        0.13120 |                  37.83%   |                   288.37%    |
-| zlib                  |                           5066.4 |                             3133.6 |                        0.11108 |                  38.15%   |                   343.44%    |
-| brotli                |                           5066.4 |                             2486.4 |                        4.30636 |                  50.92%   |                    11.83%    |
-| lzma                  |                           5066.4 |                             3073.6 |                        4.25438 |                  39.33%   |                     9.25%    |
-| bz2                   |                           5066.4 |                             3196.0 |                        0.59416 |                  36.92%   |                    62.13%    |
-| snappy                |                           5066.4 |                             4564.0 |                        0.04128 |                   9.92%   |                   240.22%    |
-| zstd                  |                           5066.4 |                             3081.6 |                        1.27422 |                  39.18%   |                    30.74%    |
+As shown, the greatest size decrease uses `brotli`, but its efficiency is one of the worst. For this reason we chose `zstd (level 6)` its relatively good compression ratio, while maintaining quick speeds since this compression will happen frequently.
+
+See full test script at [core\data\test_compression.py](core\data\test_compression.py)
+
+| Compression Algorithm  | Average Compressed Length (bytes) | Average Compression Time (ms) | Average Decompression Time (ms) | Percentage Reduction (%) | Percentage Reduction per ms |
+|------------------------|-----------------------------------|-------------------------------|---------------------------------|--------------------------|-----------------------------|
+| brotli (level 11)       | 2040.500                          | 4.603962                       | 0.061462                        | 64.325559                  | 13.971782                    |
+| brotli (level 6)        | 2377.875                          | 0.456753                       | 0.043616                        | 58.427169                  | 127.918488                   |
+| zstd (level 22)         | 2512.625                          | 1.196556                       | 0.042256                        | 56.071310                  | 46.860571                    |
+| zstd (level 6)          | 2567.750                          | 0.073750                       | 0.033159                        | 55.107549                  | 747.221247                   |
+| zlib (level 9)          | 2578.875                          | 0.207181                       | 0.034853                        | 54.913048                  | 265.048328                   |
+| zlib (level 6)          | 2585.375                          | 0.097050                       | 0.035066                        | 54.799408                  | 564.651330                   |
+| gzip (level 9)          | 2594.875                          | 0.226950                       | 0.040344                        | 54.633317                  | 240.728435                   |
 
 ## Authentication and Permissions
 

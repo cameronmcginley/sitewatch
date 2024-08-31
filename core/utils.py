@@ -5,7 +5,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from croniter import croniter
 from datetime import datetime, timezone, timedelta
-import zlib
+import zstandard as zstd
 import base64
 import time
 from bs4 import BeautifulSoup
@@ -93,7 +93,9 @@ def sum_of_numbers(*texts):
 
 def compress_text(text):
     start_time = time.time()
-    compressed_data = zlib.compress(text.encode("utf-8"))
+    # Initialize the Zstd compressor with level 6
+    compressor = zstd.ZstdCompressor(level=6)
+    compressed_data = compressor.compress(text.encode("utf-8"))
     compressed_data = base64.b64encode(compressed_data).decode("utf-8")
     elapsed_time = time.time() - start_time
     logger.info(f"Compressed data in {elapsed_time*1000:.2f} ms")
@@ -107,8 +109,9 @@ def decompress_text(compressed_data):
         if isinstance(compressed_data, str):
             compressed_data = base64.b64decode(compressed_data)
 
-        decompressed_data = zlib.decompress(compressed_data).decode("utf-8")
-    except (zlib.error, AttributeError, base64.binascii.Error) as e:
+        decompressor = zstd.ZstdDecompressor()
+        decompressed_data = decompressor.decompress(compressed_data).decode("utf-8")
+    except (zstd.ZstdError, AttributeError, base64.binascii.Error) as e:
         # Handle potential errors in decompression
         logger.error(f"Decompression error: {e}")
         decompressed_data = ""
