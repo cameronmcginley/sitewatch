@@ -32,7 +32,15 @@ def lambda_handler(event, context):
         if event_name == "INSERT" or event_name == "MODIFY":
             new_image = record["dynamodb"]["NewImage"]
 
-            write_all_items_to_redis(redis_client, [new_image], logger)
+            # Check if status is PAUSED and delete the item from Redis if it is
+            if new_image.get("status", {}).get("S") == "PAUSED":
+                pk = new_image["pk"]["S"]
+                sk = new_image["sk"]["S"]
+                redis_key = get_redis_key(pk, sk)
+                redis_client.delete(redis_key)
+                logger.info(f"Deleted Redis key {redis_key} due to status PAUSED")
+            else:
+                write_all_items_to_redis(redis_client, [new_image], logger)
 
         elif event_name == "REMOVE":
             old_image = record["dynamodb"]["OldImage"]
