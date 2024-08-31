@@ -40,7 +40,7 @@ See [here]() for more documentation (including a demo video) on features and fun
 
 ## Architecture Overview
 
-SiteWatch employs a serverless architecture using AWS services, with a React-based frontend hosted on Vercel. The system is divided into several key components:
+SiteWatch uses a serverless architecture using AWS services, with a React-based frontend hosted on a VPS. The system is divided into several key components:
 
 1. **Frontend**: Next.js application with React
 2. **API Layer**: AWS API Gateway with Lambda functions
@@ -57,7 +57,6 @@ SiteWatch employs a serverless architecture using AWS services, with a React-bas
 - TypeScript
 - Next.js
 - React
-- Vercel (hosting)
 - NextAuth.js (authentication)
 - Axios (HTTP client)
 - Tailwind CSS
@@ -303,9 +302,8 @@ See test script at [core\data\test_compression.py](core\data\test_compression.py
 
 The project uses the Serverless Framework for deploying AWS resources:
 
-- Separate deployment scripts for core functionality, API, and DB
+- Separate deployment scripts for Core, API, and DB
 - Support for both development and production environments
-- Automatic UI deployment via Vercel on main branch changes
 
 ### Hosting
 
