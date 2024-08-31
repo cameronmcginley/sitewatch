@@ -34,9 +34,11 @@ export const CreateCheckButton: React.FC<CreateCheckButtonProps> = ({
           Create Check
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-h-[80vh] overflow-y-auto">
+      <DialogContent className="max-h-[80vh] max-w-[95%] w-[320px] sm:w-[480px] md:w-[640px] lg:w-[800px] xl:w-[960px] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{"Create New Check"}</DialogTitle>
+          <DialogTitle className="text-center font-bold text-2xl">
+            Create New Check
+          </DialogTitle>
         </DialogHeader>
         <div className="relative">
           <CreateCheckForm handleCreateItemSubmit={handleCreateItemSubmit} />
