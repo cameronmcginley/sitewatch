@@ -15,6 +15,7 @@
   - [Data Management](#data-management)
     - [Data Storage and Caching](#data-storage-and-caching)
       - [Why Redis?](#why-redis)
+      - [Redis Alternative - 288 Buckets](#redis-alternative---288-buckets)
     - [Data Models](#data-models)
       - [Check Item](#check-item)
       - [Check Item Synced to Redis](#check-item-synced-to-redis)
@@ -184,6 +185,10 @@ DynamoDB costs are based on data sent, and with our processor lambda running eve
 
 Caching in Redis (the subset of fields we need in the executor anyways) lets us read all of our items without cost.
 
+#### Redis Alternative - 288 Buckets
+
+Since I can't query the database directly to fetch ready-to-run items, can I store them differently? One thought was to create a bucket for each runtime of each day (288 buckets total assuming we run every 5 minutes, or less if we want to batch different times into one bucket), and place each item's ID in the appropriate buckets for which it needs to be run. For each runtime, fetch the bucket for the IDs, then fetch the items. Managing this seems annoying though, and could need lots of writes if an item is in many buckets.
+
 ### Data Models
 
 #### Check Item
@@ -243,9 +248,9 @@ Hash fields:
 
 ### Data Compression
 
-Certain `checks`, e.g. `PAGE DIFFERENCE`, must store the text data from websites in order to compare past and current data. From the HTML, we extract text and do basic cleaning, followed by zstd compression and base64 encoding. We chose zlib for compressing based on the statistics below.
+Certain `checks`, e.g. `PAGE DIFFERENCE`, must store the text data from websites in order to compare past and current data. From the HTML, we extract text and do basic cleaning, followed by [Zstandard](https://facebook.github.io/zstd/) compression and Base64 encoding.
 
-When storing website's text data, this reduces bytes stored by about 50-60% on average. 
+When storing website's text data, this reduces bytes stored by about 50% on average. 
 
 #### Compression Statistics
 
