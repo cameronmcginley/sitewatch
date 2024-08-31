@@ -80,7 +80,7 @@ const authOptions: NextAuthOptions = {
   },
   pages: {
     signIn: SIGN_IN_URL,
-    error: "/error",
+    error: "/",
   },
   debug: true,
 };
