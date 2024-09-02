@@ -1,13 +1,21 @@
-import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
 import { Database } from "lucide-react";
 import { CreateCheckButton } from "./CreateCheckButton";
+import { createCheckFormSchema } from "@/lib/checks/schema";
+import { z } from "zod";
+
+interface NoChecksFoundProps {
+  isCreateItemModalOpen: boolean;
+  setIsCreateItemModalOpen: (open: boolean) => void;
+  handleCreateItemSubmit: (
+    values: z.infer<typeof createCheckFormSchema>
+  ) => void;
+}
 
 export const NoChecksFound = ({
   isCreateItemModalOpen,
   setIsCreateItemModalOpen,
   handleCreateItemSubmit,
-}) => {
+}: NoChecksFoundProps) => {
   return (
     <div className="flex flex-col items-center justify-center bg-background m-24 p-6 space-y-5">
       <Database

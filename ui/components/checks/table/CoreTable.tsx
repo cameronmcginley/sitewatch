@@ -28,15 +28,19 @@ import { CreateCheckButton } from "./CreateCheckButton";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { SidebarFlyout } from "@/components/checks/SidebarFlyout";
 import { Check } from "drizzle-orm/mysql-core";
+import { createCheckFormSchema } from "@/lib/checks/schema";
+import { z } from "zod";
 
 interface CoreTableProps {
   data: CheckItem[];
   handleDelete: (items: CheckItem[]) => void;
   isLoading: boolean;
-  handleCreateItemSubmit: (data: CheckItem) => void;
+  handleCreateItemSubmit: (
+    values: z.infer<typeof createCheckFormSchema>
+  ) => void;
   isCreateItemModalOpen: boolean;
   setIsCreateItemModalOpen: (open: boolean) => void;
-  fetchDataForUser: () => void;
+  fetchDataForUser: (userid: string) => Promise<void>;
   selectedItems: CheckItem[];
   setSelectedItems: (items: CheckItem[]) => void;
 }
@@ -90,6 +94,7 @@ const CoreTable = ({
   };
 
   const handleSelectItem = (item: CheckItem) => {
+    // @ts-ignore
     setSelectedItems((prev: CheckItem[]) => {
       return prev.includes(item)
         ? (prev.filter((i) => i !== item) as CheckItem[])
@@ -156,7 +161,6 @@ const CoreTable = ({
           />
         </div>
       </div>
-
       <div className={`relative`}>
         <Table>
           <TableHeader>
@@ -233,7 +237,7 @@ const CoreTable = ({
       <SidebarFlyout
         isOpen={isSidebarFlyoutOpen}
         onClose={handleCloseSidebarFlyout}
-        checkData={flyoutItem}
+        checkData={flyoutItem as CheckItem}
         handleDelete={handleDelete}
         fetchDataForUser={fetchDataForUser}
       />

@@ -26,6 +26,7 @@ import { convertToCron, cronToPlainText } from "@/lib/checks/utils";
 import { Switch } from "@/components/ui/switch";
 import { createCheckFormSchema } from "@/lib/checks/schema";
 import { InfoTooltip } from "../custom/InfoTooltip";
+import { CheckItem } from "@/lib/types";
 
 const columnLayout = {
   left: ["checkType", "attributes", "useProxy"],

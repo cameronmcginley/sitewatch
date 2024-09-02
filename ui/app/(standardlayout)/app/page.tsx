@@ -28,8 +28,8 @@ const AppPage = () => {
   const [selectedItems, setSelectedItems] = useState<CheckItem[]>([]);
 
   useEffect(() => {
-    if (status === "authenticated" && session.user.id) {
-      fetchDataForUser(session.user.id);
+    if (status === "authenticated" && session!.user.id) {
+      fetchDataForUser(session!.user.id);
     }
   }, [status, session]);
 
@@ -57,8 +57,8 @@ const AppPage = () => {
     setIsCreateItemModalOpen(false);
 
     // Check for user's limit first
-    const userLimit = USER_TYPE_TO_LIMITS[session.user.userType];
-    const userData = await fetchUser(session.user.id);
+    const userLimit = USER_TYPE_TO_LIMITS[session!.user.userType];
+    const userData = await fetchUser(session!.user.id);
     const currentCount = userData?.[0]?.checkCount || 0;
 
     if (currentCount >= userLimit) {
@@ -71,8 +71,8 @@ const AppPage = () => {
 
     try {
       await createCheck(values);
-      dlog(values as CheckItem, session.user, true);
-      await fetchDataForUser(session.user.id);
+      dlog(values as unknown as CheckItem, session!.user, true);
+      await fetchDataForUser(session!.user.id);
     } catch (error) {
       setIsCreateItemLoading(false);
       console.error("Error adding item:", error);
@@ -87,8 +87,8 @@ const AppPage = () => {
     setIsDeleteModalOpen(false);
     try {
       await Promise.all(items.map((item) => deleteCheck(item)));
-      items.forEach((item) => dlog(item, session.user, false, true));
-      fetchDataForUser(session.user.id);
+      items.forEach((item) => dlog(item, session!.user, false, true));
+      fetchDataForUser(session!.user.id);
     } catch (error) {
       console.error("Error deleting items:", error);
     } finally {

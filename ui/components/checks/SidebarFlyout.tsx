@@ -32,7 +32,7 @@ interface SidebarFlyoutProps {
   isOpen: boolean;
   onClose: () => void;
   checkData: CheckItem;
-  handleDelete: (checkData: Partial<CheckItem>[]) => void;
+  handleDelete: (items: CheckItem[]) => void;
   fetchDataForUser: (userid: string) => void;
 }
 
@@ -152,6 +152,7 @@ export const SidebarFlyout = ({
       );
       dlog(
         { ...currentCheckData, ...validationResult.data },
+        // @ts-ignore
         session?.user || {},
         false,
         false,
@@ -490,7 +491,7 @@ export const SidebarFlyout = ({
                         pk: currentCheckData.pk,
                         sk: currentCheckData.sk,
                         userid: session?.user?.id || "",
-                      },
+                      } as CheckItem,
                     ])
                   }
                 >

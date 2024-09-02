@@ -10,13 +10,16 @@ export function prettyLog(label: string, obj: any): void {
     compact: false,
   });
 
-  console.log(`${chalk.bgBlue(new Date().toLocaleString())} : ${chalk.blue(
-    label
-  )} : ${formattedObj}
-    `);
+  console.log(
+    `${chalk.bgBlue(new Date().toLocaleString())} : ${chalk.blue(
+      label
+    )} : ${formattedObj}`
+  );
 }
 
-const formatAttributes = (attributes) => {
+const formatAttributes = (
+  attributes: Record<string, any> | undefined
+): string => {
   if (!attributes) {
     return "";
   }
@@ -25,13 +28,17 @@ const formatAttributes = (attributes) => {
     .join("\n");
 };
 
+interface User {
+  id: string;
+}
+
 export const dlog = (
   item: CheckItem | any,
-  user,
-  created = false,
-  deleted = false,
-  updated = false
-) => {
+  user: User,
+  created: boolean = false,
+  deleted: boolean = false,
+  updated: boolean = false
+): void => {
   const stage = process.env.NEXT_PUBLIC_STAGE || "dev";
   if (stage === "dev") {
     return;
@@ -55,7 +62,7 @@ ${formatAttributes(item.attributes)}
   }
   -----------------------------------------------------------
   `;
-  axios.post(process.env.NEXT_PUBLIC_HOOK_UPDATE_ITEM, {
+  axios.post(process.env.NEXT_PUBLIC_HOOK_UPDATE_ITEM || "", {
     content: message,
   });
 };

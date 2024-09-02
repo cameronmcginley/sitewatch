@@ -9,11 +9,15 @@ import {
 import { Button } from "@/components/ui/button";
 import CreateCheckForm from "@/components/checks/CreateCheckForm";
 import { PlusCircle } from "lucide-react";
+import { createCheckFormSchema } from "@/lib/checks/schema";
+import { z } from "zod";
 
 interface CreateCheckButtonProps {
   isCreateItemModalOpen: boolean;
   setIsCreateItemModalOpen: (open: boolean) => void;
-  handleCreateItemSubmit: () => void;
+  handleCreateItemSubmit: (
+    values: z.infer<typeof createCheckFormSchema>
+  ) => void;
   isMobile: boolean;
 }
 
