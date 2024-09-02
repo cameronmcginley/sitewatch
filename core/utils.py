@@ -1,4 +1,3 @@
-import logging
 import re
 import smtplib
 from email.mime.multipart import MIMEMultipart
@@ -9,9 +8,11 @@ import zstandard as zstd
 import base64
 import time
 from bs4 import BeautifulSoup
+from aws_lambda_powertools import Logger
 
 TIMEOUT_LIMIT = 100000
-logger = logging.getLogger(__name__)
+
+logger = Logger()
 
 
 def is_task_ready_to_run(cron_string, grace_period_seconds=120):
@@ -79,10 +80,8 @@ def sum_of_numbers(*texts):
     total_sum = 0.0
 
     for text in texts:
-        # Find all matches in the text
         matches = re.findall(pattern, text)
 
-        # Convert matches to float and sum them up
         total_sum += sum(
             float(match.replace("$", "").replace("+", "").replace(",", ""))
             for match in matches
@@ -93,7 +92,6 @@ def sum_of_numbers(*texts):
 
 def compress_text(text):
     start_time = time.time()
-    # Initialize the Zstd compressor with level 6
     compressor = zstd.ZstdCompressor(level=6)
     compressed_data = compressor.compress(text.encode("utf-8"))
     compressed_data = base64.b64encode(compressed_data).decode("utf-8")
@@ -112,7 +110,6 @@ def decompress_text(compressed_data):
         decompressor = zstd.ZstdDecompressor()
         decompressed_data = decompressor.decompress(compressed_data).decode("utf-8")
     except (zstd.ZstdError, AttributeError, base64.binascii.Error) as e:
-        # Handle potential errors in decompression
         logger.error(f"Decompression error: {e}")
         decompressed_data = ""
     elapsed_time = time.time() - start_time
@@ -121,7 +118,6 @@ def decompress_text(compressed_data):
 
 
 def clean_content(content):
-    # Parse HTML and extract text
     soup = BeautifulSoup(content, "lxml")
     text = soup.get_text().lower()
 

@@ -2,22 +2,18 @@ import os
 import json
 import asyncio
 import boto3
-import logging
 import redis
 from boto3.dynamodb.conditions import Attr
 from constants import BATCH_SIZE
 from utils import is_task_ready_to_run
+from aws_lambda_powertools import Logger
 
-# Set up logging
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+logger = Logger()
 
-# Initialize DynamoDB and Lambda clients
 dynamodb = boto3.resource("dynamodb")
 table = dynamodb.Table(os.environ["DYNAMODB_TABLE_NAME"])
 lambda_client = boto3.client("lambda")
 
-# Initialize Redis client
 redis_client = redis.Redis(
     host=os.environ.get("REDIS_HOST"),
     port=int(os.environ.get("REDIS_PORT")),
@@ -48,6 +44,7 @@ def transform_item(check):
     return transformed
 
 
+@logger.inject_lambda_context
 async def read_from_redis():
     """
     Asynchronously read the entire Redis cache.
@@ -57,7 +54,6 @@ async def read_from_redis():
     """
     logger.info("Attempting to read from Redis cache")
     try:
-        # Assume "cache" is a list of keys, you would iterate over these keys to get full items
         keys = await asyncio.to_thread(
             redis_client.keys, f"{os.environ.get('STAGE')}:*:*"
         )
@@ -70,7 +66,6 @@ async def read_from_redis():
                 try:
                     item[field] = json.loads(value)
                 except (json.JSONDecodeError, TypeError):
-                    # If it's not a JSON string, keep the original value
                     pass
                 # Convert specific fields to boolean
                 if field in ["useProxy", "runNowOverride"]:
@@ -84,6 +79,7 @@ async def read_from_redis():
         raise
 
 
+@logger.inject_lambda_context
 async def scan_table():
     """
     Asynchronously scan the DynamoDB table for active items, falling back to DynamoDB if Redis fails.
@@ -92,7 +88,6 @@ async def scan_table():
         list: A list of active items from the DynamoDB table.
     """
     try:
-        # If env var is false, dont read from redis
         if os.environ.get("USE_REDIS", "false").lower() == "false":
             raise Exception("USE_REDIS is set to false")
         items = await read_from_redis()
@@ -114,12 +109,12 @@ async def scan_table():
 
         logger.info(f"Completed table scan, found {len(items)} active items")
 
-    # Filter out empty items if they exist
     items = [item for item in items if item.get("cron")]
 
     return items
 
 
+@logger.inject_lambda_context
 async def invoke_executor(batch):
     """
     Asynchronously invoke the executor Lambda function.
@@ -137,6 +132,7 @@ async def invoke_executor(batch):
     logger.debug(f"Executor invoked successfully for batch of {len(batch)} checks")
 
 
+@logger.inject_lambda_context
 async def main_handler(event, context):
     """
     Main Lambda handler function.
@@ -150,7 +146,6 @@ async def main_handler(event, context):
     """
     logger.info("Starting Processor Lambda execution")
 
-    # Get checks from Redis cache, if it fails then use DynamoDB
     checks = await scan_table()
     logger.info(f"Retrieved {len(checks)} checks")
 
@@ -175,7 +170,6 @@ async def main_handler(event, context):
         f"Created {len(batches)} batches of checks, each with up to {BATCH_SIZE} checks"
     )
 
-    # Invoke a new executor Lambda function for each batch
     await asyncio.gather(*[invoke_executor(batch) for batch in batches])
     logger.info(f"Invoked {len(batches)} Executor Lambda functions")
 
@@ -188,6 +182,7 @@ async def main_handler(event, context):
     }
 
 
+@logger.inject_lambda_context
 def lambda_handler(event, context):
     return asyncio.run(main_handler(event, context))
 

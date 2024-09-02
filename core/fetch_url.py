@@ -1,28 +1,26 @@
 import asyncio
 import random
 from typing import Optional, List
-from aiohttp import ClientSession, ClientTimeout, ClientError, TCPConnector
+from aiohttp import ClientSession, ClientTimeout, ClientError
 import yarl
 import os
-import logging
+from aws_lambda_powertools import Logger
 
-# List of User-Agents to rotate
+logger = Logger()
+
 USER_AGENTS: List[str] = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:106.0) Gecko/20100101 Firefox/106.0",
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Safari/605.1.15",
 ]
 
-
 PROXIES: List[str] = [os.environ.get("oxylab_proxy", "")]
 
-# Semaphore for rate limiting
 # Lambda region limit is 1000
 RATE_LIMIT = asyncio.Semaphore(1000)
 
 
 async def fetch_url(
-    logger: logging.Logger,
     session: ClientSession,
     url: str,
     useProxy: bool = False,
@@ -37,7 +35,6 @@ async def fetch_url(
     Fetch a URL with configurable retries and timeouts.
 
     Args:
-        logger (logging.Logger): The logger to use for output.
         session (ClientSession): The aiohttp ClientSession to use.
         url (str): The URL to fetch.
         useProxy (bool): Whether to use a proxy for the request.
@@ -84,7 +81,7 @@ async def fetch_url(
                         async for chunk in response.content.iter_chunked(1024):
                             content += chunk
                             if len(content) > max_content_size:
-                                logger.warn(f"Reached max content size for {url}")
+                                logger.warning(f"Reached max content size for {url}")
                                 return content[:max_content_size]
                         return content
                     else:
@@ -97,7 +94,7 @@ async def fetch_url(
 
         if attempt < max_retries - 1:
             delay = (2**attempt) * base_delay + random.uniform(0, 1)
-            logger.warn(f"Retrying {url} in {delay:.2f} seconds...")
+            logger.warning(f"Retrying {url} in {delay:.2f} seconds...")
             await asyncio.sleep(delay)
 
     logger.error(f"Failed to fetch {url} after {max_retries} attempts")

@@ -1,7 +1,6 @@
 import asyncio
 import os
 import time
-import logging
 from aiohttp import ClientSession
 from utils import send_email
 from constants import CHECKTYPE_TO_FUNCTION_MAP, TIMEOUT_LIMIT
@@ -10,12 +9,9 @@ from botocore.exceptions import ClientError
 from collections import defaultdict
 from datetime import datetime, timezone
 from fetch_url import fetch_url
+from aws_lambda_powertools import Logger
 
-# Set up logging
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-
-logger.info("Starting Executor Lambda")
+logger = Logger()
 
 dynamodb = boto3.resource("dynamodb")
 table = dynamodb.Table(os.environ["DYNAMODB_TABLE_NAME"])
@@ -24,6 +20,7 @@ DEBUG = os.environ.get("debug", "false") == "true"
 error_counter = {"errors": 0, "total": 0}
 
 
+@logger.inject_lambda_context
 async def update_dynamodb_item(pk, sk, lastResult):
     """
     Update an item in DynamoDB with the latest result.
@@ -49,6 +46,7 @@ async def update_dynamodb_item(pk, sk, lastResult):
         logger.error(f"Error updating item {pk} in DynamoDB: {e}")
 
 
+@logger.inject_lambda_context
 async def process_check(session, check):
     """
     Process a single check asynchronously.
@@ -65,9 +63,7 @@ async def process_check(session, check):
 
     try:
         if check["checkType"] in CHECKTYPE_TO_FUNCTION_MAP:
-            content = await fetch_url(
-                logger, session, check["url"], useProxy=check["useProxy"]
-            )
+            content = await fetch_url(session, check["url"], useProxy=check["useProxy"])
 
             if not content:
                 raise Exception("Failed to fetch URL content")
@@ -81,7 +77,6 @@ async def process_check(session, check):
                 check, content_str
             )
 
-            # link.update(result)
             check["result"] = result
 
             lastResult = {
@@ -107,7 +102,6 @@ async def process_check(session, check):
         error_counter["errors"] += 1
         check["result"] = {"send_alert": False}
 
-        # Update DynamoDB with error information
         lastResult = {
             "status": "FAILED",
             "message": str(e),
@@ -124,6 +118,7 @@ async def process_check(session, check):
             )
 
 
+@logger.inject_lambda_context
 async def main_handler(event, context):
     """
     Main asynchronous handler function.
@@ -154,6 +149,7 @@ async def main_handler(event, context):
     await send_alerts(checks_to_alert)
 
 
+@logger.inject_lambda_context
 async def update_most_recent_alert(pk, sk):
     """
     Update the most recent alert timestamp for a user.
@@ -176,6 +172,7 @@ async def update_most_recent_alert(pk, sk):
         logger.error(f"Error updating most recent alert for user {pk}: {e}")
 
 
+@logger.inject_lambda_context
 async def send_alerts(checks):
     """
     Send email alerts for products that have updates.
@@ -236,6 +233,7 @@ async def send_alerts(checks):
     )
 
 
+@logger.inject_lambda_context
 def lambda_handler(event, context):
     """
     AWS Lambda function handler.
