@@ -10,10 +10,26 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { getTimeUntilNext5Minutes } from "@/lib/checks/utils";
+import { CheckItem } from "@/lib/types";
 
-export const RunCheckButton = ({ checkData, handleRunNow, isUserAllowed }) => {
+interface RunCheckButtonProps {
+  checkData: CheckItem;
+  handleRunNow: (pk: string, sk: string, userid: string) => void;
+  isUserAllowed: boolean;
+}
+
+interface Countdown {
+  minutesToNextInterval: number;
+  secondsToNextInterval: number;
+}
+
+export const RunCheckButton: React.FC<RunCheckButtonProps> = ({
+  checkData,
+  handleRunNow,
+  isUserAllowed,
+}) => {
   const [isDisabled, setIsDisabled] = useState(!isUserAllowed);
-  const [countdown, setCountdown] = useState(null);
+  const [countdown, setCountdown] = useState<Countdown | null>(null);
 
   const handleClick = () => {
     if (!isUserAllowed) return;
@@ -35,20 +51,23 @@ export const RunCheckButton = ({ checkData, handleRunNow, isUserAllowed }) => {
     if (countdown) {
       const timer = setInterval(() => {
         setCountdown((prev) => {
-          if (prev.secondsToNextInterval > 0) {
-            return {
-              ...prev,
-              secondsToNextInterval: prev.secondsToNextInterval - 1,
-            };
-          } else if (prev.minutesToNextInterval > 0) {
-            return {
-              minutesToNextInterval: prev.minutesToNextInterval - 1,
-              secondsToNextInterval: 59,
-            };
-          } else {
-            clearInterval(timer);
-            return null;
+          if (prev) {
+            if (prev.secondsToNextInterval > 0) {
+              return {
+                ...prev,
+                secondsToNextInterval: prev.secondsToNextInterval - 1,
+              };
+            } else if (prev.minutesToNextInterval > 0) {
+              return {
+                minutesToNextInterval: prev.minutesToNextInterval - 1,
+                secondsToNextInterval: 59,
+              };
+            } else {
+              clearInterval(timer);
+              return null;
+            }
           }
+          return null;
         });
       }, 1000);
 

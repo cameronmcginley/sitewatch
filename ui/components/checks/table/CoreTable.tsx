@@ -27,6 +27,19 @@ import { CustomPagination } from "./CustomPagination";
 import { CreateCheckButton } from "./CreateCheckButton";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { SidebarFlyout } from "@/components/checks/SidebarFlyout";
+import { Check } from "drizzle-orm/mysql-core";
+
+interface CoreTableProps {
+  data: CheckItem[];
+  handleDelete: (items: CheckItem[]) => void;
+  isLoading: boolean;
+  handleCreateItemSubmit: (data: CheckItem) => void;
+  isCreateItemModalOpen: boolean;
+  setIsCreateItemModalOpen: (open: boolean) => void;
+  fetchDataForUser: () => void;
+  selectedItems: CheckItem[];
+  setSelectedItems: (items: CheckItem[]) => void;
+}
 
 const CoreTable = ({
   data,
@@ -38,7 +51,7 @@ const CoreTable = ({
   fetchDataForUser,
   selectedItems,
   setSelectedItems,
-}) => {
+}: CoreTableProps) => {
   const [selectedCheckType, setSelectedCheckType] = useState<CheckType | "ALL">(
     "ALL"
   );
@@ -77,9 +90,11 @@ const CoreTable = ({
   };
 
   const handleSelectItem = (item: CheckItem) => {
-    setSelectedItems((prev) =>
-      prev.includes(item) ? prev.filter((i) => i !== item) : [...prev, item]
-    );
+    setSelectedItems((prev: CheckItem[]) => {
+      return prev.includes(item)
+        ? (prev.filter((i) => i !== item) as CheckItem[])
+        : [...prev, item];
+    });
   };
 
   const isMobile = useMediaQuery("(max-width: 640px)");

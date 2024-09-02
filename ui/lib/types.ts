@@ -47,4 +47,5 @@ export interface CheckItem {
   cron: string;
   attributes: CheckItemAttributes[CheckType];
   runNowOverride?: boolean;
+  useProxy: boolean;
 }

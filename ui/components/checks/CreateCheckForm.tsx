@@ -60,7 +60,15 @@ const checkTypeOptions = [
   { label: "AI CHECK", value: "AI CHECK" },
 ];
 
-const CreateCheckForm = ({ handleCreateItemSubmit }) => {
+interface CreateCheckFormProps {
+  handleCreateItemSubmit: (
+    values: z.infer<typeof createCheckFormSchema>
+  ) => void;
+}
+
+const CreateCheckForm: React.FC<CreateCheckFormProps> = ({
+  handleCreateItemSubmit,
+}) => {
   const { data: session, status } = useSession();
   const [cronDescription, setCronDescription] = useState("");
 
@@ -95,7 +103,7 @@ const CreateCheckForm = ({ handleCreateItemSubmit }) => {
   }, [status, session]);
 
   useEffect(() => {
-    const cronExpression = convertToCron(delayMs, offset, dayOfWeek);
+    const cronExpression = convertToCron(delayMs ?? 0, offset, dayOfWeek);
     const description = cronToPlainText(cronExpression);
     form.setValue("cron", cronExpression);
     setCronDescription(description);
@@ -117,9 +125,9 @@ const CreateCheckForm = ({ handleCreateItemSubmit }) => {
     }
   }, [checkType]);
 
-  function onSubmit(values: z.infer<typeof createCheckFormSchema>) {
+  function onSubmit(values: Partial<z.infer<typeof createCheckFormSchema>>) {
     console.log(values);
-    handleCreateItemSubmit(values);
+    handleCreateItemSubmit(values as z.infer<typeof createCheckFormSchema>);
   }
 
   const renderFormFields = (column: "left" | "right") => {
@@ -368,7 +376,7 @@ const CreateCheckForm = ({ handleCreateItemSubmit }) => {
                   <FormControl>
                     <Switch
                       checked={
-                        session.user.userType === "default"
+                        session?.user.userType === "default"
                           ? false
                           : field.value
                       }
@@ -428,7 +436,7 @@ const CreateCheckForm = ({ handleCreateItemSubmit }) => {
                   <FormLabel>Frequency</FormLabel>
                   <Select
                     onValueChange={(value) => field.onChange(Number(value))}
-                    defaultValue={field.value.toString()}
+                    defaultValue={field.value?.toString()}
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -441,12 +449,12 @@ const CreateCheckForm = ({ handleCreateItemSubmit }) => {
                           key={option.value}
                           value={option.value.toString()}
                           disabled={
-                            session.user.userType === "default" &&
+                            session?.user.userType === "default" &&
                             option.value < 14400000
                           }
                         >
                           {option.label}{" "}
-                          {session.user.userType === "default" &&
+                          {session?.user.userType === "default" &&
                             option.value < 14400000 &&
                             "(Premium)"}
                         </SelectItem>
@@ -463,7 +471,7 @@ const CreateCheckForm = ({ handleCreateItemSubmit }) => {
           );
         case "offset":
           return (
-            form.watch("delayMs") >= 14400000 && (
+            (form.watch("delayMs") ?? 0) >= 14400000 && (
               <FormField
                 key={fieldName}
                 control={form.control}
@@ -482,7 +490,7 @@ const CreateCheckForm = ({ handleCreateItemSubmit }) => {
                       </FormControl>
                       <SelectContent>
                         {Array.from(
-                          { length: form.watch("delayMs") / 3600000 },
+                          { length: (form.watch("delayMs") ?? 0) / 3600000 },
                           (_, i) => (
                             <SelectItem key={i} value={i.toString()}>
                               {i} hour{i !== 1 ? "s" : ""}
@@ -559,8 +567,8 @@ const CreateCheckForm = ({ handleCreateItemSubmit }) => {
           </Button>
           <p className="text-gray-400">
             Check will run{" "}
-            {form.watch("delayMs") > 60 * 60 * 1000 &&
-              form.watch("delayMs") < 7 * 24 * 60 * 60 * 1000 &&
+            {(form.watch("delayMs") ?? 0) > 60 * 60 * 1000 &&
+              (form.watch("delayMs") ?? 0) < 7 * 24 * 60 * 60 * 1000 &&
               "daily (UTC)"}{" "}
             {cronDescription.charAt(0).toLowerCase() + cronDescription.slice(1)}
           </p>

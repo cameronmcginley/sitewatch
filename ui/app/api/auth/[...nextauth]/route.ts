@@ -46,8 +46,8 @@ const authOptions: NextAuthOptions = {
         if (!dbUser) {
           dbUser = {
             id: user.id,
-            email: user.email,
-            name: user.name,
+            email: user.email ?? "",
+            name: user.name ?? "",
             createdAt: new Date().toISOString(),
             userType: "default",
             provider: account?.provider,

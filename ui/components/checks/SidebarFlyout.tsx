@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/custom/StatusBadge";
-import { CHECK_STATUS_VALUES } from "@/lib/types";
+import { CHECK_STATUS_VALUES, CheckItem } from "@/lib/types";
 import { msToTimeStr, cronToPlainText } from "@/lib/checks/utils";
 import { updateCheck } from "@/lib/api/checks";
 import { RunCheckButton } from "@/components/checks/RunCheckButton";
@@ -31,13 +31,12 @@ import { dlog } from "@/utils/logger";
 interface SidebarFlyoutProps {
   isOpen: boolean;
   onClose: () => void;
-  checkData: any | null;
-  handleDelete: (checkData: any) => void;
+  checkData: CheckItem;
+  handleDelete: (checkData: Partial<CheckItem>[]) => void;
   fetchDataForUser: (userid: string) => void;
 }
 
-const formatKey = (key) => {
-  // Split both camelCase and snake_case
+const formatKey = (key: string): string => {
   return key
     .split(/(?=[A-Z])/)
     .join(" ")
@@ -53,26 +52,30 @@ export const SidebarFlyout = ({
   fetchDataForUser,
 }: SidebarFlyoutProps) => {
   const [isEditMode, setIsEditMode] = useState(false);
-  const [editedData, setEditedData] = useState(checkData);
+  const [editedData, setEditedData] = useState<CheckItem>(checkData);
   const [isUserAllowedToRunNow, setIsUserAllowedToRunNow] = useState(false);
   const { data: session, status } = useSession();
-  const [currentCheckData, setCurrentCheckData] = useState(checkData);
+  const [currentCheckData, setCurrentCheckData] =
+    useState<CheckItem>(checkData);
 
   useEffect(() => {
     setCurrentCheckData(checkData);
+    setEditedData(checkData);
   }, [checkData]);
 
   useEffect(() => {
-    if (status === "authenticated" && session.user.id) {
+    if (status === "authenticated" && session?.user?.id) {
       setIsUserAllowedToRunNow(session.user.userType !== "default");
     }
   }, [status, session]);
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string): string => {
     return new Date(dateString).toLocaleString();
   };
 
-  const renderAttributeValue = (value) => {
+  const renderAttributeValue = (
+    value: boolean | number | string
+  ): JSX.Element | string => {
     if (typeof value === "boolean") {
       return (
         <span className="flex items-center">
@@ -97,17 +100,19 @@ export const SidebarFlyout = ({
 
   const handleEdit = () => {
     setIsEditMode(true);
-    setEditedData({ ...currentCheckData });
+    setEditedData({ ...currentCheckData } as CheckItem);
   };
 
   const handleSave = async () => {
     console.log("Saving changes:", editedData);
+    if (!editedData) return;
+
     editedData.updatedAt = new Date().toISOString();
     try {
       const editableSchema = z.object({
         updatedAt: z.string(),
         alias: z.string().trim().min(1).max(100).optional(),
-        status: z.enum(["ACTIVE", "PAUSED"]).optional(),
+        status: z.enum(CHECK_STATUS_VALUES as any).optional(),
         email: z.string().email().trim().min(1).max(255).optional(),
         useProxy: z.boolean().optional(),
         url: z.string().url().trim().min(1).max(255),
@@ -119,8 +124,11 @@ export const SidebarFlyout = ({
         }),
       });
 
-      // convert percent_diff to a number if it's a string
-      if (typeof editedData.attributes.percent_diff === "string") {
+      // Convert percent_diff to a number if it's a string
+      if (
+        "percent_diff" in editedData.attributes &&
+        typeof editedData.attributes.percent_diff === "string"
+      ) {
         editedData.attributes.percent_diff = parseFloat(
           editedData.attributes.percent_diff
         );
@@ -136,15 +144,15 @@ export const SidebarFlyout = ({
 
       await updateCheck(
         {
-          pk: currentCheckData.pk,
-          sk: currentCheckData.sk,
-          userid: currentCheckData.userid,
+          pk: currentCheckData!.pk,
+          sk: currentCheckData!.sk,
+          userid: currentCheckData!.userid,
         },
         validationResult.data
       );
       dlog(
         { ...currentCheckData, ...validationResult.data },
-        session.user,
+        session?.user || {},
         false,
         false,
         true
@@ -154,42 +162,51 @@ export const SidebarFlyout = ({
       setCurrentCheckData(editedData);
 
       alert("Your changes have been successfully saved.");
-      fetchDataForUser(currentCheckData.userid);
+      fetchDataForUser(currentCheckData!.userid);
     } catch (error) {
       console.error("Error saving changes:", error);
       alert("An error occurred while saving changes. Please try again.");
     }
   };
 
-  const handleInputChange = (field, value) => {
-    if (field.includes(".")) {
-      const [parent, child] = field.split(".");
-      setEditedData((prev) => ({
-        ...prev,
-        [parent]: { ...prev[parent], [child]: value },
-      }));
-      return;
-    }
+  const handleInputChange = (field: string, value: any) => {
+    if (editedData) {
+      if (field.includes(".")) {
+        const [parent, child] = field.split(".");
+        setEditedData((prev) => {
+          if (!prev) return prev;
+          const parentValue = (prev[parent as keyof CheckItem] as object) || {};
+          return {
+            ...prev,
+            [parent]: {
+              ...parentValue,
+              [child]: value,
+            },
+          };
+        });
+        return;
+      }
 
-    setEditedData((prev) => ({ ...prev, [field]: value }));
+      setEditedData((prev) => (prev ? { ...prev, [field]: value } : prev));
+    }
   };
 
-  const handleRunNow = (pk, sk, userid) => {
+  const handleRunNow = (pk: string, sk: string, userid: string) => {
     updateCheck({ pk, sk, userid }, { runNowOverride: true });
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || !currentCheckData) return null;
 
   const items = [
     {
       label: "Alias",
-      value: currentCheckData?.alias || "Loading...",
+      value: currentCheckData.alias || "Loading...",
       key: "alias",
       type: "text",
     },
     {
       label: "Check Type",
-      value: currentCheckData?.checkType || "Loading...",
+      value: currentCheckData.checkType || "Loading...",
       type: "text",
     },
     {
@@ -201,11 +218,14 @@ export const SidebarFlyout = ({
       ),
       key: "status",
       type: "select",
-      options: CHECK_STATUS_VALUES,
+      options: [
+        { value: "ACTIVE", label: "Active" },
+        { value: "PAUSED", label: "Paused" },
+      ],
     },
     {
       label: "URL",
-      value: currentCheckData ? (
+      value: currentCheckData.url ? (
         <a
           className="text-blue-500 hover:underline"
           href={currentCheckData.url}
@@ -283,7 +303,7 @@ export const SidebarFlyout = ({
       value: currentCheckData
         ? renderAttributeValue(currentCheckData.useProxy)
         : renderAttributeValue(false),
-      key: session.user.userType === "default" ? undefined : "useProxy",
+      key: session?.user?.userType === "default" ? undefined : "useProxy",
       type: "boolean",
       options: [
         { value: true, label: "Yes" },
@@ -315,37 +335,44 @@ export const SidebarFlyout = ({
                     {isEditMode && item.key ? (
                       item.type === "select" ? (
                         <Select
-                          value={editedData[item.key]}
+                          value={
+                            editedData![item.key as keyof CheckItem] as string
+                          }
                           onValueChange={(value) =>
-                            handleInputChange(item.key, value)
+                            handleInputChange(item.key!, value)
                           }
                         >
                           <SelectTrigger className="w-full mt-1">
                             <SelectValue placeholder={`Select ${item.label}`} />
                           </SelectTrigger>
                           <SelectContent>
-                            {item.options.map((option) => (
-                              <SelectItem key={option} value={option}>
-                                {option}
+                            {item?.options?.map((option) => (
+                              <SelectItem
+                                key={String(option.value)}
+                                value={String(option.value)}
+                              >
+                                {option.label}
                               </SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
                       ) : item.type === "boolean" ? (
                         <Select
-                          value={editedData[item.key]}
+                          value={String(
+                            editedData![item.key as keyof CheckItem]
+                          )}
                           onValueChange={(value) =>
-                            handleInputChange(item.key, value)
+                            handleInputChange(item.key!, value === "true")
                           }
                         >
                           <SelectTrigger className="w-full mt-1">
                             <SelectValue placeholder={`Select ${item.label}`} />
                           </SelectTrigger>
                           <SelectContent>
-                            {item.options.map((option) => (
+                            {item.options?.map((option) => (
                               <SelectItem
-                                key={option.value}
-                                value={option.value}
+                                key={String(option.value)}
+                                value={String(option.value)}
                               >
                                 {option.label}
                               </SelectItem>
@@ -353,56 +380,66 @@ export const SidebarFlyout = ({
                           </SelectContent>
                         </Select>
                       ) : item.type === "attributes" ? (
-                        // Custom attributes, map over them and give an input based on its type
                         item.value !== " Loading..." &&
-                        Object.entries(item.attributes).map(([key, value]) => (
-                          <div
-                            key={key}
-                            className="flex flex-col justify-between"
-                          >
-                            <span className="text-sm capitalize truncate flex-shrink-0 mr-2">
-                              {formatKey(key)}
-                            </span>
-                            {typeof value === "boolean" ? (
-                              <Select
-                                value={editedData["attributes"][key]}
-                                onValueChange={(value) =>
-                                  handleInputChange(`attributes.${key}`, value)
-                                }
-                              >
-                                <SelectTrigger className="w-full">
-                                  <SelectValue placeholder="Select" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value={true}>Yes</SelectItem>
-                                  <SelectItem value={false}>No</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            ) : (
-                              <Input
-                                value={editedData.attributes[key]}
-                                onChange={(e) =>
-                                  handleInputChange(
-                                    `attributes.${key}`,
-                                    e.target.value
-                                  )
-                                }
-                                className="mt-1"
-                              />
-                            )}
-                          </div>
-                        ))
+                        Object.entries(item.attributes || {}).map(
+                          ([key, value]) => (
+                            <div
+                              key={key}
+                              className="flex flex-col justify-between"
+                            >
+                              <span className="text-sm capitalize truncate flex-shrink-0 mr-2">
+                                {formatKey(key)}
+                              </span>
+                              {typeof value === "boolean" ? (
+                                <Select
+                                  value={String(
+                                    (editedData!.attributes as any)[key]
+                                  )}
+                                  onValueChange={(value) =>
+                                    handleInputChange(
+                                      `attributes.${key}`,
+                                      value === "true"
+                                    )
+                                  }
+                                >
+                                  <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Select" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="true">Yes</SelectItem>
+                                    <SelectItem value="false">No</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              ) : (
+                                <Input
+                                  value={String(
+                                    (editedData!.attributes as any)[key]
+                                  )}
+                                  onChange={(e) =>
+                                    handleInputChange(
+                                      `attributes.${key}`,
+                                      e.target.value
+                                    )
+                                  }
+                                  className="mt-1"
+                                />
+                              )}
+                            </div>
+                          )
+                        )
                       ) : (
                         <Input
-                          value={editedData[item.key]}
+                          value={
+                            editedData![item.key as keyof CheckItem] as string
+                          }
                           onChange={(e) =>
-                            handleInputChange(item.key, e.target.value)
+                            handleInputChange(item.key!, e.target.value)
                           }
                           className="mt-1"
                         />
                       )
                     ) : (
-                      <p className="break-words" title={item.value}>
+                      <p className="break-words" title={String(item.value)}>
                         {item.value}
                       </p>
                     )}
@@ -452,7 +489,7 @@ export const SidebarFlyout = ({
                       {
                         pk: currentCheckData.pk,
                         sk: currentCheckData.sk,
-                        userid: session.user.id,
+                        userid: session?.user?.id || "",
                       },
                     ])
                   }

@@ -26,7 +26,7 @@ const formatAttributes = (attributes) => {
 };
 
 export const dlog = (
-  item: CheckItem,
+  item: CheckItem | any,
   user,
   created = false,
   deleted = false,

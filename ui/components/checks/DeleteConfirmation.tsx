@@ -9,7 +9,17 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
-export const DeleteConfirmation = ({ isOpen, onOpenChange, handleDelete }) => {
+interface DeleteConfirmationProps {
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+  handleDelete: () => void;
+}
+
+export const DeleteConfirmation: React.FC<DeleteConfirmationProps> = ({
+  isOpen,
+  onOpenChange,
+  handleDelete,
+}) => {
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>

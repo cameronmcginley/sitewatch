@@ -27,7 +27,12 @@ import { BADGE_COLOR_CLASS } from "@/lib/constants";
 import { CheckItem, CheckType } from "@/lib/types";
 import { StatusBadge } from "@/components/custom/StatusBadge";
 
-export const formatCells = (item: CheckItem, columns) =>
+interface Column {
+  header: string;
+  formatter: (item: CheckItem) => JSX.Element;
+}
+
+export const formatCells = (item: CheckItem, columns: Column[]) =>
   columns.map((column) => column.formatter(item));
 
 export const getGenericColumns = () => [
