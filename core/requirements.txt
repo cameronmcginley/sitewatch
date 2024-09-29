@@ -10,3 +10,4 @@ levenshtein==0.25.1
 openai==1.42.0
 zstandard==0.23.0
 aws_lambda_powertools==2.43.1
+lxml==5.2.2

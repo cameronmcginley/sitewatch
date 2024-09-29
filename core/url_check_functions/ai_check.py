@@ -73,6 +73,8 @@ async def ai_check(check, content):
             "message": check["lastResult"]["message"],
             "page_text": compressed_text,
         }
+    else:
+        logger.info("Text content has changed since last check")
 
     prompt = f"""
     Analyze the text content of a website to determine if it meets the user's prompt and condition.
