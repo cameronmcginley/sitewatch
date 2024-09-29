@@ -44,7 +44,6 @@ def transform_item(check):
     return transformed
 
 
-@logger.inject_lambda_context
 async def read_from_redis():
     """
     Asynchronously read the entire Redis cache.
@@ -79,7 +78,6 @@ async def read_from_redis():
         raise
 
 
-@logger.inject_lambda_context
 async def scan_table():
     """
     Asynchronously scan the DynamoDB table for active items, falling back to DynamoDB if Redis fails.
@@ -114,7 +112,6 @@ async def scan_table():
     return items
 
 
-@logger.inject_lambda_context
 async def invoke_executor(batch):
     """
     Asynchronously invoke the executor Lambda function.
@@ -132,7 +129,6 @@ async def invoke_executor(batch):
     logger.debug(f"Executor invoked successfully for batch of {len(batch)} checks")
 
 
-@logger.inject_lambda_context
 async def main_handler(event, context):
     """
     Main Lambda handler function.

@@ -145,8 +145,11 @@ functions:
           cors: ${self:custom.corsConfig}
 
 package:
-  include:
+  individually: true
+  patterns:
     - functions/**
+    - ../node_modules/@aws-lambda-powertools/**
+    - ../node_modules/lodash.merge/**
 
 resources:
   Resources:

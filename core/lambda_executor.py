@@ -20,7 +20,6 @@ DEBUG = os.environ.get("debug", "false") == "true"
 error_counter = {"errors": 0, "total": 0}
 
 
-@logger.inject_lambda_context
 async def update_dynamodb_item(pk, sk, lastResult):
     """
     Update an item in DynamoDB with the latest result.
@@ -46,7 +45,6 @@ async def update_dynamodb_item(pk, sk, lastResult):
         logger.error(f"Error updating item {pk} in DynamoDB: {e}")
 
 
-@logger.inject_lambda_context
 async def process_check(session, check):
     """
     Process a single check asynchronously.
@@ -118,7 +116,6 @@ async def process_check(session, check):
             )
 
 
-@logger.inject_lambda_context
 async def main_handler(event, context):
     """
     Main asynchronous handler function.
@@ -149,7 +146,6 @@ async def main_handler(event, context):
     await send_alerts(checks_to_alert)
 
 
-@logger.inject_lambda_context
 async def update_most_recent_alert(pk, sk):
     """
     Update the most recent alert timestamp for a user.
@@ -172,7 +168,6 @@ async def update_most_recent_alert(pk, sk):
         logger.error(f"Error updating most recent alert for user {pk}: {e}")
 
 
-@logger.inject_lambda_context
 async def send_alerts(checks):
     """
     Send email alerts for products that have updates.

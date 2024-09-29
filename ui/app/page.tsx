@@ -133,7 +133,13 @@ function Root() {
                 <Button className="p-4 sm:p-6" variant="outline">
                   Watch demo
                 </Button>
-                <Button className="p-4 sm:p-6" variant="outline">
+                <Button
+                  className="p-4 sm:p-6"
+                  variant="outline"
+                  onClick={() => {
+                    window.open("/docs", "_blank");
+                  }}
+                >
                   Read Documentation
                 </Button>
               </div>
@@ -144,7 +150,13 @@ function Root() {
             <Button className="p-4" variant="default">
               Watch demo
             </Button>
-            <Button className="p-4" variant="outline">
+            <Button
+              className="p-4"
+              variant="outline"
+              onClick={() => {
+                window.open("/docs", "_blank");
+              }}
+            >
               Read Documentation
             </Button>
           </div>
