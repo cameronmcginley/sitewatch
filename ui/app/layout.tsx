@@ -12,6 +12,9 @@ export default function RootLayout({
   return (
     <ClientSessionProvider>
       <html lang="en">
+        <head>
+          <title>SiteWatch</title>
+        </head>
         <body className="h-screen flex flex-col justify-between">
           <main className="flex flex-col items-center w-full flex-grow">
             <Navbar />
