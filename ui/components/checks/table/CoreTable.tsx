@@ -33,6 +33,10 @@ import { z } from "zod";
 
 interface CoreTableProps {
   data: CheckItem[];
+  handlePauseToggle: (
+    pauseOrResume: "PAUSE" | "RESUME",
+    items: CheckItem[]
+  ) => void;
   handleDelete: (items: CheckItem[]) => void;
   isLoading: boolean;
   handleCreateItemSubmit: (
@@ -47,6 +51,7 @@ interface CoreTableProps {
 
 const CoreTable = ({
   data,
+  handlePauseToggle,
   handleDelete,
   isLoading,
   handleCreateItemSubmit,
@@ -63,6 +68,22 @@ const CoreTable = ({
   const [isSidebarFlyoutOpen, setIsSidebarFlyoutOpen] = useState(false);
   const [flyoutItem, setFlyoutItem] = useState<CheckItem | null>(null);
   const itemsPerPage = 10;
+  const [pauseOrResumeMode, setPauseOrResumeMode] = useState<
+    "PAUSE" | "RESUME"
+  >("PAUSE");
+
+  React.useEffect(() => {
+    const allPaused = selectedItems.every((item) => item.status === "PAUSED");
+    const allActive = selectedItems.every((item) => item.status === "ACTIVE");
+
+    if (allPaused) {
+      setPauseOrResumeMode("RESUME");
+    } else if (allActive) {
+      setPauseOrResumeMode("PAUSE");
+    } else {
+      setPauseOrResumeMode("PAUSE");
+    }
+  }, [selectedItems]);
 
   const usedCheckTypes = ["ALL"].concat(
     Array.from(new Set(data.map((item) => item.checkType)))
@@ -145,6 +166,22 @@ const CoreTable = ({
             isMobile ? "flex-col w-full" : "flex-row"
           }`}
         >
+          {selectedItems.length > 0 && (
+            <Button
+              onClick={() =>
+                handlePauseToggle(pauseOrResumeMode, selectedItems)
+              }
+              className={`${
+                pauseOrResumeMode === "RESUME"
+                  ? "bg-green-700 hover:bg-green-600"
+                  : "bg-yellow-700 hover:bg-yellow-600"
+              } w-full sm:w-auto`}
+            >
+              {pauseOrResumeMode.charAt(0).toUpperCase() +
+                pauseOrResumeMode.slice(1).toLowerCase()}{" "}
+              {selectedItems.length} Items
+            </Button>
+          )}
           {selectedItems.length > 0 && (
             <Button
               onClick={() => handleDelete(selectedItems)}

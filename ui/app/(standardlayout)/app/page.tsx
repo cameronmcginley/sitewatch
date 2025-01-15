@@ -3,7 +3,12 @@
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import CoreTable from "@/components/checks/table/CoreTable";
-import { fetchChecksByUser, createCheck, deleteCheck } from "@/lib/api/checks";
+import {
+  fetchChecksByUser,
+  createCheck,
+  deleteCheck,
+  updateCheck,
+} from "@/lib/api/checks";
 import { CheckItem } from "@/lib/types";
 import { createCheckFormSchema } from "@/lib/checks/schema";
 import { z } from "zod";
@@ -98,6 +103,30 @@ const AppPage = () => {
     }
   };
 
+  const handlePauseToggle = async (
+    pauseOrResume: "PAUSE" | "RESUME",
+    items: CheckItem[]
+  ) => {
+    const pausedItems = items.filter((item) => item.status === "PAUSED");
+    const unpausedItems = items.filter((item) => item.status !== "PAUSED");
+    const itemsToUpdate =
+      pauseOrResume === "RESUME" ? pausedItems : unpausedItems;
+    const statusValue = pauseOrResume === "RESUME" ? "ACTIVE" : "PAUSED";
+
+    try {
+      await Promise.all(
+        itemsToUpdate.map((item) => {
+          return updateCheck(item, { status: statusValue });
+        })
+      );
+      fetchDataForUser(session!.user.id);
+    } catch (error) {
+      console.error("Error pausing items:", error);
+    } finally {
+      setSelectedItems([]);
+    }
+  };
+
   const handleDelete = async (items: CheckItem[]) => {
     console.log("handleDelete", items);
     setItemsToDelete(items);
@@ -121,6 +150,7 @@ const AppPage = () => {
           ) : (
             <CoreTable
               data={data}
+              handlePauseToggle={handlePauseToggle}
               handleDelete={handleDelete}
               isLoading={isDataLoading}
               handleCreateItemSubmit={handleCreateItemSubmit}
