@@ -77,12 +77,11 @@ test.describe("E2E Tests for SiteWatch", () => {
 
     test("Create a New Check", async ({ page }) => {
       await page.goto("/app");
+      await Promise.race([
+        page.waitForSelector('text="No check configurations found"'),
+        page.waitForSelector('button:has-text("Details")'),
+      ]);
 
-      await page.waitForTimeout(3000);
-
-      // Check if checks are already created and delete them
-      // if checkbox with aria labvel "Select all" is visible, then items exist. If not move on.
-      // If it exists click it. Then click button with arialabel "Delete selected checks"
       const selectAllCheckbox = page.locator('[aria-label="Select all"]');
       if (await selectAllCheckbox.isVisible()) {
         await selectAllCheckbox.click();
@@ -96,8 +95,8 @@ test.describe("E2E Tests for SiteWatch", () => {
         );
         await expect(confirmDeleteButton).toBeVisible();
         await confirmDeleteButton.click();
-        // Wait 3 seconds to ensure the checks are deleted
-        await page.waitForTimeout(3000);
+
+        await page.waitForSelector('text="No check configurations found"');
       }
 
       // Configuration map
@@ -151,7 +150,7 @@ test.describe("E2E Tests for SiteWatch", () => {
       )) {
         const textBox = page.getByPlaceholder(placeholder);
         await expect(textBox).toBeVisible();
-        await textBox.fill(value);
+        await textBox.fill(value!);
       }
 
       const submitButton = page.locator(
