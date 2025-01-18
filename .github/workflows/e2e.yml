@@ -29,10 +29,16 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      - name: Run E2E Tests (Headless)
+      - name: Start Xvfb (Virtual Display)
+        run: |
+          Xvfb :99 -screen 0 1280x720x16 &
+          export DISPLAY=:99
+
+      - name: Run E2E Tests (Headed)
         env:
           CI: true
-        run: npx playwright test --reporter=dot
+          DISPLAY: :99
+        run: cd e2e && npx playwright test --headed --reporter=dot
 
       - name: Upload Playwright Artifacts
         if: failure()

@@ -7,7 +7,7 @@ package
 lambda_function.zip
 *.requirements.zip
 auth.json
-test-results
+*test-results*
 
 # ui
 # dependencies
