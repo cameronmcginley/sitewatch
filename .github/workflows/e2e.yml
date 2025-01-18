@@ -1,0 +1,42 @@
+name: E2E Tests
+
+on:
+  push:
+    branches:
+      - main
+      - e2e
+  pull_request:
+    branches:
+      - main
+      - e2e
+
+jobs:
+  e2e-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Run E2E Tests (Headless)
+        env:
+          CI: true
+        run: npx playwright test --reporter=dot
+
+      - name: Upload Playwright Artifacts
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: playwright-artifacts
+          path: playwright-report

@@ -6,6 +6,8 @@ myenv
 package
 lambda_function.zip
 *.requirements.zip
+auth.json
+test-results
 
 # ui
 # dependencies
