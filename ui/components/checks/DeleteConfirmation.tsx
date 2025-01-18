@@ -34,7 +34,11 @@ export const DeleteConfirmation: React.FC<DeleteConfirmationProps> = ({
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button variant="destructive" onClick={() => handleDelete()}>
+          <Button
+            variant="destructive"
+            onClick={() => handleDelete()}
+            aria-label="Delete confirmation button"
+          >
             Delete
           </Button>
         </DialogFooter>

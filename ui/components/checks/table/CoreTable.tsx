@@ -186,6 +186,7 @@ const CoreTable = ({
             <Button
               onClick={() => handleDelete(selectedItems)}
               className="bg-red-700 hover:bg-red-600 w-full sm:w-auto"
+              aria-label="Delete selected checks"
             >
               Delete {selectedItems.length} check
               {selectedItems.length > 1 ? "s" : ""}
@@ -211,6 +212,7 @@ const CoreTable = ({
                   onCheckedChange={(checked) =>
                     setSelectedItems(checked ? filteredData : [])
                   }
+                  aria-label="Select all"
                 />
               </TableHead>
               {columns.map((column, index: number) => (
