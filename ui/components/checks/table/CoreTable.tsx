@@ -179,7 +179,7 @@ const CoreTable = ({
             >
               {pauseOrResumeMode.charAt(0).toUpperCase() +
                 pauseOrResumeMode.slice(1).toLowerCase()}{" "}
-              {selectedItems.length} Items
+              {selectedItems.length} check{selectedItems.length > 1 ? "s" : ""}
             </Button>
           )}
           {selectedItems.length > 0 && (
@@ -187,7 +187,8 @@ const CoreTable = ({
               onClick={() => handleDelete(selectedItems)}
               className="bg-red-700 hover:bg-red-600 w-full sm:w-auto"
             >
-              Delete {selectedItems.length} items
+              Delete {selectedItems.length} check
+              {selectedItems.length > 1 ? "s" : ""}
             </Button>
           )}
           <CreateCheckButton
