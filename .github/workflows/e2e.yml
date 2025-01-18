@@ -30,7 +30,7 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Start Application
-        run: npm run start &
+        run: npm run ui:start &
 
       - name: Wait for Application to Be Ready
         run: npx wait-on http://localhost:3000
