@@ -38,6 +38,8 @@ jobs:
         env:
           CI: true
           DISPLAY: :99
+          GOOGLE_EMAIL: ${{ secrets.GOOGLE_EMAIL }}
+          GOOGLE_PASSWORD: ${{ secrets.GOOGLE_PASSWORD }}
         run: cd e2e && npx playwright test --headed --reporter=dot
 
       - name: Upload Playwright Artifacts
