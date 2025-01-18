@@ -6,7 +6,7 @@ export const HeroWavy = ({ primaryColor = "#4d69ad", height = 750 }) => (
       xmlns="http://www.w3.org/2000/svg"
       width="100%"
       height={`${height}`}
-      viewBox={`0 0 1600 ${height}`}
+      viewBox={`0 0 1600 ${height * 0.8}`}
       preserveAspectRatio="none"
     >
       <defs>
