@@ -19,7 +19,7 @@ test.describe("E2E Tests for SiteWatch", () => {
 
     await page.goto("/");
 
-    const signInButton = page.locator('button:has-text("Sign In")');
+    const signInButton = page.locator('button:has-text("Sign In")').first();
     await expect(signInButton).toBeVisible();
     await signInButton.click();
 
