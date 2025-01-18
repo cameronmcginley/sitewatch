@@ -10,17 +10,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Deploy Website
-        env:
-          HOST: ${{ secrets.VPS_IP }}
-          USERNAME: ${{ secrets.VPS_USERNAME }}
-          PRIVATE_KEY: ${{ secrets.VPS_PRIVATE_KEY }}
-        run: |
-          ssh -i "$PRIVATE_KEY" "$USERNAME@$HOST" << 'EOF'
-          set -e
-          cd ~ || exit
-          ./droplet_setup.sh
-          EOF
+      - name: Deploy using SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_PRIVATE_KEY }}
+          port: 22
+          script: |
+            cd ~
+            ./droplet-setup.sh
