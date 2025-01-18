@@ -36,24 +36,27 @@ jobs:
         run: npm run ui:start &
 
       - name: Wait for Application to Be Ready
-        run: npx wait-on http://localhost:3000 --timeout 120000
+        run: npx wait-on http://localhost:3000 --timeout 300000
 
       - name: Start Xvfb (Virtual Display)
         run: |
           Xvfb :99 -screen 0 1280x720x16 &
           export DISPLAY=:99
 
-      - name: Run E2E Tests (Headed)
+      - name: Run E2E Tests
         env:
           CI: true
           DISPLAY: :99
-          GOOGLE_EMAIL: ${{ secrets.GOOGLE_EMAIL }}
-          GOOGLE_PASSWORD: ${{ secrets.GOOGLE_PASSWORD }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
         run: cd e2e && npx playwright test --headed --reporter=dot
 
-      - name: Upload Playwright Artifacts
+      - name: Upload Debug Artifacts
         if: failure()
         uses: actions/upload-artifact@v3
         with:
-          name: playwright-artifacts
-          path: playwright-report
+          name: debug-artifacts
+          path: |
+            e2e/*.png
+            playwright-report

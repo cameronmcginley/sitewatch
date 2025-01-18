@@ -17,6 +17,14 @@ test.describe("E2E Tests for SiteWatch", () => {
       );
     }
 
+    if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+      throw new Error("Google OAuth credentials are not set.");
+    }
+
+    if (!process.env.NEXTAUTH_SECRET) {
+      throw new Error("NEXTAUTH_SECRET is not set.");
+    }
+
     await page.goto("/");
 
     const signInButton = page.locator('button:has-text("Sign In")').first();
