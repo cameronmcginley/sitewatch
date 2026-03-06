@@ -1,20 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 interface MarkdownViewerProps {
-  filePath: string;
+  content: string;
 }
 
-const MarkdownViewer: React.FC<MarkdownViewerProps> = ({ filePath }) => {
-  const [content, setContent] = useState<string>("");
-
-  useEffect(() => {
-    fetch(filePath)
-      .then((response) => response.text())
-      .then((text) => setContent(text))
-      .catch((error) => console.error("Error loading markdown file:", error));
-  }, [filePath]);
+const MarkdownViewer: React.FC<MarkdownViewerProps> = ({ content }) => {
 
   const components = {
     h1: ({ node, ...props }: { node: any; [key: string]: any }) => (

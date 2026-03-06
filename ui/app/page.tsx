@@ -6,6 +6,7 @@ import { HeroWavy } from "@/components/ui/hero-wavy";
 import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
+import demoImage from "../public/demo.png";
 
 const checks = [
   {
@@ -118,48 +119,11 @@ function Root() {
           className="absolute top-full left-1/2 transform -translate-x-1/2 z-10 w-full max-w-5xl px-4"
           style={{ transform: "translate(-50%, -20%)" }}
         >
-          <div className="relative">
-            <img
-              src="/demo.png"
-              alt="download"
-              className="rounded-2xl border-2 border-black w-full"
-            />
-            {/* Desktop buttons (hidden on mobile) */}
-            <div
-              className="absolute mt-16 sm:mt-24 top-1/4 left-1/2 transform -translate-x-1/2 hidden sm:block"
-              style={{ transform: "translate(-50%, -130%)" }}
-            >
-              <div className="flex flex-col gap-4 bg-gray-900 p-4 rounded-xl">
-                <Button className="p-4 sm:p-6" variant="outline">
-                  Watch demo
-                </Button>
-                <Button
-                  className="p-4 sm:p-6"
-                  variant="outline"
-                  onClick={() => {
-                    window.open("/docs", "_blank");
-                  }}
-                >
-                  Read Documentation
-                </Button>
-              </div>
-            </div>
-          </div>
-          {/* Mobile buttons (visible on small screens) */}
-          <div className="mt-4 flex flex-col gap-4 sm:hidden">
-            <Button className="p-4" variant="default">
-              Watch demo
-            </Button>
-            <Button
-              className="p-4"
-              variant="outline"
-              onClick={() => {
-                window.open("/docs", "_blank");
-              }}
-            >
-              Read Documentation
-            </Button>
-          </div>
+          <img
+            src={demoImage.src}
+            alt="download"
+            className="rounded-2xl border-2 border-black w-full"
+          />
         </div>
       </div>
       {/* Below hero section */}
